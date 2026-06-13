@@ -1,0 +1,885 @@
+/* OyeAstro Cyber-Mystical CSS Design System */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@500;700;800&display=swap');
+
+:root {
+  --bg-color: #050508;
+  --panel-bg: rgba(13, 12, 22, 0.45);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(168, 85, 247, 0.2);
+  
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  
+  /* Neon Accents */
+  --accent-pink: #d946ef;
+  --accent-purple: #a855f7;
+  --accent-cyan: #06b6d4;
+  --accent-green: #10b981;
+  --accent-gold: #fbbf24;
+  --accent-orange: #f97316;
+  
+  /* Gradients */
+  --grad-holographic: linear-gradient(135deg, #06b6d4 0%, #a855f7 50%, #d946ef 100%);
+  --grad-sunset: linear-gradient(135deg, #f97316 0%, #d946ef 100%);
+  --grad-aurora: linear-gradient(135deg, #06b6d4 0%, #10b981 100%);
+  --grad-dark: linear-gradient(180deg, #0c0a1a 0%, #050508 100%);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Space Grotesk', sans-serif;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-purple) var(--bg-color);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--accent-purple);
+  border-radius: 4px;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Background Cosmos Visuals */
+.nebula-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at 10% 20%, rgba(168, 85, 247, 0.15) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 40%),
+              radial-gradient(circle at 50% 50%, rgba(217, 70, 239, 0.08) 0%, transparent 50%),
+              var(--grad-dark);
+  z-index: -2;
+}
+
+.starfield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: 
+    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px);
+  background-size: 550px 550px, 350px 350px, 250px 250px;
+  background-position: 0 0, 40px 60px, 130px 270px;
+  opacity: 0.3;
+  z-index: -1;
+  animation: starMovement 180s linear infinite;
+}
+
+@keyframes starMovement {
+  from { background-position: 0 0, 40px 60px, 130px 270px; }
+  to { background-position: 550px 550px, 390px 410px, 380px 820px; }
+}
+
+/* Global Typography & Utilities */
+h1, h2, h3, .brand-font {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.glow-text {
+  background: var(--grad-holographic);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.3));
+}
+
+.glow-gold {
+  background: var(--grad-sunset);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Layout Framework */
+header {
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.logo svg {
+  width: 2rem;
+  height: 2rem;
+  fill: none;
+  stroke: url(#logoGrad);
+  stroke-width: 2.5;
+  filter: drop-shadow(0 0 8px var(--accent-pink));
+}
+
+main {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Step 1: Intake Screen */
+.intake-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+}
+
+.intake-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.1;
+}
+
+.intake-container p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+}
+
+/* Modern Cyber Forms */
+.glass-form {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 2.5rem;
+  width: 100%;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
+              inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--grad-holographic);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.form-group input, .form-group select {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1rem;
+  color: white;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.form-group input:focus, .form-group select:focus {
+  border-color: var(--accent-purple);
+  background: rgba(168, 85, 247, 0.08);
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.25);
+}
+
+/* CSS Form Validation Styling (:user-valid / :user-invalid fallback) */
+.form-group input:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+}
+
+.cyber-btn {
+  background: var(--grad-holographic);
+  border: none;
+  border-radius: 14px;
+  padding: 1.1rem;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.3);
+  margin-top: 1rem;
+}
+
+.cyber-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(168, 85, 247, 0.5);
+}
+
+.cyber-btn:active {
+  transform: translateY(1px);
+}
+
+.cyber-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.cyber-btn:hover::after {
+  left: 100%;
+}
+
+/* Step 2: Dashboard Grid */
+.dashboard-container {
+  display: none; /* Controlled by JS */
+  grid-template-columns: 320px 1fr 360px;
+  gap: 1.5rem;
+  width: 100%;
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Left Column: Big Three */
+.column-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.section-title {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+  padding-left: 0.25rem;
+}
+
+.tarot-card {
+  background: rgba(13, 12, 22, 0.6);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 1.5rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: default;
+}
+
+.tarot-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 1px;
+  background: linear-gradient(to bottom, var(--card-glow, var(--accent-purple)), transparent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.4;
+  transition: opacity 0.3s;
+}
+
+.tarot-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 30px var(--card-glow-shadow, rgba(168, 85, 247, 0.15));
+}
+
+.tarot-card:hover::before {
+  opacity: 1;
+}
+
+.tarot-card.sun {
+  --card-glow: var(--accent-orange);
+  --card-glow-shadow: rgba(249, 115, 22, 0.25);
+}
+
+.tarot-card.moon {
+  --card-glow: var(--accent-purple);
+  --card-glow-shadow: rgba(168, 85, 247, 0.25);
+}
+
+.tarot-card.rising {
+  --card-glow: var(--accent-cyan);
+  --card-glow-shadow: rgba(6, 182, 212, 0.25);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.card-badge {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+  font-weight: 600;
+  border: 1px solid var(--border-color);
+}
+
+.tarot-card h3 {
+  font-size: 1.5rem;
+  margin-top: 0.25rem;
+}
+
+.tarot-card p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.tarot-illustration {
+  align-self: center;
+  margin: 0.5rem 0;
+  width: 80px;
+  height: 80px;
+  opacity: 0.75;
+  transition: transform 0.5s ease;
+}
+
+.tarot-card:hover .tarot-illustration {
+  transform: rotate(5deg) scale(1.1);
+  opacity: 1;
+}
+
+/* Center Column: Kundli Chart Graphic */
+.column-center {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.glass-panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 1.75rem;
+  backdrop-filter: blur(16px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.panel-header h2 {
+  font-size: 1.4rem;
+  background: linear-gradient(90deg, #fff, var(--text-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Interactive SVG Kundli Styles */
+.kundli-chart-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  min-height: 350px;
+}
+
+.kundli-svg {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4));
+}
+
+.chart-line {
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 1.5;
+  transition: stroke 0.3s;
+}
+
+.chart-line.highlight {
+  stroke: var(--accent-purple);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 4px var(--accent-purple));
+}
+
+.house-bg {
+  fill: rgba(255, 255, 255, 0.005);
+  cursor: pointer;
+  transition: fill 0.3s;
+}
+
+.house-bg:hover {
+  fill: rgba(168, 85, 247, 0.05);
+}
+
+.rashi-number {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--accent-gold);
+  opacity: 0.85;
+}
+
+.planet-symbol {
+  font-size: 10px;
+  font-weight: 600;
+  fill: #ffffff;
+  cursor: help;
+}
+
+.planet-symbol:hover {
+  fill: var(--accent-cyan);
+  font-size: 11px;
+}
+
+.house-number-label {
+  font-size: 8px;
+  fill: var(--text-muted);
+  pointer-events: none;
+}
+
+/* Right Column: Cosmic Tea & Era Tracker */
+.column-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cosmic-tea-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tea-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.1rem;
+}
+
+.tea-item-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tea-item-title.green { color: var(--accent-green); }
+.tea-item-title.red { color: var(--accent-pink); }
+
+.tea-item p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Era Tracker (Dasha Timeline) */
+.era-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.current-era-banner {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.12) 0%, rgba(217, 70, 239, 0.05) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 16px;
+  padding: 1.25rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.current-era-banner h4 {
+  font-size: 0.75rem;
+  color: var(--accent-purple);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+}
+
+.current-era-banner h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.current-era-banner p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Timeline grid */
+.dasha-timeline-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.timeline-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.8rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 0.8rem;
+}
+
+.timeline-row.active {
+  border-color: var(--accent-purple);
+  background: rgba(168, 85, 247, 0.05);
+}
+
+.timeline-row .ruler {
+  font-weight: 700;
+}
+
+.timeline-row .dates {
+  color: var(--text-muted);
+}
+
+/* Remedies Panel */
+.remedies-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.remedy-badge {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.remedy-badge .label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.remedy-badge .val {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.remedy-tip {
+  grid-column: span 2;
+  background: rgba(251, 191, 36, 0.05);
+  border: 1px dashed rgba(251, 191, 36, 0.3);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: var(--accent-gold);
+  line-height: 1.4;
+}
+
+/* Share Button */
+.share-action-container {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: auto;
+}
+
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: white;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Interactive Info Modal / Details elements */
+.info-details {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.info-details summary {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  user-select: none;
+  outline: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.info-details[open] summary {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.details-content {
+  padding: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* User Info Bar at Top of Results */
+.user-profile-header {
+  grid-column: span 3;
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 1.25rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(16px);
+}
+
+.user-meta-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-avatar {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: var(--grad-holographic);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.75rem;
+  font-family: 'Syne', sans-serif;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+}
+
+.user-text h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.user-text p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Share Card Modal styling (Holographic mockup) */
+dialog#share-modal {
+  background: #0d0c16;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  padding: 2rem;
+  margin: auto;
+  max-width: 400px;
+  width: calc(100% - 2rem);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8),
+              0 0 40px rgba(168, 85, 247, 0.2);
+  color: white;
+  outline: none;
+}
+
+dialog#share-modal::backdrop {
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+.share-card-visual {
+  background: linear-gradient(135deg, #100f24 0%, #06050a 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: inset 0 0 30px rgba(168, 85, 247, 0.15);
+}
+
+.share-card-visual::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--grad-holographic);
+  border-radius: 20px 20px 0 0;
+}
+
+.share-card-visual h4 {
+  font-size: 1.2rem;
+  font-family: 'Syne', sans-serif;
+  letter-spacing: 0.05em;
+  color: var(--accent-pink);
+}
+
+.share-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.share-mini-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0.75rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.share-mini-card span {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.share-mini-card h5 {
+  font-size: 0.8rem;
+  font-family: 'Syne', sans-serif;
+  color: var(--text-primary);
+}
+
+.share-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Tablet & Mobile Responsiveness */
+@media (max-width: 1100px) {
+  .dashboard-container {
+    grid-template-columns: 1fr 1fr;
+  }
+  .user-profile-header {
+    grid-column: span 2;
+  }
+  .column-center {
+    grid-column: span 2;
+    order: -1; /* put chart at the top */
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+  }
+  .user-profile-header {
+    grid-column: span 1;
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  .column-center {
+    grid-column: span 1;
+  }
+  .intake-container h1 {
+    font-size: 2rem;
+  }
+  main {
+    padding: 1rem;
+  }
+}

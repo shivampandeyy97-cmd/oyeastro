@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const profile = window.OyeAstroEngine.getProfile(name, date, time, place);
         
         // 2. Render Dashboard Elements
-        renderPinterestBoard(profile);
+        renderAstroBoard(profile);
 
         // 3. Transition UI
         boardSection.style.display = "block";
@@ -104,8 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Render the Pinterest Dashboard
-  function renderPinterestBoard(profile) {
+  // Render the Astro Dashboard
+  function renderAstroBoard(profile) {
     currentProfileData = profile;
 
     // 1. User Info Avatar card

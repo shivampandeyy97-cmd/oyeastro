@@ -1,4 +1,4 @@
-/* OyeAstro Pinterest Buttercream Yellow Design System */
+/* OyeAstro Aesthetic Buttercream Yellow Design System */
 
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap');
 
@@ -196,9 +196,9 @@ main {
   box-shadow: 2px 2px 0px var(--espresso);
 }
 
-/* Pinterest Masonry Board */
+/* Masonry Board */
 .masonry-board {
-  display: none; /* Controlled by JS */
+  display: block;
   columns: 3 320px;
   column-gap: 1.5rem;
   width: 100%;

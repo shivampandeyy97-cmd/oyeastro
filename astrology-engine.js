@@ -4,7 +4,7 @@
  * - Deterministic Sidereal (Vedic) planetary calculations using Lahiri Ayanamsa.
  * - Lagna (Ascendant) calculation based on local birth time and longitude.
  * - Moon-based Nakshatra and Vimshottari Dasha calculations.
- * - Gen-Z / Tier-1 targeted modern readings and forecasts.
+ * - Gen-Z targeted modern readings.
  */
 
 // Major cities local DB for instant fallback calculations
@@ -34,9 +34,9 @@ const PLANET_NAMES = {
 };
 
 const RASHI_NAMES = [
-  "Aries (Mesh)", "Taurus (Vrishabha)", "Gemini (Mithuna)", "Cancer (Karka)",
-  "Leo (Simha)", "Virgo (Kanya)", "Libra (Tula)", "Scorpio (Vrischika)",
-  "Sagittarius (Dhanu)", "Capricorn (Makara)", "Aquarius (Kumbha)", "Pisces (Meena)"
+  "Aries", "Taurus", "Gemini", "Cancer",
+  "Leo", "Virgo", "Libra", "Scorpio",
+  "Sagittarius", "Capricorn", "Aquarius", "Pisces"
 ];
 
 const NAKSHATRAS = [
@@ -58,10 +58,8 @@ const DASHA_YEARS = { Ke: 7, Ve: 20, Su: 6, Mo: 10, Ma: 7, Ra: 18, Ju: 16, Sa: 1
 function resolveLocation(cityInput) {
   const query = cityInput.trim().toLowerCase();
   
-  // Direct match in local DB
   if (CITIES_DB[query]) return CITIES_DB[query];
   
-  // Search for partial match
   for (const key in CITIES_DB) {
     if (query.includes(key) || key.includes(query)) {
       return CITIES_DB[key];
@@ -74,10 +72,8 @@ function resolveLocation(cityInput) {
     hash = query.charCodeAt(i) + ((hash << 5) - hash);
   }
 
-  const lat = 10 + (Math.abs(hash % 40)); // positive latitude between 10 and 50
-  const lng = -120 + (Math.abs((hash >> 3) % 240)); // longitude between -120 and 120
-  
-  // Approximate a reasonable timezone based on longitude
+  const lat = 10 + (Math.abs(hash % 40)); 
+  const lng = -120 + (Math.abs((hash >> 3) % 240)); 
   const tz = Math.round(lng / 15);
 
   return { lat, lng, tz, name: cityInput };
@@ -88,31 +84,27 @@ function getJulianDays(dateStr, timeStr, tzOffset) {
   const [year, month, day] = dateStr.split("-").map(Number);
   const [hour, minute] = timeStr.split(":").map(Number);
   
-  // Convert local birth time to UTC
   const localDateMs = Date.UTC(year, month - 1, day, hour, minute);
   const tzAdjustmentMs = tzOffset * 3600000;
   const utcDateMs = localDateMs - tzAdjustmentMs;
 
-  const j2000Ms = Date.UTC(2000, 0, 1, 12, 0); // J2000 epoch standard
-  return (utcDateMs - j2000Ms) / 86400000; // 86400000 ms per day
+  const j2000Ms = Date.UTC(2000, 0, 1, 12, 0); 
+  return (utcDateMs - j2000Ms) / 86400000; 
 }
 
 // Mathematical Vedic Astronomy Calculations
 function calculatePlanets(days, lat, lng, hour, minute) {
-  // 1. Calculate Ayanamsa (Lahiri Ayanamsa: ~23.85 degrees at J2000, changes slowly)
   const ayanamsa = 23.85 + 0.00014 * days;
-
-  // Helper to normalize degree to 0 - 360
   const norm = (val) => (val % 360 + 360) % 360;
 
-  // 2. Sun Position
+  // Sun
   const sunMeanLong = 280.460 + 0.9856003 * days;
   const sunMeanAnomaly = (357.528 + 0.9856003 * days) * Math.PI / 180;
   const sunEquationOfCenter = 1.915 * Math.sin(sunMeanAnomaly) + 0.020 * Math.sin(2 * sunMeanAnomaly);
   const sunTropicalLong = sunMeanLong + sunEquationOfCenter;
   const sunVedicLong = norm(sunTropicalLong - ayanamsa);
 
-  // 3. Moon Position (incorporates main orbital anomalies)
+  // Moon
   const moonMeanLong = 218.316 + 13.176396 * days;
   const moonMeanAnomaly = (134.963 + 13.064993 * days) * Math.PI / 180;
   const moonElongation = (297.850 + 12.190749 * days) * Math.PI / 180;
@@ -122,25 +114,18 @@ function calculatePlanets(days, lat, lng, hour, minute) {
   const moonTropicalLong = moonMeanLong + moonPerturbation;
   const moonVedicLong = norm(moonTropicalLong - ayanamsa);
 
-  // 4. Other planets - Keplerian approximations
+  // Other planets - Keplerian approximations
   const Mars_deg = norm(355.433 + 0.524033 * days - ayanamsa);
-  
-  // Mercury and Venus remain close to the Sun
   const Mercury_deg = norm(sunVedicLong + 22 * Math.sin((days * 360 / 87.97) * Math.PI / 180));
   const Venus_deg = norm(sunVedicLong + 44 * Math.sin((days * 360 / 224.7) * Math.PI / 180));
-  
   const Jupiter_deg = norm(34.35 + 0.083091 * days - ayanamsa);
   const Saturn_deg = norm(50.08 + 0.033459 * days - ayanamsa);
-  
-  // Rahu / Ketu (Mean Nodes)
   const Rahu_deg = norm(125.04 - 0.052954 * days - ayanamsa);
   const Ketu_deg = norm(Rahu_deg + 180);
 
-  // 5. Lagna (Ascendant) calculation
-  // Local Sidereal Time approximation based on local time and longitude
-  // Earth rotates 15 degrees per hour. Lagna advances roughly 15 degrees per hour relative to the Sun.
+  // Lagna (Ascendant)
   const localTimeHours = hour + (minute / 60);
-  const hoursSinceSunrise = localTimeHours - 6; // approximate sunrise at 6 AM local
+  const hoursSinceSunrise = localTimeHours - 6; 
   const lagnaDegreeAdjustment = (hoursSinceSunrise * 15) + (lng / 15);
   const Lagna_deg = norm(sunVedicLong + lagnaDegreeAdjustment);
 
@@ -161,23 +146,20 @@ function calculatePlanets(days, lat, lng, hour, minute) {
 // Generate house placements and signs
 function getHousePlacements(positions) {
   const lagnaDeg = positions.Lagn;
-  const lagnaSignIndex = Math.floor(lagnaDeg / 30); // 0 to 11
+  const lagnaSignIndex = Math.floor(lagnaDeg / 30); 
   
-  const placements = {}; // maps Planet -> { degree, signIndex, houseIndex }
-  const houses = Array.from({ length: 12 }, () => []); // houses[0] is 1st House, containing planets
+  const placements = {}; 
+  const houses = Array.from({ length: 12 }, () => []); 
 
   for (const planetCode in positions) {
     const deg = positions[planetCode];
     const signIndex = Math.floor(deg / 30);
-    
-    // Vedic Rashi Chart (Equal House System from Lagna Sign)
-    // House index: 0 is 1st House, 1 is 2nd House, etc.
     const houseIndex = (signIndex - lagnaSignIndex + 12) % 12;
     
     placements[planetCode] = {
       degree: deg % 30,
       signIndex: signIndex,
-      houseIndex: houseIndex + 1 // 1-indexed for display
+      houseIndex: houseIndex + 1 
     };
 
     if (planetCode !== "Lagn") {
@@ -190,23 +172,17 @@ function getHousePlacements(positions) {
 
 // Vimshottari Dasha calculations based on Moon position
 function getVimshottariDasha(moonDeg, birthDateStr, birthTimeStr, tzOffset) {
-  // 1 Nakshatra = 13 degrees 20 minutes = 13.333333 degrees
   const nakshatraWidth = 360 / 27;
   const rawNakshatraIndex = Math.floor(moonDeg / nakshatraWidth);
   const nakshatraInfo = NAKSHATRAS[rawNakshatraIndex];
   
-  // Percent of current Nakshatra traversed
   const traverseOffset = moonDeg % nakshatraWidth;
   const traversePercent = traverseOffset / nakshatraWidth;
 
-  // Determine starting Dasha ruler
   const startRulerIndex = DASHA_SEQUENCE.indexOf(nakshatraInfo.ruler);
   const startRulerYears = DASHA_YEARS[nakshatraInfo.ruler];
-  
-  // Calculate remaining years in the first Dasha
   const remainingFirstDashaYears = startRulerYears * (1 - traversePercent);
 
-  // Compute current timeline of Dashas
   const birthTimestamp = new Date(birthDateStr + "T" + birthTimeStr).getTime();
   const timeline = [];
   let currentStartMs = birthTimestamp;
@@ -221,7 +197,6 @@ function getVimshottariDasha(moonDeg, birthDateStr, birthTimeStr, tzOffset) {
   });
   currentStartMs += firstDurationMs;
 
-  // Generate subsequent dashas up to 120 years total
   for (let i = 1; i < 9; i++) {
     rIndex = (rIndex + 1) % 9;
     const ruler = DASHA_SEQUENCE[rIndex];
@@ -234,7 +209,6 @@ function getVimshottariDasha(moonDeg, birthDateStr, birthTimeStr, tzOffset) {
     currentStartMs += durationMs;
   }
 
-  // Find current running Dasha
   const now = Date.now();
   const activeDasha = timeline.find(d => now >= d.start.getTime() && now <= d.end.getTime()) || timeline[timeline.length - 1];
 
@@ -249,18 +223,18 @@ function getVimshottariDasha(moonDeg, birthDateStr, birthTimeStr, tzOffset) {
 // Gen-Z Interpretations & Copy Engine
 const INTERPRETATIONS = {
   Lagna: {
-    0: { name: "Aries", tag: "Main Character Energy", copy: "Aries Rising means you're standard main character material. You walk in like you own the block. You're impulsive, high-key competitive, and hate waiting." },
-    1: { name: "Taurus", tag: "Comfort & Aesthetics", copy: "Taurus Rising makes you aesthetic-obsessed, a major foodie, and a lover of cozy setups. You'll drop money on premium comfort without a second thought." },
-    2: { name: "Gemini", tag: "Certified Social Butterfly", copy: "Gemini Rising means your brain has 60 tabs open, all playing audio. You're talkative, witty, and low-key love gathering gossip." },
-    3: { name: "Cancer", tag: "The Group Mom", copy: "Cancer Rising is protective, emotional, and holds onto memories like collectibles. You look soft, but you'll delete anyone who crosses your squad." },
-    4: { name: "Leo", tag: "Spotlight magnet", copy: "Leo Rising means your aura is golden and you love attention. You're generous, hyper-dramatic, and probably take 20 minutes styling your hair." },
-    5: { name: "Virgo", tag: "Anxious Organizer", copy: "Virgo Rising means you look organized but your brain is actually running 100 mph overthinking everything. You're detail-oriented and give great advice." },
-    6: { name: "Libra", tag: "Aesthetic Pleaser", copy: "Libra Rising is all about balance, vibes, and gorgeous color palettes. You hate conflict but struggle with simple decisions like dinner options." },
+    0: { name: "Aries", tag: "Main Character Energy", copy: "Aries Rising means you're standard main character material. You walk in like you own the block. Low-key impatient, high-key determined." },
+    1: { name: "Taurus", tag: "Comfort & Aesthetics", copy: "Taurus Rising means you're aesthetic-obsessed, a major foodie, and value coziness above all else. You'll spend money on premium comfort without a second thought." },
+    2: { name: "Gemini", tag: "Certified Chatbox", copy: "Gemini Rising means your brain has 60 tabs open, all playing audio. You're talkative, witty, and low-key love gathering tea." },
+    3: { name: "Cancer", tag: "The Group Guardian", copy: "Cancer Rising is protective, emotional, and holds onto memories like collectibles. Soft on the outside, but you will delete anyone who crosses your crew." },
+    4: { name: "Leo", tag: "Spotlight Magnet", copy: "Leo Rising means your aura is golden and you love attention. You're generous, hyper-dramatic, and probably take 20 minutes styling your fit." },
+    5: { name: "Virgo", tag: "Anxious Planner", copy: "Virgo Rising means you look organized but your brain is actually running 100 mph overthinking everything. You're detail-oriented and give great advice." },
+    6: { name: "Libra", tag: "Aesthetic Pleaser", copy: "Libra Rising is all about balance, vibes, and gorgeous color palettes. You hate conflict but struggle with simple decisions like what to eat." },
     7: { name: "Scorpio", tag: "Dark Mystique Vibe", copy: "Scorpio Rising gives intense, magnetic energy. You have an built-in lie detector. People either find you intimidating or incredibly alluring." },
     8: { name: "Sagittarius", tag: "Zero Filter Explorer", copy: "Sagittarius Rising is the chaos-coordinator. You say what you think, love traveling, and have a dark, hilarious sense of humor." },
     9: { name: "Capricorn", tag: "Corporate Baddie", copy: "Capricorn Rising gives serious CEO energy. You've had your retirement plan ready since middle school. Sarcastic, ambitious, and super structured." },
     10: { name: "Aquarius", tag: "The Resident Rebel", copy: "Aquarius Rising is the indie rebel. You march to your own futuristic beat. You love tech, social justice, and being intentionally unique." },
-    11: { name: "Pisces", tag: "Lost in the Clouds", copy: "Pisces Rising is pure fantasy and intuition. You absorb other people's feelings like a sponge. Creatively gifted, but you definitely daydream all day." }
+    11: { name: "Pisces", tag: "Dream World Resident", copy: "Pisces Rising is pure fantasy and intuition. You absorb other people's feelings like a sponge. Creatively gifted, but you definitely daydream all day." }
   },
   Sun: {
     0: "Aries Sun: Passionate, active, gets bored quickly. Born to lead.",
@@ -291,16 +265,31 @@ const INTERPRETATIONS = {
     11: "Pisces Moon: Highly sensitive, absorbs vibes, gets lost in romantic dreams."
   },
   Dasha: {
-    Ke: { title: "The Spiritual Detachment Era 🌌", copy: "Ketu is running your life right now. Expect intense self-discovery, spiritual healing, and realizing that half the things you used to care about don't matter anymore. A perfect era for mental resets." },
-    Ve: { title: "The Glow-Up & Luxury Era ✨", copy: "Venus is in charge. This is your glow-up era! Expect major wins in romance, aesthetic upgrades, creativity, and treating yourself to the finer things in life. You're the main event." },
-    Su: { title: "The Spotlight & Authority Era ☀️", copy: "The Sun is putting you on center stage. You'll gain massive clarity on your career, take on leadership roles, and feel your confidence soar. Don't hide from the spotlight." },
-    Mo: { title: "The Emotional Era & Nostalgia Trip 🌙", copy: "Moon energy is active. You are feeling *all* the feels. You'll crave nesting, cozy aesthetics, deep bonding sessions, and exploring your intuition. Hydrate and journal." },
-    Ma: { title: "The Hustle & Grind Era 🔥", copy: "Mars has lit a fire under you. You're in high-energy, ambitious hustle mode. Great for starting workouts, launching projects, and aggressively claiming what's yours." },
-    Ra: { title: "The Chaotic Obsession Era ⚡️", copy: "Rahu is creating obsession and ambition. Expect sudden shifts, unexpected wins, and feeling intensely driven toward big goals. Stay grounded, it's a wild ride." },
-    Ju: { title: "The Blessings & Wisdom Era 🎓", copy: "Jupiter is showering you with wisdom, good luck, and expansion. Travel, higher studies, and financial success are highly favored. Share the wealth." },
-    Sa: { title: "The Reality Check & Boundaries Era 🪐", copy: "Saturn is running a strict academy. You're building solid boundaries, learning patience, and working hard. It feels tough, but you are laying down foundations for a lifetime." },
-    Me: { title: "The Side Hustle & Brainiac Era 🧠", copy: "Mercury has activated your communication centers. You are networking like crazy, building side projects, writing, and learning new skills. Your DMs are busy." }
+    Ke: { title: "Spiritual Detachment", track: "The Spiritual Hermit Era", copy: "Ketu is running your life right now. Expect intense self-discovery, spiritual healing, and realizing that half the things you used to care about don't matter anymore. A perfect era for mental resets." },
+    Ve: { title: "Glow-Up & Luxury", track: "The Glow-Up Era", copy: "Venus is in charge. This is your glow-up era! Expect major wins in romance, aesthetic upgrades, creativity, and treating yourself to the finer things in life. You're the main event." },
+    Su: { title: "Spotlight & Authority", track: "The Spotlight Era", copy: "The Sun is putting you on center stage. You'll gain massive clarity on your career, take on leadership roles, and feel your confidence soar. Don't hide from the spotlight." },
+    Mo: { title: "Deep Feels & Intuition", track: "The Intuitive Feels Era", copy: "Moon energy is active. You are feeling *all* the feels. You'll crave nesting, cozy aesthetics, deep bonding sessions, and exploring your intuition. Hydrate and journal." },
+    Ma: { title: "Hustle & Assertiveness", track: "The Hustle Era", copy: "Mars has lit a fire under you. You're in high-energy, ambitious hustle mode. Great for starting workouts, launching projects, and aggressively claiming what's yours." },
+    Ra: { title: "Chaotic Ambition", track: "The Obsession Era", copy: "Rahu is creating obsession and ambition. Expect sudden shifts, unexpected wins, and feeling intensely driven toward big goals. Stay grounded, it's a wild ride." },
+    Ju: { title: "Wealth & Expansion", track: "The Blessings Era", copy: "Jupiter is showering you with wisdom, good luck, and expansion. Travel, higher studies, and financial success are highly favored. Share the wealth." },
+    Sa: { title: "Reality Check & Rules", track: "The Reality Check Era", copy: "Saturn is running a strict academy. You're building solid boundaries, learning patience, and working hard. It feels tough, but you are laying down foundations for a lifetime." },
+    Me: { title: "Side Hustle & Brain", track: "The Side Hustle Era", copy: "Mercury has activated your communication centers. You are networking like crazy, building side projects, writing, and learning new skills. Your DMs are busy." }
   }
+};
+
+const ZODIAC_MATCHES = {
+  0: { bestie: "Leo", rival: "Capricorn", copy: "Aries: Leo brings that fire banter, while Capricorn is way too serious for your chaos." },
+  1: { bestie: "Virgo", rival: "Aquarius", copy: "Taurus: Virgo shares your gourmet taste, but Aquarius is too unpredictable for your comfort." },
+  2: { bestie: "Libra", rival: "Scorpio", copy: "Gemini: Libra is down for all your midnight talks, but Scorpio gives too much silent treatment." },
+  3: { bestie: "Pisces", rival: "Aries", copy: "Cancer: Pisces understands your deep mood swings, while Aries is too blunt for your feels." },
+  4: { bestie: "Sagittarius", rival: "Taurus", copy: "Leo: Sagittarius loves the drama, but Taurus will stubbornly refuse to let you shine." },
+  5: { bestie: "Taurus", rival: "Gemini", copy: "Virgo: Taurus keeps you grounded, but Gemini's double-faced texting will exhaust you." },
+  6: { bestie: "Aquarius", rival: "Cancer", copy: "Libra: Aquarius matches your aesthetic vibe, but Cancer is too clingy for your schedule." },
+  7: { bestie: "Cancer", rival: "Leo", copy: "Scorpio: Cancer is loyal to the grave, but Leo's constant need for applause triggers you." },
+  8: { bestie: "Aries", rival: "Virgo", copy: "Sagittarius: Aries matches your high-speed adventure, but Virgo's critique lists will kill your vibe." },
+  9: { bestie: "Scorpio", rival: "Libra", copy: "Capricorn: Scorpio respects your hustle, but Libra's indecision makes you lose your mind." },
+  10: { bestie: "Gemini", rival: "Virgo", copy: "Aquarius: Gemini gets your weird theories, but Virgo will try to fix your logic." },
+  11: { bestie: "Cancer", rival: "Sagittarius", copy: "Pisces: Cancer provides the emotional safety net, but Sagittarius will run away when you cry." }
 };
 
 // Main execution function called by app.js
@@ -311,13 +300,12 @@ function getAstrologicalProfile(name, dateStr, timeStr, locationInput) {
   const [hour, minute] = timeStr.split(":").map(Number);
   const positions = calculatePlanets(days, loc.lat, loc.lng, hour, minute);
   const houseData = getHousePlacements(positions);
-  const dashaData = getVimshottariDasha(positions.Mo, birthDateStr = dateStr, birthTimeStr = timeStr, loc.tz);
+  const dashaData = getVimshottariDasha(positions.Mo, dateStr, timeStr, loc.tz);
 
   const lagnaIndex = houseData.lagnaSignIndex;
   const sunSignIndex = Math.floor(positions.Su / 30);
   const moonSignIndex = Math.floor(positions.Mo / 30);
 
-  // Compile final results
   return {
     meta: {
       name,
@@ -350,6 +338,7 @@ function getAstrologicalProfile(name, dateStr, timeStr, locationInput) {
       nakshatra: dashaData.nakshatra,
       ruler: PLANET_NAMES[dashaData.ruler],
       activeEraTitle: INTERPRETATIONS.Dasha[dashaData.activeDasha.ruler].title,
+      activeEraTrack: INTERPRETATIONS.Dasha[dashaData.activeDasha.ruler].track,
       activeEraCopy: INTERPRETATIONS.Dasha[dashaData.activeDasha.ruler].copy,
       timeline: dashaData.timeline.map(d => ({
         ruler: PLANET_NAMES[d.ruler],
@@ -357,41 +346,40 @@ function getAstrologicalProfile(name, dateStr, timeStr, locationInput) {
         end: d.end.toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
       }))
     },
+    socialMatch: ZODIAC_MATCHES[lagnaIndex] || ZODIAC_MATCHES[0],
     flags: getFlags(lagnaIndex, sunSignIndex, moonSignIndex),
     remedies: getRemedies(moonSignIndex)
   };
 }
 
 function getFlags(lagna, sun, moon) {
-  // Semi-randomized but deterministic flags based on placements
   const greenFlags = [];
   const redFlags = [];
 
   if (lagna === sun) {
-    greenFlags.push("High alignment: Your outer personality matches your inner soul core. Ultra authentic.");
+    greenFlags.push("High alignment: Your outer mask matches your core. Unapologetically you.");
   } else {
-    greenFlags.push("Mystery factor: Your Rising and Sun signs are different, making you highly intriguing.");
+    greenFlags.push("Mystery shield: You give off a completely different vibe than who you are once known.");
   }
 
   if (moon === 3 || moon === 11 || moon === 1) {
-    greenFlags.push("Vibe check: Excellent moon position for emotional stability and creative flows.");
+    greenFlags.push("Vibe check: Elite emotional resilience. You handle drama like a pro.");
   } else {
-    greenFlags.push("Deep empathy: Highly receptive to cosmic currents and squad emotional vibes.");
+    greenFlags.push("Highly intuitive: You absorb room energy instantly. Great lie detector.");
   }
 
-  if (sun === 7) {
-    redFlags.push("Indecisiveness: Sun in Libra means you will take 45 minutes to pick a Spotify playlist.");
+  if (sun === 6) {
+    redFlags.push("Indecisiveness: You will literally starve before choosing a lunch spot.");
   }
   if (moon === 7) {
-    redFlags.push("Trust issues: Scorpio Moon makes you look for hidden meanings in simple 'good morning' texts.");
+    redFlags.push("Trust limits: You check read-receipts and look for hidden meanings in a single emoji.");
   }
   if (lagna === 0 || lagna === 4) {
-    redFlags.push("Main-character syndrome: High tendency to think every TikTok is secretly about you.");
+    redFlags.push("Main-character syndrome: You low-key think every sad song was written about your life.");
   }
 
-  // Fallbacks to ensure we always have 2-3 flags
-  if (greenFlags.length < 2) greenFlags.push("Strong intuition: You can smell fake vibes from a mile away.");
-  if (redFlags.length < 2) redFlags.push("Ghosting tendencies: You turn off notifications when slightly overwhelmed.");
+  if (greenFlags.length < 2) greenFlags.push("Loyalty level: 100%. You protect your crew at all costs.");
+  if (redFlags.length < 2) redFlags.push("Ghosting mode: You toggle Do Not Disturb when slightly overwhelmed.");
 
   return { green: greenFlags, red: redFlags };
 }
@@ -399,23 +387,22 @@ function getFlags(lagna, sun, moon) {
 function getRemedies(moonSign) {
   const remediesDB = {
     0: { stone: "Red Coral", color: "Crimson Red", mantra: "Om Angarakaya Namaha", tips: "Work out or run to channel excess fiery energy." },
-    1: { stone: "Opal / Diamond", color: "Pastel Pink / White", mantra: "Om Shum Shukraya Namaha", tips: "Spend time in nature or do clay modeling to ground yourself." },
+    1: { stone: "Opal / Diamond", color: "Pastel Pink", mantra: "Om Shum Shukraya Namaha", tips: "Spend time in nature or baking to ground your senses." },
     2: { stone: "Emerald", color: "Emerald Green", mantra: "Om Budhaya Namaha", tips: "Journal your thoughts to clear your busy mental tabs." },
-    3: { stone: "Pearl", color: "Silver / Sea White", mantra: "Om Shram Shreem Shrom Sah Chandrase Namaha", tips: "Meditate near water bodies and practice deep breathing." },
-    4: { stone: "Ruby", color: "Golden Yellow", mantra: "Om Hram Hreem Hrom Sah Suryaya Namaha", tips: "Express yourself through art or public speaking." },
-    5: { stone: "Emerald", color: "Sage Green", mantra: "Om Budhaya Namaha", tips: "Declutter your physical room to calm your anxious mind." },
-    6: { stone: "White Sapphire", color: "Cream / Indigo", mantra: "Om Shum Shukraya Namaha", tips: "Practice saying 'no' to keep your boundaries healthy." },
-    7: { stone: "Red Coral", color: "Blood Red", mantra: "Om Kraam Kreem Kroom Sah Bhaumaya Namaha", tips: "Practice shadow-work journaling to release pent-up secrets." },
-    8: { stone: "Yellow Sapphire", color: "Sunny Yellow", mantra: "Om Jhram Jhreem Jhrom Sah Gurave Namaha", tips: "Learn a new language or read philosophical fiction." },
-    9: { stone: "Blue Sapphire", color: "Midnight Blue", mantra: "Om Sham Shanaishcharaya Namaha", tips: "Set routines and stick to a consistent sleep schedule." },
-    10: { stone: "Blue Sapphire", color: "Electric Blue", mantra: "Om Sham Shanaishcharaya Namaha", tips: "Get involved in community support or tech hackathons." },
-    11: { stone: "Yellow Sapphire", color: "Sea Green / Gold", mantra: "Om Jhram Jhreem Jhrom Sah Gurave Namaha", tips: "Limit doomscrolling and paint, play music, or swim." }
+    3: { stone: "Pearl", color: "Silver White", mantra: "Om Chandraya Namaha", tips: "Practice deep breathing or keep plants in your bedroom." },
+    4: { stone: "Ruby", color: "Golden Yellow", mantra: "Om Suryaya Namaha", tips: "Express yourself through art, style, or performance." },
+    5: { stone: "Emerald", color: "Sage Green", mantra: "Om Budhaya Namaha", tips: "Declutter your room to calm your anxious mind." },
+    6: { stone: "White Sapphire", color: "Cream / Beige", mantra: "Om Shum Shukraya Namaha", tips: "Practice saying 'no' to keep your energy circles healthy." },
+    7: { stone: "Red Coral", color: "Blood Red", mantra: "Om Bhaumaya Namaha", tips: "Release secrets by typing them out and then deleting the file." },
+    8: { stone: "Yellow Sapphire", color: "Gold Yellow", mantra: "Om Gurave Namaha", tips: "Learn a new language or read philosophical fiction." },
+    9: { stone: "Blue Sapphire", color: "Midnight Blue", mantra: "Om Sham Shanaishcharaya Namaha", tips: "Draft routines and stick to a consistent sleep cycle." },
+    10: { stone: "Blue Sapphire", color: "Electric Blue", mantra: "Om Sham Shanaishcharaya Namaha", tips: "Connect with community projects or build side projects." },
+    11: { stone: "Yellow Sapphire", color: "Aqua Green", mantra: "Om Gurave Namaha", tips: "Limit doomscrolling and paint, draw, or listen to water sounds." }
   };
 
   return remediesDB[moonSign] || remediesDB[0];
 }
 
-// Export for app.js
 window.OyeAstroEngine = {
   getProfile: getAstrologicalProfile,
   RashiNames: RASHI_NAMES,

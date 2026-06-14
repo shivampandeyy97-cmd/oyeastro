@@ -5,261 +5,370 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <!-- SEO & Sharing Meta Tags -->
-  <title>OyeAstro - Vedic Cosmic Vibe Check</title>
-  <meta name="description" content="Discover your Big 3, Vedic Kundli, and current planetary era instantly. No sign-ups, just vibes.">
-  <meta property="og:title" content="OyeAstro - Your Cosmic Era Check">
-  <meta property="og:description" content="Unveil your Vedic planetary dasha, birth stars, and holographic Kundli chart instantly.">
-  <meta property="og:image" content="https://oyeastro.vercel.app/og-image.jpg">
-  <meta name="twitter:card" content="summary_large_image">
-
-  <!-- Main Stylesheet -->
+  <title>OyeAstro - Pinterest-Style Vedic Vibe Check</title>
+  <meta name="description" content="Aesthetic Gen-Z astrology board. Calculate your Vedic Kundli, Dasha playlist, and vibe check instantly.">
+  <meta property="og:title" content="OyeAstro - Aesthetic Vedic Astrology">
+  <meta property="og:description" content="Pinterest-inspired astrology board with interactive Kundli charts and music vibe check.">
+  
+  <!-- Link to Stylesheet -->
   <link rel="stylesheet" href="index.css">
 </head>
 <body>
-
-  <!-- Dynamic Starry Cosmic Canvas Background -->
-  <div class="nebula-bg"></div>
-  <div class="starfield"></div>
 
   <!-- Header -->
   <header>
     <div class="logo">
       <svg viewBox="0 0 24 24">
-        <defs>
-          <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#06b6d4" />
-            <stop offset="50%" stop-color="#a855f7" />
-            <stop offset="100%" stop-color="#d946ef" />
-          </linearGradient>
-        </defs>
         <circle cx="12" cy="12" r="10" />
         <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
         <path d="M2 12h20" />
       </svg>
-      <span class="glow-text">OyeAstro</span>
+      <span>OyeAstro</span>
     </div>
-    <div style="font-size: 0.9rem; color: var(--text-secondary); font-weight: 500;">
-      No Login. Just Stars. 🪐
+    <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">
+      📌 Pinterest Style MVP
     </div>
   </header>
 
-  <!-- Main Content Area -->
+  <!-- Main Grid Layout -->
   <main>
     
-    <!-- STEP 1: Cosmic Coordinates Intake (Landing Form) -->
-    <div id="intake-screen" class="intake-container">
-      <h1 class="glow-text">Unlock Your Cosmic Blueprint</h1>
-      <p>Enter your birth coordinates to check your Big Three, Vedic chart, and running Dasha era.</p>
+    <!-- TOP SECTION: Three-Column Intake Panel -->
+    <div class="intake-panel">
+      <h1>Reveal Your Cosmic Alignment</h1>
       
-      <form id="intake-form" class="glass-form">
-        <div class="form-group">
-          <label for="user-name">Your Name</label>
-          <input type="text" id="user-name" required placeholder="What do your friends call you?">
-        </div>
+      <form id="intake-form" style="width: 100%; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
         
-        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <!-- Name Field -->
+        <div class="form-group" style="width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 0.4rem;">
+          <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Your Name</label>
+          <input type="text" id="user-name" required placeholder="What's your name, bestie?" style="width: 100%; padding: 0.9rem; border: 2px solid var(--espresso); border-radius: 12px; font-size: 0.95rem; outline: none;">
+        </div>
+
+        <!-- Three Columns Grid: Date, Time, Place -->
+        <div class="intake-grid">
+          
+          <!-- Column 1: Date -->
+          <div class="input-column">
             <label for="birth-date">Birth Date</label>
-            <input type="date" id="birth-date" required>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+              <input type="date" id="birth-date" required>
+            </div>
           </div>
-          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+
+          <!-- Column 2: Time -->
+          <div class="input-column">
             <label for="birth-time">Birth Time</label>
-            <input type="time" id="birth-time" required>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              <input type="time" id="birth-time" required>
+            </div>
           </div>
+
+          <!-- Column 3: Place -->
+          <div class="input-column">
+            <label for="birth-place">Birth Place</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <input type="text" id="birth-place" placeholder="City, Country" required>
+            </div>
+          </div>
+
         </div>
 
-        <div class="form-group">
-          <label for="birth-place">Place of Birth</label>
-          <input type="text" id="birth-place" required>
-        </div>
-
-        <button type="submit" class="cyber-btn">Vibe Check My Chart</button>
+        <button type="submit" class="reveal-btn">Reveal My Astro</button>
       </form>
     </div>
 
-    <!-- STEP 2: The Cosmic Dashboard -->
-    <div id="dashboard-screen" class="dashboard-container">
+    <!-- BOTTOM SECTION: Pinterest Board (initially hidden, toggled via JS) -->
+    <div id="masonry-board-container" style="display: none;">
       
-      <!-- Top Profile Overview Bar -->
-      <div class="user-profile-header">
-        <div class="user-meta-info">
-          <div id="user-avatar-initial" class="user-avatar">M</div>
-          <div class="user-text">
-            <h2 id="user-display-name">Hey, Stargazer! 💫</h2>
-            <p id="user-meta-details">Born in New York, USA | Coordinates: 40.71°N, -74.00°W</p>
-          </div>
-        </div>
-        <div>
-          <button id="restart-btn" class="secondary-btn">
-            🔄 New Chart
-          </button>
-        </div>
-      </div>
-
-      <!-- LEFT COLUMN: Big Three Tarot Cards -->
-      <div class="column-left">
-        <h3 class="section-title">Your Big Three</h3>
+      <div class="masonry-board">
         
-        <!-- Rising Card -->
-        <div class="tarot-card rising">
-          <div class="card-header">
-            <span>Ascendant</span>
-            <span class="card-badge">Rising</span>
+        <!-- PIN 1: User Profile Identity Card -->
+        <div class="pin-card user-identity-card" style="background: var(--pastel-purple);">
+          <div id="user-avatar-text" class="user-identity-avatar">A</div>
+          <div class="user-identity-info">
+            <h2 id="user-name-title">Alex's Cosmos</h2>
+            <p id="user-meta-sub">Born in Mumbai, India | 19.07°N, 72.87°E</p>
           </div>
-          <svg class="tarot-illustration" viewBox="0 0 100 100">
-            <!-- Rising Symbol Line Art -->
-            <circle cx="50" cy="50" r="30" fill="none" stroke="url(#logoGrad)" stroke-width="1.5" />
-            <path d="M50 10 L50 90 M10 50 L90 50" stroke="url(#logoGrad)" stroke-width="1" />
-            <polygon points="50,15 45,28 55,28" fill="url(#logoGrad)" />
-            <polygon points="50,85 45,72 55,72" fill="url(#logoGrad)" />
-            <polygon points="15,50 28,45 28,55" fill="url(#logoGrad)" />
-            <polygon points="85,50 72,45 72,55" fill="url(#logoGrad)" />
-          </svg>
-          <h3 id="rising-sign-name" class="glow-text">Aries</h3>
-          <p id="rising-sign-tag" style="font-weight: 700; color: var(--accent-cyan); font-size: 0.8rem;"></p>
-          <p id="rising-sign-copy">Your ascendant sign represents your physical body, vibe, and outer personality layer.</p>
         </div>
 
-        <!-- Sun Card -->
-        <div class="tarot-card sun">
-          <div class="card-header">
-            <span>Zodiac Sign</span>
-            <span class="card-badge">Sun</span>
-          </div>
-          <svg class="tarot-illustration" viewBox="0 0 100 100">
-            <!-- Sun Symbol Line Art -->
-            <circle cx="50" cy="50" r="25" fill="none" stroke="var(--accent-orange)" stroke-width="2" />
-            <circle cx="50" cy="50" r="5" fill="var(--accent-orange)" />
-            <path d="M50 12 L50 20 M50 80 L50 88 M12 50 L20 50 M80 50 L88 50 M23 23 L29 29 M71 71 L77 77 M23 77 L29 71 M71 23 L77 29" stroke="var(--accent-orange)" stroke-width="1.5" />
-          </svg>
-          <h3 id="sun-sign-name" style="color: var(--accent-orange);">Leo</h3>
-          <p id="sun-sign-copy">Your sun sign rules your core ego, identity, and general driving motivation.</p>
-        </div>
-
-        <!-- Moon Card -->
-        <div class="tarot-card moon">
-          <div class="card-header">
-            <span>Emotional Core</span>
-            <span class="card-badge">Moon</span>
-          </div>
-          <svg class="tarot-illustration" viewBox="0 0 100 100">
-            <!-- Moon Symbol Line Art -->
-            <path d="M30 50 A 20 20 0 1 0 70 50 A 15 15 0 1 1 30 50 Z" fill="none" stroke="var(--accent-purple)" stroke-width="2" />
-            <circle cx="42" cy="40" r="1.5" fill="var(--accent-purple)" opacity="0.8" />
-            <circle cx="52" cy="35" r="1" fill="var(--accent-purple)" opacity="0.6" />
-          </svg>
-          <h3 id="moon-sign-name" style="color: var(--accent-purple);">Scorpio</h3>
-          <p id="moon-sign-copy">Your moon sign manages your inner mind, emotions, and personal comfort desires.</p>
-        </div>
-      </div>
-
-      <!-- CENTER COLUMN: Interactive SVG Kundli Chart -->
-      <div class="column-center">
-        <h3 class="section-title">Your Vedic Blueprint</h3>
-        <div class="glass-panel">
-          <div class="panel-header">
-            <h2>Lagna Kundli</h2>
-            <div style="font-size: 0.75rem; color: var(--accent-gold); font-weight: 600;">
-              Lahiri Sidereal System 📡
-            </div>
+        <!-- PIN 2: KUNDLI MAGIC (Vedic Chart) - Takes larger column space if needed -->
+        <div class="pin-card chart-pin">
+          <div class="pin-card-header">
+            <h3>Kundli Magic</h3>
+            <span class="tag-badge" style="background: var(--pastel-orange);">Lagna Rashi</span>
           </div>
           
-          <div class="kundli-chart-wrapper">
-            <svg id="kundli-svg-canvas" class="kundli-svg" viewBox="0 0 400 400">
-              <!-- Background Polygons (Individual Houses for hover effects) -->
-              <polygon id="house-1" class="house-bg" points="200,200 100,100 300,100" />
-              <polygon id="house-2" class="house-bg" points="0,0 200,0 100,100" />
-              <polygon id="house-3" class="house-bg" points="0,0 0,200 100,100" />
-              <polygon id="house-4" class="house-bg" points="200,200 100,100 100,300" />
-              <polygon id="house-5" class="house-bg" points="0,400 0,200 100,300" />
-              <polygon id="house-6" class="house-bg" points="0,400 200,400 100,300" />
-              <polygon id="house-7" class="house-bg" points="200,200 100,300 300,300" />
-              <polygon id="house-8" class="house-bg" points="400,400 200,400 300,300" />
-              <polygon id="house-9" class="house-bg" points="400,400 400,200 300,300" />
-              <polygon id="house-10" class="house-bg" points="200,200 300,100 300,300" />
-              <polygon id="house-11" class="house-bg" points="400,0 400,200 300,100" />
-              <polygon id="house-12" class="house-bg" points="400,0 200,0 300,100" />
-
-              <!-- North Indian Grid Lines -->
-              <!-- Outer Square -->
-              <rect class="chart-line" x="0" y="0" width="400" height="400" fill="none" stroke-width="2" />
-              <!-- Diagonals -->
-              <line class="chart-line" x1="0" y1="0" x2="400" y2="400" />
-              <line class="chart-line" x1="400" y1="0" x2="0" y2="400" />
-              <!-- Inner Diamond -->
-              <line class="chart-line" x1="200" y1="0" x2="0" y2="200" />
-              <line class="chart-line" x1="0" y1="200" x2="200" y2="400" />
-              <line class="chart-line" x1="200" y1="400" x2="400" y2="200" />
-              <line class="chart-line" x1="400" y1="200" x2="200" y2="0" />
+          <h2 class="chart-header-title">My Vedic Chart</h2>
+          
+          <div class="chart-layout-wrapper">
+            <!-- Inline SVG: Lilo the wizard cat mascot -->
+            <svg class="wizard-cat-svg" viewBox="0 0 100 100">
+              <!-- Wizard Hat -->
+              <polygon points="50,5 30,40 70,40" fill="var(--bright-purple)" stroke="var(--espresso)" stroke-width="2.5" />
+              <!-- Stars on Hat -->
+              <polygon points="50,15 48,22 55,18" fill="var(--bright-gold)" />
+              <polygon points="42,28 40,32 45,30" fill="var(--bright-gold)" />
+              <!-- Hat Rim -->
+              <ellipse cx="50" cy="40" rx="23" ry="5" fill="var(--espresso)" />
+              <!-- Cat Ears -->
+              <polygon points="28,45 15,30 25,55" fill="var(--bright-orange)" stroke="var(--espresso)" stroke-width="2" />
+              <polygon points="72,45 85,30 75,55" fill="var(--bright-orange)" stroke="var(--espresso)" stroke-width="2" />
+              <!-- Cat Head -->
+              <ellipse cx="50" cy="58" rx="24" ry="18" fill="var(--bright-gold)" stroke="var(--espresso)" stroke-width="2.5" />
+              <!-- Eyes -->
+              <circle cx="42" cy="55" r="3" fill="var(--espresso)" />
+              <circle cx="58" cy="55" r="3" fill="var(--espresso)" />
+              <!-- Mouth and Nose -->
+              <polygon points="50,60 48,58 52,58" fill="var(--bright-pink)" stroke="var(--espresso)" stroke-width="1" />
+              <path d="M47 63 Q50 66 53 63" fill="none" stroke="var(--espresso)" stroke-width="2" />
+              <!-- Whiskers -->
+              <line x1="20" y1="58" x2="10" y2="56" stroke="var(--espresso)" stroke-width="1.5" />
+              <line x1="20" y1="62" x2="8" y2="63" stroke="var(--espresso)" stroke-width="1.5" />
+              <line x1="80" y1="58" x2="90" y2="56" stroke="var(--espresso)" stroke-width="1.5" />
+              <line x1="80" y1="62" x2="92" y2="63" stroke="var(--espresso)" stroke-width="1.5" />
             </svg>
+
+            <!-- SVG Lagna Chart Canvas -->
+            <div class="svg-chart-container">
+              <svg id="kundli-svg-canvas" viewBox="0 0 400 400">
+                <!-- Background Polygons for Hover Highlights -->
+                <polygon id="house-1" class="house-sector" points="200,200 100,100 300,100" />
+                <polygon id="house-2" class="house-sector" points="0,0 200,0 100,100" />
+                <polygon id="house-3" class="house-sector" points="0,0 0,200 100,100" />
+                <polygon id="house-4" class="house-sector" points="200,200 100,100 100,300" />
+                <polygon id="house-5" class="house-sector" points="0,400 0,200 100,300" />
+                <polygon id="house-6" class="house-sector" points="0,400 200,400 100,300" />
+                <polygon id="house-7" class="house-sector" points="200,200 100,300 300,300" />
+                <polygon id="house-8" class="house-sector" points="400,400 200,400 300,300" />
+                <polygon id="house-9" class="house-sector" points="400,400 400,200 300,300" />
+                <polygon id="house-10" class="house-sector" points="200,200 300,100 300,300" />
+                <polygon id="house-11" class="house-sector" points="400,0 400,200 300,100" />
+                <polygon id="house-12" class="house-sector" points="400,0 200,0 300,100" />
+
+                <!-- Grid Border Lines -->
+                <rect class="chart-grid-line" x="0" y="0" width="400" height="400" fill="none" stroke-width="2.5" />
+                <line class="chart-grid-line" x1="0" y1="0" x2="400" y2="400" />
+                <line class="chart-grid-line" x1="400" y1="0" x2="0" y2="400" />
+                <line class="chart-grid-line" x1="200" y1="0" x2="0" y2="200" />
+                <line class="chart-grid-line" x1="0" y1="200" x2="200" y2="400" />
+                <line class="chart-grid-line" x1="200" y1="400" x2="400" y2="200" />
+                <line class="chart-grid-line" x1="400" y1="200" x2="200" y2="0" />
+              </svg>
+            </div>
           </div>
 
-          <!-- Interactive Accordion Info Details (Native <details>) -->
-          <details class="info-details">
-            <summary>
-              <span>How to read your chart</span>
-              <span style="font-size: 0.6rem; color: var(--accent-purple);">TAP TO REVEAL</span>
-            </summary>
-            <div class="details-content">
-              The diamond shapes are <strong>Houses</strong>. The numbers represent your <strong>Zodiac Sign (Rashi)</strong>. 
-              The abbreviations represent the <strong>Planets</strong> (e.g., <em>Su</em> is Sun, <em>Mo</em> is Moon, <em>Ra</em>/<em>Ke</em> are Lunar Nodes). 
-              House 1 is the top-center diamond, and houses count counter-clockwise from there.
-            </div>
-          </details>
+          <div class="pin-actions-bar">
+            <button class="pin-reaction-btn save-btn">📌 <span class="count">2.1k</span> saves</button>
+            <button class="pin-reaction-btn">❤️ <span class="count">840</span> likes</button>
+          </div>
         </div>
-      </div>
 
-      <!-- RIGHT COLUMN: Cosmic Tea, Eras & Remedies -->
-      <div class="column-right">
-        
-        <!-- Era Tracker (Dasha Period) -->
-        <h3 class="section-title">Your Current Era</h3>
-        <div class="glass-panel era-panel">
-          <div class="current-era-banner">
-            <h4>Active Dasha</h4>
-            <h3 id="current-era-title">Glow-Up Era</h3>
-            <p id="current-era-copy">Venus is ruling your life. Expect major aesthetic glow-ups, self-love focus, and romance opportunities.</p>
+        <!-- PIN 3: YOUR BIG THREE (Polaroids) -->
+        <div class="pin-card" style="background: var(--pastel-pink);">
+          <div class="pin-card-header">
+            <h3>Your Big Three</h3>
+            <span class="tag-badge" style="background: #fff;">Polaroids</span>
+          </div>
+
+          <div class="polaroid-grid">
+            <!-- Rising -->
+            <div class="polaroid-shot">
+              <div id="polaroid-rising-svg" class="polaroid-image"></div>
+              <div id="polaroid-rising-name" class="polaroid-label">Aries <span>Rising</span></div>
+            </div>
+            <!-- Sun -->
+            <div class="polaroid-shot">
+              <div id="polaroid-sun-svg" class="polaroid-image"></div>
+              <div id="polaroid-sun-name" class="polaroid-label">Leo <span>Sun</span></div>
+            </div>
+            <!-- Moon -->
+            <div class="polaroid-shot">
+              <div id="polaroid-moon-svg" class="polaroid-image"></div>
+              <div id="polaroid-moon-name" class="polaroid-label">Scorpio <span>Moon</span></div>
+            </div>
+          </div>
+
+          <div class="pin-actions-bar">
+            <button class="pin-reaction-btn save-btn">📌 <span class="count">1.5k</span> saves</button>
+            <button class="pin-reaction-btn">❤️ <span class="count">642</span> likes</button>
+          </div>
+        </div>
+
+        <!-- PIN 4: COSMIC PLAYLIST (Spotify Dasha Era) -->
+        <div class="pin-card spotify-card">
+          <div class="pin-card-header">
+            <h3>Cosmic Playlist</h3>
+            <span class="tag-badge" style="background: rgba(255,255,255,0.08); border-color: #333;">Vibe Player</span>
+          </div>
+
+          <div class="spotify-layout">
+            <div class="spotify-track-info">
+              <div id="spotify-vinyl" class="vinyl-cover"></div>
+              <div class="track-details">
+                <div id="spotify-track-name" class="track-name">The Venus Era</div>
+                <div class="track-artist">Lilo the Cosmic Cat</div>
+              </div>
+            </div>
+
+            <div class="spotify-controls">
+              <div class="progress-bar-container">
+                <span id="spotify-time-current">0:00</span>
+                <div class="progress-track">
+                  <div id="spotify-progress-fill" class="progress-fill"></div>
+                </div>
+                <span>3:00</span>
+              </div>
+
+              <div class="play-controls-row">
+                <button id="spotify-play-btn" class="play-btn">
+                  <svg id="spotify-play-icon" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="pin-actions-bar">
+            <button class="pin-reaction-btn save-btn" style="border-color: #333;">📌 <span class="count">3.4k</span> saves</button>
+            <button class="pin-reaction-btn" style="border-color: #333; background: #222; color: #fff;">❤️ <span class="count">1.8k</span> likes</button>
+          </div>
+        </div>
+
+        <!-- PIN 5: AURA ENERGY (Copy Affirmations) -->
+        <div class="pin-card" style="background: var(--pastel-blue);">
+          <div class="pin-card-header">
+            <h3>Aura Energy</h3>
+            <span class="tag-badge" style="background: #fff;">Vibe Check</span>
           </div>
           
-          <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-top: 0.25rem;">
-            Full Life Timeline
+          <p id="aura-text-copy" style="font-size: 0.95rem; line-height: 1.5; color: var(--espresso); font-weight: 500;">
+            Checking alignments... Loading your mental energy reports.
+          </p>
+
+          <div class="pin-actions-bar">
+            <button class="pin-reaction-btn save-btn">📌 <span class="count">982</span> saves</button>
+            <button class="pin-reaction-btn">❤️ <span class="count">311</span> likes</button>
           </div>
-          <div id="dasha-timeline-list" class="dasha-timeline-grid">
+        </div>
+
+        <!-- PIN 6: TINDER COMPATIBILITY MATCHES -->
+        <div class="pin-card" style="background: var(--pastel-orange);">
+          <div class="pin-card-header">
+            <h3>Social Radar</h3>
+            <span class="tag-badge" style="background: #fff;">Match Vibe</span>
+          </div>
+
+          <div class="tinder-layout">
+            <div class="tinder-match-box bestie">
+              <span class="tinder-match-badge">Bestie Match</span>
+              <div id="tinder-bestie-name" class="tinder-match-name">Leo ✨</div>
+              <div id="tinder-bestie-desc" class="tinder-match-desc">Your Ascendant sparks high banter wavelengths.</div>
+            </div>
+            
+            <div class="tinder-match-box warning">
+              <span class="tinder-match-badge">Caution Area</span>
+              <div id="tinder-rival-name" class="tinder-match-name">Capricorn 🛑</div>
+              <div id="tinder-rival-desc" class="tinder-match-desc">Mismatched energy nodes. Don't text first.</div>
+            </div>
+          </div>
+
+          <div class="pin-actions-bar">
+            <button class="pin-reaction-btn save-btn">📌 <span class="count">1.1k</span> saves</button>
+            <button class="pin-reaction-btn">❤️ <span class="count">540</span> likes</button>
+          </div>
+        </div>
+
+        <!-- PIN 7: FLAGS (Green/Red Flags) -->
+        <div class="pin-card" style="background: var(--pastel-purple);">
+          <div class="pin-card-header">
+            <h3>Flags & Warnings</h3>
+            <span class="tag-badge" style="background: #fff;">Sticker Flags</span>
+          </div>
+
+          <div id="flags-boxes-container" class="flag-list">
             <!-- Injected by app.js -->
           </div>
+
+          <div class="pin-actions-bar">
+            <button class="pin-reaction-btn save-btn">📌 <span class="count">754</span> saves</button>
+            <button class="pin-reaction-btn">❤️ <span class="count">210</span> likes</button>
+          </div>
         </div>
 
-        <!-- The Cosmic Tea (Green/Red Flags) -->
-        <h3 class="section-title">The Cosmic Tea</h3>
-        <div id="cosmic-tea-content" class="cosmic-tea-card">
-          <!-- Injected by app.js -->
+        <!-- PIN 8: REMEDIES & HACKS -->
+        <div class="pin-card" style="background: var(--pastel-green);">
+          <div class="pin-card-header">
+            <h3>Remedies & Hacks</h3>
+            <span class="tag-badge" style="background: #fff;">Crystal Hacks</span>
+          </div>
+
+          <div class="remedy-grid">
+            <div class="remedy-badge-box">
+              <span class="title">Gemstone</span>
+              <span id="remedy-stone-text" class="val">Opal</span>
+            </div>
+            <div class="remedy-badge-box">
+              <span class="title">Color Power</span>
+              <span id="remedy-color-text" class="val">White</span>
+            </div>
+            <div class="remedy-badge-box" style="grid-column: span 2;">
+              <span class="title">Mantra Chant</span>
+              <span id="remedy-mantra-text" class="val" style="font-size: 0.8rem; font-style: italic;">Om Chandraya Namaha</span>
+            </div>
+            <div id="remedy-tip-text" class="remedy-badge-box" style="grid-column: span 2; font-size: 0.8rem; line-height: 1.4; color: var(--text-secondary); border-style: dashed;">
+              Remedy tip goes here...
+            </div>
+          </div>
+
+          <div class="pin-actions-bar">
+            <button class="pin-reaction-btn save-btn">📌 <span class="count">861</span> saves</button>
+            <button class="pin-reaction-btn">❤️ <span class="count">419</span> likes</button>
+          </div>
         </div>
 
-        <!-- Remedies Panel -->
-        <h3 class="section-title">Remedies & Hacks</h3>
-        <div class="glass-panel remedies-grid">
-          <div class="remedy-badge">
-            <span class="label">Gemstone</span>
-            <span id="remedy-stone" class="val">White Sapphire</span>
-          </div>
-          <div class="remedy-badge">
-            <span class="label">Color Power</span>
-            <span id="remedy-color" class="val" style="color: var(--accent-cyan);">Cream / Silver</span>
-          </div>
-          <div class="remedy-badge" style="grid-column: span 2;">
-            <span class="label">Vibe Chant (Mantra)</span>
-            <span id="remedy-mantra" class="val" style="font-size: 0.8rem; font-style: italic; letter-spacing: 0.02em;">Om Shum Shukraya Namaha</span>
-          </div>
-          <div id="remedy-tip" class="remedy-tip">
-            💡 Remedy Tip: Drink water from copper vessels and avoid screen time before bed.
+        <!-- PIN 9: RETRO ASTRO JOKES (Meme box) -->
+        <div class="pin-card" style="background: var(--pastel-pink);">
+          <div class="pin-card-header">
+            <h3>Cosmic Memes</h3>
+            <span class="tag-badge" style="background: #fff;">Astro Joke</span>
           </div>
 
-          <!-- Sharing & CTA Buttons -->
-          <div class="share-action-container" style="grid-column: span 2; margin-top: 0.75rem;">
-            <button class="cyber-btn" commandfor="share-modal" command="show-modal" style="flex: 1; margin: 0;">
-              ✨ Share Card
-            </button>
+          <p id="retro-meme-copy" style="font-size: 0.95rem; line-height: 1.4; font-weight: 500; font-style: italic;">
+            "Libra deciding between two paths..."
+          </p>
+
+          <div class="pin-actions-bar">
+            <button class="pin-reaction-btn save-btn">📌 <span class="count">2.3k</span> saves</button>
+            <button class="pin-reaction-btn">❤️ <span class="count">988</span> likes</button>
           </div>
+        </div>
+
+        <!-- PIN 10: ACTION CENTER (Social share export) -->
+        <div class="pin-card actions-card" style="background: var(--bg-color);">
+          <div class="pin-card-header">
+            <h3>Action Center</h3>
+            <span class="tag-badge" style="background: #fff; border-color: var(--espresso);">Export</span>
+          </div>
+          
+          <button class="reveal-btn" commandfor="share-modal" command="show-modal" style="width: 100%; margin: 0;">
+            ✨ Generate IG Story Card
+          </button>
         </div>
 
       </div>
@@ -267,50 +376,50 @@
     </div>
   </main>
 
-  <!-- Share Modal (Native HTML5 Dialog controlled by app.js command invoker) -->
+  <!-- SHARE DIALOG POPUP: Polaroid Instagram layout -->
   <dialog id="share-modal">
-    <div class="share-card-visual">
+    <div class="polaroid-share-visual">
       <h4>OyeAstro Profile</h4>
       
-      <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Stargazer</div>
-      <h2 id="share-name" style="font-family: 'Syne', sans-serif; font-size: 1.5rem; letter-spacing: 0.05em;">ALEX</h2>
+      <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Star bestie</div>
+      <h2 id="polaroid-share-name" class="polaroid-share-name">ALEX</h2>
       
-      <div class="share-card-grid">
-        <div class="share-mini-card">
+      <div class="polaroid-share-grid">
+        <div class="polaroid-mini-card">
           <span>Rising</span>
-          <h5 id="share-rising">Aries</h5>
+          <strong id="polaroid-share-rising">Aries</strong>
         </div>
-        <div class="share-mini-card">
+        <div class="polaroid-mini-card">
           <span>Sun</span>
-          <h5 id="share-sun">Leo</h5>
+          <strong id="polaroid-share-sun">Leo</strong>
         </div>
-        <div class="share-mini-card">
+        <div class="polaroid-mini-card">
           <span>Moon</span>
-          <h5 id="share-moon">Scorpio</h5>
+          <strong id="polaroid-share-moon">Scorpio</strong>
         </div>
       </div>
 
-      <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); width: 100%; padding: 0.75rem; border-radius: 12px; font-size: 0.8rem; text-align: center;">
-        <span style="font-size: 0.65rem; color: var(--text-muted); display: block; text-transform: uppercase; margin-bottom: 0.25rem;">Active Era</span>
-        <strong id="share-era" style="color: var(--accent-purple);">Venus Period</strong>
+      <div style="background: var(--pastel-purple); border: 2px solid var(--espresso); width: 100%; padding: 0.75rem; border-radius: 12px; font-size: 0.8rem; text-align: center; box-shadow: 2px 2px 0px var(--espresso);">
+        <span style="font-size: 0.6rem; color: var(--text-muted); display: block; text-transform: uppercase; margin-bottom: 0.25rem;">Cosmic Era</span>
+        <strong id="polaroid-share-era" style="color: var(--bright-purple);">The Venus Era</strong>
       </div>
       
-      <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 500;">
-        Generate yours at <strong>oyeastro.com</strong>
+      <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; margin-top: 0.5rem;">
+        Check yours at <strong>oyeastro.com</strong>
       </div>
     </div>
     
-    <div class="share-card-actions">
-      <button id="copy-link-btn" class="cyber-btn" style="margin: 0; width: 100%;">
-        Copy Share URL
+    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+      <button id="copy-link-btn" class="reveal-btn" style="margin: 0; width: 100%;">
+        Copy Polaroid Link
       </button>
-      <button class="secondary-btn" commandfor="share-modal" command="close" style="width: 100%; justify-content: center;">
-        Back to Dashboard
+      <button class="reveal-btn" commandfor="share-modal" command="close" style="background: #fff; color: var(--espresso); margin: 0; width: 100%;">
+        Back to Board
       </button>
     </div>
   </dialog>
 
-  <!-- Script Assets -->
+  <!-- Scripts -->
   <script src="astrology-engine.js"></script>
   <script src="app.js"></script>
 

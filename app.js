@@ -1,53 +1,89 @@
 /**
  * OyeAstro - Client UI Controller
- * Integrates calculations, SVG rendering, and dashboard layout transitions.
+ * Integrates calculations, SVG rendering, and Pinterest layout event bindings.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
   const intakeForm = document.getElementById("intake-form");
-  const intakeScreen = document.getElementById("intake-screen");
-  const dashboardScreen = document.getElementById("dashboard-screen");
+  const boardSection = document.getElementById("masonry-board-container");
+  
+  let currentProfileData = null;
+  let audioTimerInterval = null;
+  let audioProgressSeconds = 0;
+  let isPlaying = false;
 
-  // Major cities default data suggestion helpers
-  const cityInput = document.getElementById("birth-place");
-  if (cityInput) {
-    cityInput.setAttribute("placeholder", "e.g., New York, London, Mumbai...");
-  }
-
-  // Handle Form Submission
+  // Handle Intake Form Submission
   if (intakeForm) {
     intakeForm.addEventListener("submit", (e) => {
       e.preventDefault();
 
-      const name = document.getElementById("user-name").value || "Stargazer";
+      const name = document.getElementById("user-name").value || "Bestie";
       const date = document.getElementById("birth-date").value;
       const time = document.getElementById("birth-time").value;
       const place = document.getElementById("birth-place").value || "New York";
 
       if (!date || !time) {
-        alert("Please drop your complete cosmic coordinates (date and time)!");
+        alert("Please enter both Date and Time to fetch your stars!");
         return;
       }
 
-      // 1. Calculate Astrological Profile
       try {
+        // 1. Calculate Astro Profile
         const profile = window.OyeAstroEngine.getProfile(name, date, time, place);
         
-        // 2. Populate UI elements
-        renderDashboard(profile);
+        // 2. Render Dashboard Elements
+        renderPinterestBoard(profile);
 
-        // 3. Transition UI Screens
-        intakeScreen.style.display = "none";
-        dashboardScreen.style.display = "grid";
+        // 3. Transition UI
+        boardSection.style.display = "block";
+        
+        // Smooth scroll to results
+        boardSection.scrollIntoView({ behavior: "smooth" });
       } catch (err) {
-        console.error("Cosmic alignment error:", err);
-        alert("Could not align stars. Please check your inputs.");
+        console.error("Astro calculation failure:", err);
+        alert("Alignment error. Check your dates!");
       }
     });
   }
 
-  // Unified Event Delegation for Command Triggers (Modal Open/Close)
-  // Replaces traditional inline onClick and supports modern invoker fallback
+  // Event Delegation for Pin Reactions (Likes/Saves)
+  document.addEventListener("click", (e) => {
+    const reactionBtn = e.target.closest(".pin-reaction-btn");
+    if (!reactionBtn) return;
+
+    const counterSpan = reactionBtn.querySelector(".count");
+    if (!counterSpan) return;
+
+    let currentVal = counterSpan.textContent.trim();
+    let isSave = reactionBtn.classList.contains("save-btn");
+
+    // Extract numerical count (e.g. "1.2k" or "843")
+    let num = parseFloat(currentVal);
+    let suffix = currentVal.replace(/[0-9.]/g, "");
+
+    // Increment count
+    num = (num + 0.1).toFixed(1);
+    if (suffix === "") {
+      num = Math.floor(parseFloat(num));
+    }
+
+    counterSpan.textContent = num + suffix;
+
+    // Visual button bounce effect
+    reactionBtn.style.transform = "scale(0.9)";
+    setTimeout(() => {
+      reactionBtn.style.transform = "scale(1.05)";
+    }, 100);
+    setTimeout(() => {
+      reactionBtn.style.transform = "none";
+    }, 200);
+
+    // Disable multiple clicks gently
+    reactionBtn.style.pointerEvents = "none";
+    reactionBtn.style.opacity = "0.7";
+  });
+
+  // Event Delegation for Dialog Modals (Share popup)
   document.addEventListener("click", (e) => {
     const button = e.target.closest("button[commandfor]");
     if (!button) return;
@@ -68,98 +104,128 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // State storage for last calculated profile to assist sharing/copying
-  let currentProfileData = null;
-
-  function renderDashboard(profile) {
+  // Render the Pinterest Dashboard
+  function renderPinterestBoard(profile) {
     currentProfileData = profile;
 
-    // 1. User Header profile
-    const avatar = document.getElementById("user-avatar-initial");
+    // 1. User Info Avatar card
+    const avatar = document.getElementById("user-avatar-text");
     if (avatar) avatar.textContent = profile.meta.name.trim().charAt(0).toUpperCase();
 
-    const nameText = document.getElementById("user-display-name");
-    if (nameText) nameText.textContent = `Hey, ${profile.meta.name}! 💫`;
+    const nameText = document.getElementById("user-name-title");
+    if (nameText) nameText.textContent = `${profile.meta.name}'s Cosmos`;
 
-    const metaText = document.getElementById("user-meta-details");
+    const metaText = document.getElementById("user-meta-sub");
     if (metaText) {
       metaText.textContent = `Born in ${profile.meta.location} | Coordinates: ${profile.meta.lat}°N, ${profile.meta.lng}°E`;
     }
 
-    // 2. Render Big Three Cards
-    // Rising Sign
-    const risingSign = document.getElementById("rising-sign-name");
-    const risingTag = document.getElementById("rising-sign-tag");
-    const risingCopy = document.getElementById("rising-sign-copy");
-    if (risingSign) risingSign.textContent = profile.bigThree.rising.sign;
-    if (risingTag) risingTag.textContent = `“${profile.bigThree.rising.tag}”`;
-    if (risingCopy) risingCopy.textContent = profile.bigThree.rising.copy;
+    // 2. Big Three Polaroids
+    const risingName = document.getElementById("polaroid-rising-name");
+    const sunName = document.getElementById("polaroid-sun-name");
+    const moonName = document.getElementById("polaroid-moon-name");
 
-    // Sun Sign
-    const sunSign = document.getElementById("sun-sign-name");
-    const sunCopy = document.getElementById("sun-sign-copy");
-    if (sunSign) sunSign.textContent = profile.bigThree.sun.sign;
-    if (sunCopy) sunCopy.textContent = profile.bigThree.sun.copy;
+    const risingSignText = profile.bigThree.rising.sign.split(" ")[0];
+    const sunSignText = profile.bigThree.sun.sign.split(" ")[0];
+    const moonSignText = profile.bigThree.moon.sign.split(" ")[0];
 
-    // Moon Sign
-    const moonSign = document.getElementById("moon-sign-name");
-    const moonCopy = document.getElementById("moon-sign-copy");
-    if (moonSign) moonSign.textContent = profile.bigThree.moon.sign;
-    if (moonCopy) moonCopy.textContent = profile.bigThree.moon.copy;
+    if (risingName) {
+      risingName.innerHTML = `${risingSignText} <span>Rising (${profile.bigThree.rising.tag})</span>`;
+    }
+    if (sunName) {
+      sunName.innerHTML = `${sunSignText} <span>Sun (Core Ego)</span>`;
+    }
+    if (moonName) {
+      moonName.innerHTML = `${moonSignText} <span>Moon (Emotion)</span>`;
+    }
 
-    // 3. Render SVG Kundli Chart
-    drawKundliSVG(profile.houseData, profile.bigThree.rising.index);
+    // Insert polaroid icons (simple inline graphics)
+    setPolaroidIcons(profile.bigThree);
 
-    // 4. Render Cosmic Tea (Green/Red Flags)
-    const flagsContainer = document.getElementById("cosmic-tea-content");
-    if (flagsContainer) {
-      flagsContainer.innerHTML = `
-        <div class="tea-item">
-          <div class="tea-item-title green">🟩 Green Flags</div>
-          <p>${profile.flags.green[0]}</p>
-          <p style="margin-top: 0.5rem;">${profile.flags.green[1]}</p>
-        </div>
-        <div class="tea-item">
-          <div class="tea-item-title red">🟥 Red Flags</div>
-          <p>${profile.flags.red[0]}</p>
-          <p style="margin-top: 0.5rem;">${profile.flags.red[1]}</p>
-        </div>
+    // 3. Draw Vedic SVG Chart
+    drawVedicKundliSVG(profile.houseData, profile.bigThree.rising.index);
+
+    // 4. Spotify Player Configuration
+    resetSpotifyPlayer(profile.dasha.activeEraTrack);
+
+    // 5. Tinder Matches
+    const matchBestie = document.getElementById("tinder-bestie-name");
+    const matchBestieDesc = document.getElementById("tinder-bestie-desc");
+    const matchRival = document.getElementById("tinder-rival-name");
+    const matchRivalDesc = document.getElementById("tinder-rival-desc");
+
+    if (matchBestie) matchBestie.textContent = `${profile.socialMatch.bestie} ✨`;
+    if (matchBestieDesc) matchBestie.textContent = `Vibe score: 98%. Excellent communication flow. Shared values, great chats.`;
+    
+    if (matchRival) matchRival.textContent = `${profile.socialMatch.rival} 🛑`;
+    if (matchRivalDesc) matchRival.textContent = `Caution node. Keep your distances bestie, mismatching wavelengths here.`;
+
+    // 6. Aura Energy Text
+    const auraDesc = document.getElementById("aura-text-copy");
+    if (auraDesc) {
+      auraDesc.innerHTML = `
+        Your Moon in <strong>${moonSignText}</strong> combined with <strong>${risingSignText} Rising</strong> means:
+        <br>${profile.bigThree.moon.copy}
+        <br><br>
+        <strong>Cosmic energy check:</strong> ${profile.flags.green[0]}
       `;
     }
 
-    // 5. Render Current Era (Dasha Timeline)
-    const eraTitle = document.getElementById("current-era-title");
-    const eraCopy = document.getElementById("current-era-copy");
-    if (eraTitle) eraTitle.textContent = profile.dasha.activeEraTitle;
-    if (eraCopy) eraCopy.textContent = profile.dasha.activeEraCopy;
-
-    const timelineContainer = document.getElementById("dasha-timeline-list");
-    if (timelineContainer) {
-      timelineContainer.innerHTML = profile.dasha.timeline.map((item, idx) => {
-        const isActive = item.ruler === profile.dasha.ruler;
-        return `
-          <div class="timeline-row ${isActive ? 'active' : ''}">
-            <span class="ruler">${item.ruler} Period ${isActive ? '👉' : ''}</span>
-            <span class="dates">${item.start} - ${item.end}</span>
-          </div>
-        `;
-      }).join("");
+    // 7. Green / Red Flags
+    const flagsList = document.getElementById("flags-boxes-container");
+    if (flagsList) {
+      flagsList.innerHTML = `
+        <div class="flag-box green">🟩 <strong>Green Flag:</strong> ${profile.flags.green[1]}</div>
+        <div class="flag-box red">🟥 <strong>Red Flag:</strong> ${profile.flags.red[0]}</div>
+      `;
     }
 
-    // 6. Remedies grid
-    const remedyStone = document.getElementById("remedy-stone");
-    const remedyColor = document.getElementById("remedy-color");
-    const remedyMantra = document.getElementById("remedy-mantra");
-    const remedyTip = document.getElementById("remedy-tip");
+    // 8. Remedies
+    const remedyStone = document.getElementById("remedy-stone-text");
+    const remedyColor = document.getElementById("remedy-color-text");
+    const remedyMantra = document.getElementById("remedy-mantra-text");
+    const remedyTip = document.getElementById("remedy-tip-text");
 
     if (remedyStone) remedyStone.textContent = profile.remedies.stone;
     if (remedyColor) remedyColor.textContent = profile.remedies.color;
     if (remedyMantra) remedyMantra.textContent = profile.remedies.mantra;
     if (remedyTip) remedyTip.textContent = `💡 Remedy Vibe: ${profile.remedies.tips}`;
+
+    // 9. Retro Meme Card
+    const memeText = document.getElementById("retro-meme-copy");
+    if (memeText) {
+      memeText.textContent = `A ${risingSignText} Rising choosing what outfit to wear: "I have 8 different options and none of them represent my current soul alignment."`;
+    }
   }
 
-  // Draw Traditional North Indian Kundli Chart in SVG
-  function drawKundliSVG(houseData, risingSignIndex) {
+  function setPolaroidIcons(bigThree) {
+    const risingSVG = document.getElementById("polaroid-rising-svg");
+    const sunSVG = document.getElementById("polaroid-sun-svg");
+    const moonSVG = document.getElementById("polaroid-moon-svg");
+
+    if (risingSVG) {
+      risingSVG.innerHTML = `
+        <circle cx="50" cy="50" r="25" fill="none" stroke="var(--espresso)" stroke-width="2.5" />
+        <path d="M50 15 L50 85 M15 50 L85 50" stroke="var(--espresso)" stroke-width="1.5" />
+        <polygon points="50,20 45,32 55,32" fill="var(--espresso)" />
+      `;
+    }
+    if (sunSVG) {
+      sunSVG.innerHTML = `
+        <circle cx="50" cy="50" r="20" fill="none" stroke="var(--espresso)" stroke-width="3" />
+        <circle cx="50" cy="50" r="5" fill="var(--espresso)" />
+        <path d="M50 10 L50 16 M50 84 L50 90 M10 50 L16 50 M84 50 L90 50" stroke="var(--espresso)" stroke-width="2" />
+      `;
+    }
+    if (moonSVG) {
+      moonSVG.innerHTML = `
+        <path d="M30 50 A 20 20 0 1 0 70 50 A 14 14 0 1 1 30 50 Z" fill="none" stroke="var(--espresso)" stroke-width="3" />
+      `;
+    }
+  }
+
+  // Draw Traditional North Indian Kundli inside SVG
+  function drawVedicKundliSVG(houseData, risingSignIndex) {
     const svg = document.getElementById("kundli-svg-canvas");
     if (!svg) return;
 
@@ -179,46 +245,41 @@ document.addEventListener("DOMContentLoaded", () => {
       12: { rashi: { x: 280, y: 65 },  planets: { x: 280, y: 85 } }
     };
 
-    // Remove any previously drawn texts (keeping grid lines)
+    // Remove any previously drawn texts (keeping grid lines & backgrounds)
     const elementsToRemove = svg.querySelectorAll("text");
     elementsToRemove.forEach(el => el.remove());
 
     // Place labels for each of the 12 houses
     for (let h = 1; h <= 12; h++) {
       const coord = HOUSE_CENTERS[h];
-      
-      // 1. Calculate Sign (Rashi) index in this house
-      // House 1 has rising sign, House 2 has (rising+1), etc. (1-indexed zodiac numbers)
       const rashiSignNumber = ((risingSignIndex + (h - 1)) % 12) + 1;
 
-      // 2. Create Rashi sign text element
+      // 1. Create Rashi sign text
       const rashiText = document.createElementNS("http://www.w3.org/2000/svg", "text");
       rashiText.setAttribute("x", coord.rashi.x);
       rashiText.setAttribute("y", coord.rashi.y);
-      rashiText.setAttribute("class", "rashi-number");
+      rashiText.setAttribute("class", "chart-text-rashi");
       rashiText.setAttribute("text-anchor", "middle");
       rashiText.textContent = rashiSignNumber;
       svg.appendChild(rashiText);
 
-      // 3. Create House Number label (small indicators in corner)
+      // 2. Create House Number label (small indicators)
       const hText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      // offset slightly based on house location
-      let hx = coord.rashi.x;
       let hy = coord.rashi.y - 12;
-      hText.setAttribute("x", hx);
+      hText.setAttribute("x", coord.rashi.x);
       hText.setAttribute("y", hy);
-      hText.setAttribute("class", "house-number-label");
+      hText.setAttribute("class", "chart-text-house");
       hText.setAttribute("text-anchor", "middle");
       hText.textContent = `H${h}`;
       svg.appendChild(hText);
 
-      // 4. Create Planets list text element
-      const planetsInHouse = houseData.houses[h - 1]; // 0-indexed array
+      // 3. Create Planets list
+      const planetsInHouse = houseData.houses[h - 1]; 
       if (planetsInHouse && planetsInHouse.length > 0) {
         const planetsText = document.createElementNS("http://www.w3.org/2000/svg", "text");
         planetsText.setAttribute("x", coord.planets.x);
         planetsText.setAttribute("y", coord.planets.y);
-        planetsText.setAttribute("class", "planet-symbol");
+        planetsText.setAttribute("class", "chart-text-planets");
         planetsText.setAttribute("text-anchor", "middle");
         planetsText.textContent = planetsInHouse.join(" ");
         svg.appendChild(planetsText);
@@ -226,48 +287,90 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Populate Shareable Social Card in Modal
+  // Spotify Player Control Engine
+  const playBtn = document.getElementById("spotify-play-btn");
+  const playIcon = document.getElementById("spotify-play-icon");
+  const vinylRecord = document.getElementById("spotify-vinyl");
+  const progressFill = document.getElementById("spotify-progress-fill");
+  const progressTime = document.getElementById("spotify-time-current");
+
+  if (playBtn) {
+    playBtn.addEventListener("click", () => {
+      isPlaying = !isPlaying;
+      
+      if (isPlaying) {
+        // Play
+        playIcon.innerHTML = `<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>`; // Pause SVG icon
+        vinylRecord.classList.add("playing");
+        
+        audioTimerInterval = setInterval(() => {
+          audioProgressSeconds++;
+          if (audioProgressSeconds >= 180) {
+            audioProgressSeconds = 0; // loop
+          }
+          
+          // Update visual progress
+          const progressPercent = (audioProgressSeconds / 180) * 100;
+          progressFill.style.width = `${progressPercent}%`;
+          
+          const mins = Math.floor(audioProgressSeconds / 60);
+          const secs = (audioProgressSeconds % 60).toString().padStart(2, '0');
+          progressTime.textContent = `${mins}:${secs}`;
+        }, 1000);
+      } else {
+        // Pause
+        playIcon.innerHTML = `<path d="M8 5v14l11-7z"/>`; // Play SVG icon
+        vinylRecord.classList.remove("playing");
+        clearInterval(audioTimerInterval);
+      }
+    });
+  }
+
+  function resetSpotifyPlayer(trackName) {
+    isPlaying = false;
+    clearInterval(audioTimerInterval);
+    audioProgressSeconds = 0;
+    
+    if (playIcon) playIcon.innerHTML = `<path d="M8 5v14l11-7z"/>`;
+    if (vinylRecord) vinylRecord.classList.remove("playing");
+    if (progressFill) progressFill.style.width = "0%";
+    if (progressTime) progressTime.textContent = "0:00";
+    
+    const trackNameEl = document.getElementById("spotify-track-name");
+    if (trackNameEl) trackNameEl.textContent = trackName;
+  }
+
+  // Populate sharing popup details
   function populateShareCard() {
     if (!currentProfileData) return;
 
-    const shareName = document.getElementById("share-name");
-    const shareRising = document.getElementById("share-rising");
-    const shareSun = document.getElementById("share-sun");
-    const shareMoon = document.getElementById("share-moon");
-    const shareEra = document.getElementById("share-era");
+    const shareName = document.getElementById("polaroid-share-name");
+    const shareRising = document.getElementById("polaroid-share-rising");
+    const shareSun = document.getElementById("polaroid-share-sun");
+    const shareMoon = document.getElementById("polaroid-share-moon");
+    const shareEra = document.getElementById("polaroid-share-era");
 
     if (shareName) shareName.textContent = currentProfileData.meta.name.toUpperCase();
-    if (shareRising) shareRising.textContent = currentProfileData.bigThree.rising.sign.split(" ")[0];
-    if (shareSun) shareSun.textContent = currentProfileData.bigThree.sun.sign.split(" ")[0];
-    if (shareMoon) shareMoon.textContent = currentProfileData.bigThree.moon.sign.split(" ")[0];
-    if (shareEra) shareEra.textContent = currentProfileData.dasha.ruler;
+    if (shareRising) shareRising.textContent = currentProfileData.bigThree.rising.sign;
+    if (shareSun) shareSun.textContent = currentProfileData.bigThree.sun.sign;
+    if (shareMoon) shareMoon.textContent = currentProfileData.bigThree.moon.sign;
+    if (shareEra) shareEra.textContent = currentProfileData.dasha.activeEraTrack;
   }
 
-  // Share Actions triggers
+  // Copy share link triggers
   const copyBtn = document.getElementById("copy-link-btn");
   if (copyBtn) {
     copyBtn.addEventListener("click", () => {
-      // Simulate copy url with share link containing basic data or prompt success
       const shareUrl = window.location.href;
       navigator.clipboard.writeText(shareUrl).then(() => {
         const originalText = copyBtn.textContent;
-        copyBtn.textContent = "Copied! 💅";
+        copyBtn.textContent = "Copied link! 💅";
         setTimeout(() => {
           copyBtn.textContent = originalText;
         }, 2000);
       }).catch(err => {
-        alert("Failed to copy link. Just screenshot this card!");
+        alert("Failed to copy link. Just screenshot this polaroid!");
       });
-    });
-  }
-
-  // Reset button to go back to intake screen
-  const restartBtn = document.getElementById("restart-btn");
-  if (restartBtn) {
-    restartBtn.addEventListener("click", () => {
-      if (intakeForm) intakeForm.reset();
-      dashboardScreen.style.display = "none";
-      intakeScreen.style.display = "flex";
     });
   }
 });

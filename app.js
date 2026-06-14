@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let audioTimerInterval = null;
   let audioProgressSeconds = 0;
   let isPlaying = false;
+  let currentAudio = null;
 
   // Handle Tab Switching
   const tabButtons = document.querySelectorAll(".tab-btn");
@@ -390,6 +391,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Get Track ID based on Era Name
+  function getTrackNumber(trackName) {
+    const mappings = {
+      "The Spiritual Hermit Era": 1,
+      "The Glow-Up Era": 2,
+      "The Spotlight Era": 3,
+      "The Intuitive Feels Era": 4,
+      "The Hustle Era": 5,
+      "The Obsession Era": 6,
+      "The Blessings Era": 7,
+      "The Reality Check Era": 8,
+      "The Side Hustle Era": 1
+    };
+    return mappings[trackName] || 1;
+  }
+
   // Spotify Player Control Engine
   const playBtn = document.getElementById("spotify-play-btn");
   const playIcon = document.getElementById("spotify-play-icon");
@@ -401,10 +418,28 @@ document.addEventListener("DOMContentLoaded", () => {
     playBtn.addEventListener("click", () => {
       isPlaying = !isPlaying;
       
+      const trackName = currentProfileData ? currentProfileData.dasha.activeEraTrack : "The Venus Era";
+      
       if (isPlaying) {
         // Play
         playIcon.innerHTML = `<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>`; // Pause SVG icon
         vinylRecord.classList.add("playing");
+        
+        // Load and play actual audio stream
+        if (!currentAudio) {
+          const trackIndex = getTrackNumber(trackName);
+          const audioUrl = `https://www.soundhelix.com/examples/mp3/SoundHelix-Song-${trackIndex}.mp3`;
+          currentAudio = new Audio(audioUrl);
+          
+          // Auto reset player on song completion
+          currentAudio.addEventListener("ended", () => {
+            resetSpotifyPlayer(trackName);
+          });
+        }
+        
+        currentAudio.play().catch(err => {
+          console.error("Audio play blocked/failed:", err);
+        });
         
         audioTimerInterval = setInterval(() => {
           audioProgressSeconds++;
@@ -425,6 +460,10 @@ document.addEventListener("DOMContentLoaded", () => {
         playIcon.innerHTML = `<path d="M8 5v14l11-7z"/>`; // Play SVG icon
         vinylRecord.classList.remove("playing");
         clearInterval(audioTimerInterval);
+        
+        if (currentAudio) {
+          currentAudio.pause();
+        }
       }
     });
   }
@@ -433,6 +472,11 @@ document.addEventListener("DOMContentLoaded", () => {
     isPlaying = false;
     clearInterval(audioTimerInterval);
     audioProgressSeconds = 0;
+    
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio = null;
+    }
     
     if (playIcon) playIcon.innerHTML = `<path d="M8 5v14l11-7z"/>`;
     if (vinylRecord) vinylRecord.classList.remove("playing");

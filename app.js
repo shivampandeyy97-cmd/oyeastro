@@ -155,10 +155,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const matchRivalDesc = document.getElementById("tinder-rival-desc");
 
     if (matchBestie) matchBestie.textContent = `${profile.socialMatch.bestie} ✨`;
-    if (matchBestieDesc) matchBestie.textContent = `Vibe score: 98%. Excellent communication flow. Shared values, great chats.`;
+    if (matchBestieDesc) matchBestieDesc.textContent = `Vibe score: 98%. Excellent communication flow. Shared values, great chats.`;
     
     if (matchRival) matchRival.textContent = `${profile.socialMatch.rival} 🛑`;
-    if (matchRivalDesc) matchRival.textContent = `Caution node. Keep your distances bestie, mismatching wavelengths here.`;
+    if (matchRivalDesc) matchRivalDesc.textContent = `Caution node. Keep your distances bestie, mismatching wavelengths here.`;
 
     // 6. Aura Energy Text
     const auraDesc = document.getElementById("aura-text-copy");

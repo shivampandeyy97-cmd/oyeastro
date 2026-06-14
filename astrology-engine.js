@@ -81,9 +81,43 @@ function resolveLocation(cityInput) {
 
 // Convert birth details to Julian Days since J2000 epoch (12:00 UTC on Jan 1, 2000)
 function getJulianDays(dateStr, timeStr, tzOffset) {
-  const [year, month, day] = dateStr.split("-").map(Number);
-  const [hour, minute] = timeStr.split(":").map(Number);
+  // Parse date robustly (handles YYYY-MM-DD, DD/MM/YYYY, etc.)
+  const parts = dateStr.includes("-") ? dateStr.split("-") : dateStr.split("/");
+  let year, month, day;
+  if (parts[0] && parts[0].length === 4) {
+    year = Number(parts[0]);
+    month = Number(parts[1]);
+    day = Number(parts[2]);
+  } else if (parts[2] && parts[2].length === 4) {
+    year = Number(parts[2]);
+    month = Number(parts[1]);
+    day = Number(parts[0]);
+  } else {
+    // general fallback
+    const d = new Date(dateStr);
+    year = d.getUTCFullYear();
+    month = d.getUTCMonth() + 1;
+    day = d.getUTCDate();
+  }
+
+  // Parse time robustly (handles 24-hour and 12-hour AM/PM formats)
+  let hour = 0, minute = 0;
+  const cleanTime = timeStr.trim().toUpperCase();
+  const isPM = cleanTime.includes("PM");
+  const isAM = cleanTime.includes("AM");
+  const timeOnly = cleanTime.replace(/[AP]M/, "").trim();
+  const timeParts = timeOnly.split(":").map(Number);
   
+  hour = timeParts[0] || 0;
+  minute = timeParts[1] || 0;
+  
+  if (isPM && hour < 12) {
+    hour += 12;
+  }
+  if (isAM && hour === 12) {
+    hour = 0;
+  }
+
   const localDateMs = Date.UTC(year, month - 1, day, hour, minute);
   const tzAdjustmentMs = tzOffset * 3600000;
   const utcDateMs = localDateMs - tzAdjustmentMs;

@@ -326,6 +326,21 @@ const ZODIAC_MATCHES = {
   11: { bestie: "Cancer", rival: "Sagittarius", copy: "Pisces: Cancer provides the emotional safety net, but Sagittarius will run away when you cry." }
 };
 
+const HOROSCOPES = {
+  0: "Aries: Your boss/teacher is going to try your patience today. Do NOT send that email. Drink iced coffee and stay quiet. ☕️🤐",
+  1: "Taurus: You will spend money you don't have on a sweet treat because 'you deserved it'. Spoiler: you do deserve it, but your wallet doesn't. 🍰💸",
+  2: "Gemini: You'll start 5 new conversations and ghost 4 of them. Your screen time is about to hit double digits. Go touch some grass. 📱🌾",
+  3: "Cancer: You are taking things personally today. It was just a text without an exclamation mark, bestie. They don't hate you. 🥺💬",
+  4: "Leo: Someone is going to challenge your main character status today. Stand your ground, but make sure your outfit is fire first. 👑🔥",
+  5: "Virgo: You are organizing a spreadsheet for something that could have been a post-it note. Take a breath and close some tabs. 📊💆",
+  6: "Libra: You will spend 45 minutes deciding what to watch on Netflix and then fall asleep 10 minutes into the movie. Standard Libra behavior. 🍿😴",
+  7: "Scorpio: You are squinting at everyone suspiciously today. Not everyone is plotting against you, but keep your secrets safe anyway. 🕵️‍♂️🔒",
+  8: "Sagittarius: You'll say something brutally honest and then have to do damage control. Tell them it was your chart's fault. 🤷‍♂️🏹",
+  9: "Capricorn: You're treating relaxation like a chore. You can't schedule 'unwinding time' on Google Calendar, bestie. Relax. 🗓️🥱",
+  10: "Aquarius: You feel like nobody understands your vision today. That's fine, you're ahead of your time. Go listen to some indie music. 🎧🌌",
+  11: "Pisces: You are daydreaming about a fake scenario that will never happen. Wake up, bestie, your iced matcha is getting warm. 🍵💭"
+};
+
 // Main execution function called by app.js
 function getAstrologicalProfile(name, dateStr, timeStr, locationInput) {
   const loc = resolveLocation(locationInput);
@@ -382,7 +397,8 @@ function getAstrologicalProfile(name, dateStr, timeStr, locationInput) {
     },
     socialMatch: ZODIAC_MATCHES[lagnaIndex] || ZODIAC_MATCHES[0],
     flags: getFlags(lagnaIndex, sunSignIndex, moonSignIndex),
-    remedies: getRemedies(moonSignIndex)
+    remedies: getRemedies(moonSignIndex),
+    horoscope: HOROSCOPES[lagnaIndex] || HOROSCOPES[0]
   };
 }
 
@@ -440,5 +456,93 @@ function getRemedies(moonSign) {
 window.OyeAstroEngine = {
   getProfile: getAstrologicalProfile,
   RashiNames: RASHI_NAMES,
-  PlanetNames: PLANET_NAMES
+  PlanetNames: PLANET_NAMES,
+  getLoveCompatibility: getLoveCompatibility,
+  getFlamesResult: getFlamesResult
 };
+
+// Deterministic Love compatibility score
+function getLoveCompatibility(name1, name2) {
+  const n1 = name1.trim().toLowerCase();
+  const n2 = name2.trim().toLowerCase();
+  
+  if (!n1 || !n2) return { score: 0, text: "Enter names, bestie!" };
+  
+  // Deterministic hash based on character codes
+  let hash = 0;
+  const combined = n1 + n2;
+  for (let i = 0; i < combined.length; i++) {
+    hash = combined.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  
+  const score = (Math.abs(hash) % 70) + 30; // score between 30% and 99%
+  
+  let text = "";
+  if (score >= 85) {
+    text = "Certified Soulmates 🔒 - You guys are sharing headphones and speaking in code. 10/10 vibe match. The stars are literally screaming!";
+  } else if (score >= 65) {
+    text = "Solid Banter Vibe 💬 - Great energy, hilarious text threads. High key compatible. Go send them a meme right now.";
+  } else if (score >= 45) {
+    text = "Friendzone Hazard ⚠️ - The compatibility is giving 'thanks for the add' vibes. Tread carefully, keep it casual.";
+  } else {
+    text = "Absolute Red Flag 🚩 - Your charts are actively fighting. Delete their number for your own peace of mind. Not it.";
+  }
+  
+  return { score, text };
+}
+
+// Classic FLAMES game calculation
+function getFlamesResult(name1, name2) {
+  let n1 = name1.trim().toLowerCase().replace(/\s+/g, "");
+  let n2 = name2.trim().toLowerCase().replace(/\s+/g, "");
+  
+  if (!n1 || !n2) return { letter: "", title: "", text: "Enter names, bestie!" };
+  
+  // Cancel common letters
+  let arr1 = n1.split("");
+  let arr2 = n2.split("");
+  
+  for (let i = 0; i < arr1.length; i++) {
+    const idx = arr2.indexOf(arr1[i]);
+    if (idx !== -1) {
+      arr1[i] = "";
+      arr2[idx] = "";
+    }
+  }
+  
+  const remainingCount = arr1.filter(c => c !== "").length + arr2.filter(c => c !== "").length;
+  
+  // Calculate flames
+  const flames = ["F", "L", "A", "M", "E", "S"];
+  
+  // If count is 0, default to Friend or Lovers
+  let finalLetter = "F";
+  if (remainingCount > 0) {
+    let flamesCopy = [...flames];
+    while (flamesCopy.length > 1) {
+      const targetIndex = (remainingCount - 1) % flamesCopy.length;
+      flamesCopy.splice(targetIndex, 1);
+      // Re-align array from targetIndex
+      if (targetIndex < flamesCopy.length) {
+        flamesCopy = [...flamesCopy.slice(targetIndex), ...flamesCopy.slice(0, targetIndex)];
+      }
+    }
+    finalLetter = flamesCopy[0];
+  }
+  
+  const mappings = {
+    F: { title: "Friends 🤝", text: "Just besties. You're in the group chat but you ain't in the DMs. Vibe is pure platonic banter." },
+    L: { title: "Lovers 💖", text: "Lover era activated! The stars are literally screaming. Get ready for butterflies and late-night deep talks." },
+    A: { title: "Affection 🥰", text: "Crush vibes are high. Lots of eye contact, lots of emoji usage. They low-key like your stories." },
+    M: { title: "Marriage 💍", text: "Lock it in! Pinterest wedding board is already being created. You're sharing a Netflix account soon." },
+    E: { title: "Enmity ⚔️", text: "Enemy status! Pure hate-watching energy. Keep your distance or prepare for a dramatic diss track." },
+    S: { title: "Sibling 👯", text: "Bro/Sis energy. You guys are literally the same person. It's giving sibling banter, not romance." }
+  };
+  
+  const result = mappings[finalLetter];
+  return {
+    letter: finalLetter,
+    title: result.title,
+    text: result.text
+  };
+}

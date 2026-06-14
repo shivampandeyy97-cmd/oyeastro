@@ -5,14 +5,51 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   const intakeForm = document.getElementById("intake-form");
+  const loveForm = document.getElementById("love-form");
+  const flamesForm = document.getElementById("flames-form");
+  
   const boardSection = document.getElementById("masonry-board-container");
+  const radarResults = document.getElementById("radar-results-card");
+  const radarClose = document.getElementById("radar-close-btn");
   
   let currentProfileData = null;
   let audioTimerInterval = null;
   let audioProgressSeconds = 0;
   let isPlaying = false;
 
-  // Handle Intake Form Submission
+  // Handle Tab Switching
+  const tabButtons = document.querySelectorAll(".tab-btn");
+  tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      // Deactivate all tabs
+      tabButtons.forEach(t => t.classList.remove("active"));
+      // Hide all calculator forms
+      document.querySelectorAll(".calculator-form").forEach(f => f.style.display = "none");
+      // Hide relationship calculator results
+      if (radarResults) radarResults.style.display = "none";
+      
+      // Activate clicked tab
+      btn.classList.add("active");
+      
+      const tabTarget = btn.getAttribute("data-tab");
+      if (tabTarget === "astro-vibe" && intakeForm) {
+        intakeForm.style.display = "flex";
+      } else if (tabTarget === "love-radar" && loveForm) {
+        loveForm.style.display = "flex";
+      } else if (tabTarget === "flames-radar" && flamesForm) {
+        flamesForm.style.display = "flex";
+      }
+    });
+  });
+
+  // Close Radar Results
+  if (radarClose && radarResults) {
+    radarClose.addEventListener("click", () => {
+      radarResults.style.display = "none";
+    });
+  }
+
+  // Handle Intake Form Submission (Vibe Check)
   if (intakeForm) {
     intakeForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -42,6 +79,66 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch (err) {
         console.error("Astro calculation failure:", err);
         alert("Alignment error. Check your dates!");
+      }
+    });
+  }
+
+  // Handle Love Radar Submission
+  if (loveForm) {
+    loveForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      
+      const name1 = document.getElementById("love-name1").value;
+      const name2 = document.getElementById("love-name2").value;
+      
+      const result = window.OyeAstroEngine.getLoveCompatibility(name1, name2);
+      
+      const radarTitle = document.getElementById("radar-title");
+      const radarScore = document.getElementById("radar-score-container");
+      const radarDesc = document.getElementById("radar-description");
+      
+      if (radarResults) {
+        radarResults.style.background = "var(--pastel-pink)";
+        if (radarTitle) radarTitle.textContent = "Love Vibe Radar ❤️";
+        if (radarScore) {
+          radarScore.textContent = result.score + "%";
+          radarScore.style.background = "#fff";
+        }
+        if (radarDesc) {
+          radarDesc.innerHTML = `<strong>${name1}</strong> & <strong>${name2}</strong> compatibility score:<br>${result.text}`;
+        }
+        radarResults.style.display = "block";
+        radarResults.scrollIntoView({ behavior: "smooth" });
+      }
+    });
+  }
+
+  // Handle FLAMES Radar Submission
+  if (flamesForm) {
+    flamesForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      
+      const name1 = document.getElementById("flames-name1").value;
+      const name2 = document.getElementById("flames-name2").value;
+      
+      const result = window.OyeAstroEngine.getFlamesResult(name1, name2);
+      
+      const radarTitle = document.getElementById("radar-title");
+      const radarScore = document.getElementById("radar-score-container");
+      const radarDesc = document.getElementById("radar-description");
+      
+      if (radarResults) {
+        radarResults.style.background = "var(--pastel-purple)";
+        if (radarTitle) radarTitle.textContent = "FLAMES Destiny Radar 🔥";
+        if (radarScore) {
+          radarScore.textContent = result.letter;
+          radarScore.style.background = "var(--pastel-orange)";
+        }
+        if (radarDesc) {
+          radarDesc.innerHTML = `<strong>${name1}</strong> & <strong>${name2}</strong> match status:<br><strong>${result.title}</strong> - ${result.text}`;
+        }
+        radarResults.style.display = "block";
+        radarResults.scrollIntoView({ behavior: "smooth" });
       }
     });
   }
@@ -195,6 +292,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const memeText = document.getElementById("retro-meme-copy");
     if (memeText) {
       memeText.textContent = `A ${risingSignText} Rising choosing what outfit to wear: "I have 8 different options and none of them represent my current soul alignment."`;
+    }
+
+    // 9.5. Daily Horoscope (Horror-scope)
+    const horoscopeText = document.getElementById("horoscope-text-copy");
+    if (horoscopeText) {
+      horoscopeText.textContent = profile.horoscope;
     }
   }
 

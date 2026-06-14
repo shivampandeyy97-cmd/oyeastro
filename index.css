@@ -914,3 +914,83 @@ footer {
   margin-top: 1.5rem;
 }
 
+/* Navigation Tabs Styling */
+.calculator-tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  background: var(--pastel-orange);
+  padding: 0.4rem;
+  border-radius: 16px;
+  border: 2px solid var(--espresso);
+  box-shadow: 3px 3px 0px var(--espresso);
+}
+
+.tab-btn {
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: 'Syne', sans-serif;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.tab-btn.active {
+  background: var(--card-bg);
+  border: 2px solid var(--espresso);
+  color: var(--text-primary);
+  box-shadow: 2px 2px 0px var(--espresso);
+  transform: translateY(-1px);
+}
+
+/* Sticker / Floating Decal Animations */
+.intake-panel {
+  position: relative;
+}
+
+.panel-decal {
+  position: absolute;
+  font-size: 1.8rem;
+  pointer-events: none;
+  user-select: none;
+  animation: floatDecal 4s ease-in-out infinite alternate;
+}
+
+@keyframes floatDecal {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    transform: translateY(-8px) rotate(8deg);
+  }
+}
+
+.panel-decal:nth-child(even) {
+  animation-delay: 1.5s;
+}
+
+/* Responsive columns scaling for tabs */
+@media (max-width: 600px) {
+  .calculator-tabs {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.4rem;
+  }
+  .tab-btn {
+    width: 100%;
+    text-align: center;
+  }
+  .panel-decal {
+    display: none; /* Hide floating decals on small mobile to avoid layout clipping */
+  }
+}
+

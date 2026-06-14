@@ -34,7 +34,21 @@
     <div class="intake-panel">
       <h1>Reveal Your Cosmic Alignment</h1>
       
-      <form id="intake-form" style="width: 100%; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
+      <!-- Floating Sticker Decals -->
+      <span class="panel-decal" style="left: -15px; top: -15px;">🪐</span>
+      <span class="panel-decal" style="right: -15px; top: -15px;">✨</span>
+      <span class="panel-decal" style="left: -15px; bottom: -15px;">🔮</span>
+      <span class="panel-decal" style="right: -15px; bottom: -15px;">💖</span>
+
+      <!-- Navigation Tabs -->
+      <div class="calculator-tabs">
+        <button type="button" class="tab-btn active" data-tab="astro-vibe">🌟 Vibe Check</button>
+        <button type="button" class="tab-btn" data-tab="love-radar">❤️ Love Radar</button>
+        <button type="button" class="tab-btn" data-tab="flames-radar">🔥 FLAMES Matcher</button>
+      </div>
+      
+      <!-- Astro Birth Chart Form -->
+      <form id="intake-form" class="calculator-form" style="width: 100%; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
         
         <!-- Name Field -->
         <div class="form-group" style="width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 0.4rem;">
@@ -87,6 +101,52 @@
 
         <button type="submit" class="reveal-btn">Reveal My Astro</button>
       </form>
+
+      <!-- Love Radar Form -->
+      <form id="love-form" class="calculator-form" style="display: none; width: 100%; flex-direction: column; gap: 1.5rem; align-items: center;">
+        <div style="display: flex; gap: 1.25rem; width: 100%; max-width: 600px; justify-content: center; flex-wrap: wrap;">
+          <div class="form-group" style="flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 0.4rem;">
+            <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Your Name</label>
+            <input type="text" id="love-name1" required placeholder="Your name, bestie..." style="width: 100%; padding: 0.9rem; border: 2px solid var(--espresso); border-radius: 12px; font-size: 0.95rem; outline: none; color: var(--espresso); font-weight: 500;">
+          </div>
+          <div class="form-group" style="flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 0.4rem;">
+            <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Their Name</label>
+            <input type="text" id="love-name2" required placeholder="Their name..." style="width: 100%; padding: 0.9rem; border: 2px solid var(--espresso); border-radius: 12px; font-size: 0.95rem; outline: none; color: var(--espresso); font-weight: 500;">
+          </div>
+        </div>
+        <button type="submit" class="reveal-btn">Calculate Love %</button>
+      </form>
+
+      <!-- FLAMES Matcher Form -->
+      <form id="flames-form" class="calculator-form" style="display: none; width: 100%; flex-direction: column; gap: 1.5rem; align-items: center;">
+        <div style="display: flex; gap: 1.25rem; width: 100%; max-width: 600px; justify-content: center; flex-wrap: wrap;">
+          <div class="form-group" style="flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 0.4rem;">
+            <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Your Name</label>
+            <input type="text" id="flames-name1" required placeholder="Your name..." style="width: 100%; padding: 0.9rem; border: 2px solid var(--espresso); border-radius: 12px; font-size: 0.95rem; outline: none; color: var(--espresso); font-weight: 500;">
+          </div>
+          <div class="form-group" style="flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 0.4rem;">
+            <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Their Name</label>
+            <input type="text" id="flames-name2" required placeholder="Their name..." style="width: 100%; padding: 0.9rem; border: 2px solid var(--espresso); border-radius: 12px; font-size: 0.95rem; outline: none; color: var(--espresso); font-weight: 500;">
+          </div>
+        </div>
+        <button type="submit" class="reveal-btn">Reveal FLAMES Destiny</button>
+      </form>
+
+      <!-- Shared Results Box for Relationship Radars -->
+      <div id="radar-results-card" style="display: none; width: 100%; max-width: 600px; margin-top: 1.5rem; padding: 1.5rem; border: 3px solid var(--espresso); border-radius: 20px; background: var(--pastel-pink); box-shadow: 5px 5px 0px var(--espresso); text-align: center; position: relative;">
+        <div id="radar-close-btn" style="position: absolute; right: 1rem; top: 0.75rem; cursor: pointer; font-weight: bold; font-size: 1.2rem; color: var(--espresso);">✕</div>
+        <h3 id="radar-title" style="font-family: 'Syne', sans-serif; font-size: 1.5rem; margin-bottom: 0.75rem; color: var(--espresso);">Love Vibe Radar</h3>
+        
+        <!-- Score Bubble -->
+        <div id="radar-score-container" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--espresso); background: #fff; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; font-weight: 800; margin: 0.5rem auto 1rem auto; box-shadow: 3px 3px 0px var(--espresso); font-family: 'Syne', sans-serif; color: var(--espresso);">
+          85%
+        </div>
+        
+        <p id="radar-description" style="font-size: 0.95rem; line-height: 1.5; color: var(--espresso); font-weight: 600; margin-bottom: 0;">
+          Soulmate alignment detected!
+        </p>
+      </div>
+
     </div>
 
     <!-- BOTTOM SECTION: Pinterest Board (initially hidden, toggled via JS) -->
@@ -172,6 +232,23 @@
           <div class="pin-actions-bar">
             <button class="pin-reaction-btn save-btn">📌 <span class="count">2.1k</span> saves</button>
             <button class="pin-reaction-btn">❤️ <span class="count">840</span> likes</button>
+          </div>
+        </div>
+
+        <!-- PIN 2.5: DAILY HORROR-SCOPE -->
+        <div class="pin-card" style="background: var(--pastel-yellow);">
+          <div class="pin-card-header">
+            <h3>Daily Horror-scope 😈</h3>
+            <span class="tag-badge" style="background: var(--bright-gold); color: var(--espresso); border-color: var(--espresso);">Watch out!</span>
+          </div>
+          
+          <p id="horoscope-text-copy" style="font-size: 1.05rem; line-height: 1.5; color: var(--espresso); font-weight: 600; font-style: italic; margin-bottom: 1rem;">
+            Select your birth details to reveal your daily warning, bestie.
+          </p>
+
+          <div class="pin-actions-bar">
+            <button class="pin-reaction-btn save-btn">📌 <span class="count">4.2k</span> saves</button>
+            <button class="pin-reaction-btn">❤️ <span class="count">2.1k</span> likes</button>
           </div>
         </div>
 

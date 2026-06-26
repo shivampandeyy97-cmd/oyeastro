@@ -15,13 +15,16 @@ import {
 
 // ─── Swiss Ephemeris Setup ─────────────────────────────────────────────────
 
-let sweInstance: typeof import('swisseph') | null = null
+import SwissEph from 'swisseph-wasm'
+
+let sweInstance: SwissEph | null = null
 
 async function getSwe() {
   if (!sweInstance) {
-    const swe = await import('swisseph')
+    const swe = new SwissEph()
+    await swe.initSwissEph()
     // Set Lahiri Ayanamsa (SE_SIDM_LAHIRI = 1)
-    swe.swe_set_sid_mode(swe.SE_SIDM_LAHIRI, 0, 0)
+    swe.set_sid_mode(swe.SE_SIDM_LAHIRI, 0, 0)
     sweInstance = swe
   }
   return sweInstance
@@ -164,7 +167,7 @@ function getTzOffsetFromIANA(tz: string, date: Date): number {
 
 export async function julianDay(year: number, month: number, day: number, utHour: number): Promise<number> {
   const swe = await getSwe()
-  return swe.swe_julday(year, month, day, utHour, swe.SE_GREG_CAL)
+  return swe.julday(year, month, day, utHour)
 }
 
 // ─── Planet Computation ─────────────────────────────────────────────────────
@@ -174,11 +177,8 @@ export async function computePlanets(jd: number): Promise<PlanetPositions> {
   const flags = swe.SEFLG_SIDEREAL | swe.SEFLG_SPEED
 
   function getPlanetLon(planetId: number): number {
-    const result = swe.swe_calc_ut(jd, planetId, flags) as any
-    if (result.error) {
-      throw new Error(`swe_calc_ut failed for planet ${planetId}: ${result.error}`)
-    }
-    const lon = result.longitude !== undefined ? result.longitude : (result.x?.[0] ?? 0)
+    const result = swe.calc_ut(jd, planetId, flags)
+    const lon = result[0]
     return ((lon % 360) + 360) % 360
   }
 
@@ -200,13 +200,12 @@ export async function computePlanets(jd: number): Promise<PlanetPositions> {
 
 export async function computeLagna(jd: number, lat: number, lon: number): Promise<number> {
   const swe = await getSwe()
-  // Whole Sign houses ('W'), returns cusps array where cusps[1] = Lagna
-  const result = (swe as any).swe_houses(jd, swe.SEFLG_SIDEREAL, lat, lon, 'W'.charCodeAt(0))
-  if (!result || !result.house) {
-    // Fallback: Sun + hour adjustment (same as original engine)
+  // Whole Sign houses ('W')
+  const result = swe.houses(jd, lat, lon, 'W') as any
+  if (!result || !result.ascmc || result.ascmc.length === 0) {
     return 0
   }
-  return ((result.ascendant % 360) + 360) % 360
+  return ((result.ascmc[0] % 360) + 360) % 360
 }
 
 // ─── House Placements ───────────────────────────────────────────────────────

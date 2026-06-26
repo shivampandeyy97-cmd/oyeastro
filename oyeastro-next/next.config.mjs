@@ -4,7 +4,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   experimental: {
-    serverComponentsExternalPackages: ['swisseph'],
+    serverComponentsExternalPackages: ['swisseph-wasm'],
   },
 };
 

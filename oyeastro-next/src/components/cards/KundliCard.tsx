@@ -41,15 +41,15 @@ export default function KundliCard({ chart }: Props) {
   const lagnaSignIndex = houseData.lagnaSignIndex
 
   return (
-    <div className="pin-card bg-white border-2 border-espresso rounded-neoLg p-6 shadow-neo break-inside-avoid mb-6">
+    <div className="pin-card bg-cardBg border-2 border-espresso rounded-neoLg p-6 shadow-neo break-inside-avoid mb-6">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="font-display font-extrabold text-espresso text-base">Kundli Magic</h3>
+        <h3 className="font-display font-extrabold text-espresso text-base">Stellar Map</h3>
         <span className="px-2.5 py-1 text-xs font-bold border-2 border-espresso bg-pastelOrange text-espresso rounded-neoSm shadow-neoSm">
-          Lagna Rashi
+          First Impression Vibe
         </span>
       </div>
 
-      <h2 className="font-display text-2xl font-black text-espresso mb-4">My Vedic Chart</h2>
+      <h2 className="font-display text-2xl font-black text-espresso mb-4">Your Cosmic Blueprint</h2>
 
       <div className="flex flex-col gap-4 relative">
         {/* Wizard Cat Mascot */}
@@ -78,7 +78,7 @@ export default function KundliCard({ chart }: Props) {
         </div>
 
         {/* SVG Lagna Chart Canvas */}
-        <div className="border-2 border-espresso rounded-neoSm bg-white p-2">
+        <div className="border-2 border-espresso rounded-neoSm bg-[#03040c] p-2">
           <svg id="kundli-svg-canvas" viewBox="0 0 400 400" className="w-full h-auto">
             {/* Background Polygons for Hover Highlights */}
             {Object.entries(HOUSE_POLYGONS).map(([hStr, points]) => {
@@ -128,7 +128,7 @@ export default function KundliCard({ chart }: Props) {
                     className="chart-text-house"
                     textAnchor="middle"
                   >
-                    H{h}
+                    Sector {h}
                   </text>
 
                   {/* Planets */}
@@ -147,6 +147,19 @@ export default function KundliCard({ chart }: Props) {
             })}
           </svg>
         </div>
+      </div>
+
+      {/* Planet symbols translation legend */}
+      <div className="mt-4 p-3 bg-[#131438] border border-purple-500/10 rounded-neoSm text-[10px] font-bold text-purple-300/80 leading-relaxed grid grid-cols-3 gap-y-1 gap-x-2 text-center">
+        <div>Su: Core</div>
+        <div>Mo: Heart</div>
+        <div>Ma: Hustle</div>
+        <div>Me: Brain</div>
+        <div>Ju: Luck</div>
+        <div>Ve: Rizz</div>
+        <div>Sa: Truth</div>
+        <div>Ra: Chaos</div>
+        <div>Ke: Zen</div>
       </div>
 
       <div className="flex gap-4 mt-4 border-t border-espresso/10 pt-4 text-xs font-bold text-textMuted justify-between">

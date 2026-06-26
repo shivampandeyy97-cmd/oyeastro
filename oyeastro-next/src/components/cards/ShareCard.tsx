@@ -8,8 +8,8 @@ export default function ShareCard({ onShare }: Props) {
   return (
     <div className="pin-card bg-bgWarm border-2 border-espresso rounded-neoLg p-6 shadow-neo break-inside-avoid mb-6">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="font-display font-extrabold text-espresso text-base">Action Center</h3>
-        <span className="px-2.5 py-1 text-xs font-bold border-2 border-espresso bg-white text-espresso rounded-neoSm shadow-neoSm">
+        <h3 className="font-display font-extrabold text-white text-base">Action Center</h3>
+        <span className="px-2.5 py-1 text-xs font-bold border-2 border-espresso bg-[#0b0d26] text-textSecondary rounded-neoSm shadow-neoSm">
           Export
         </span>
       </div>

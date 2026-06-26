@@ -121,10 +121,10 @@ export default function CosmicVibeCard({ chart, onShare }: Props) {
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 z-10">
         <div>
           <h3 className="font-display font-extrabold text-xl flex items-center gap-1.5 text-white">
-            {name}'s Cosmic Vibe +
+            {name}'s Vibe Check
           </h3>
           <p className="text-xs font-semibold text-purple-300/70 mt-1">
-            {vedicLagna} Lagna • {nakshatra} Nakshatra
+            Zodiac Vibe: {vedicLagna} • Soul Constellation: {nakshatra}
           </p>
         </div>
 

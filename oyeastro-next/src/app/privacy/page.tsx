@@ -12,13 +12,13 @@ export default function PrivacyPage() {
         <div className="max-w-3xl mx-auto px-4 md:px-8 py-10">
           <Link
             href="/"
-            className="inline-block mb-6 font-display font-extrabold text-espresso hover:text-brightOrange transition-colors"
+            className="inline-block mb-6 font-display font-extrabold text-white hover:text-brightOrange transition-colors"
           >
             👈 Back to Board
           </Link>
 
-          <div className="bg-white border-2 border-espresso rounded-neoLg p-8 shadow-neoLg flex flex-col gap-6">
-            <h1 className="font-display text-3xl md:text-4xl font-black text-espresso">
+          <div className="bg-cardBg border-2 border-espresso rounded-neoLg p-8 shadow-neoLg flex flex-col gap-6">
+            <h1 className="font-display text-3xl md:text-4xl font-black text-white">
               Privacy Policy
             </h1>
             <p className="text-xs font-bold text-textMuted italic -mt-3">
@@ -29,7 +29,7 @@ export default function PrivacyPage() {
               At <strong>OyeAstro</strong>, we value the privacy of our stargazing community. This Privacy Policy details how we handle information when you interact with our website (oyeastro.com), ensuring full transparency and compliance with global privacy standards.
             </p>
 
-            <h2 className="font-display text-xl font-bold text-espresso border-b border-espresso/10 pb-1 mt-2">
+            <h2 className="font-display text-xl font-bold text-white border-b border-espresso/30 pb-1 mt-2">
               1. Information We Do NOT Collect
             </h2>
             <p className="font-body text-sm font-semibold text-textSecondary leading-relaxed">
@@ -38,7 +38,7 @@ export default function PrivacyPage() {
               All calculations for your Vedic Kundli, Ascendant, and Vimshottari Dashas are run directly in your local browser using client-side JavaScript. Once you close or reload the website tab, the input data (Name, Date, Time, Place of Birth) is completely wiped from memory. No database logs are created.
             </p>
 
-            <h2 className="font-display text-xl font-bold text-espresso border-b border-espresso/10 pb-1 mt-2">
+            <h2 className="font-display text-xl font-bold text-white border-b border-espresso/30 pb-1 mt-2">
               2. Third-Party Advertisers & Cookies
             </h2>
             <p className="font-body text-sm font-semibold text-textSecondary leading-relaxed">
@@ -49,28 +49,28 @@ export default function PrivacyPage() {
               <li>You can also adjust your web browser settings to block or delete cookies entirely if you prefer.</li>
             </ul>
 
-            <h2 className="font-display text-xl font-bold text-espresso border-b border-espresso/10 pb-1 mt-2">
+            <h2 className="font-display text-xl font-bold text-white border-b border-espresso/30 pb-1 mt-2">
               3. Web Analytics
             </h2>
             <p className="font-body text-sm font-semibold text-textSecondary leading-relaxed">
               We may collect basic, anonymous traffic analytics (such as page views, device types, and browser agents) using lightweight privacy-centric analytics platforms to optimize our responsive layout designs. This data contains no personally identifiable information (PII).
             </p>
 
-            <h2 className="font-display text-xl font-bold text-espresso border-b border-espresso/10 pb-1 mt-2">
+            <h2 className="font-display text-xl font-bold text-white border-b border-espresso/30 pb-1 mt-2">
               4. External Links
             </h2>
             <p className="font-body text-sm font-semibold text-textSecondary leading-relaxed">
               Our website may contain links to other websites or blogs. If you click on a third-party link, you will be directed to that site. Note that these external sites are not operated by us, and we strongly advise you to review the Privacy Policy of those platforms.
             </p>
 
-            <h2 className="font-display text-xl font-bold text-espresso border-b border-espresso/10 pb-1 mt-2">
+            <h2 className="font-display text-xl font-bold text-white border-b border-espresso/30 pb-1 mt-2">
               5. Compliance Updates
             </h2>
             <p className="font-body text-sm font-semibold text-textSecondary leading-relaxed">
               We reserve the right to modify this Privacy Policy at any time. Changes will take effect immediately upon being posted on this page.
             </p>
 
-            <h2 className="font-display text-xl font-bold text-espresso border-b border-espresso/10 pb-1 mt-2">
+            <h2 className="font-display text-xl font-bold text-white border-b border-espresso/30 pb-1 mt-2">
               6. Contact Us
             </h2>
             <p className="font-body text-sm font-semibold text-textSecondary leading-relaxed">

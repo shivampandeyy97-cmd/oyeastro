@@ -24,7 +24,7 @@ export default function MasonryBoard({ chart, birthData, onShare }: Props) {
             {initial}
           </div>
           <div className="flex flex-col">
-            <h2 className="font-display text-xl font-black text-espresso">
+            <h2 className="font-display text-xl font-black text-white">
               {birthData.name}'s Cosmos
             </h2>
             <p className="text-xs font-semibold text-textSecondary mt-0.5">

@@ -34,10 +34,10 @@ const config: Config = {
         display: ['var(--font-syne)', 'sans-serif'],
       },
       boxShadow: {
-        neo:    '4px 4px 0px #2c1905',
-        neoLg:  '6px 6px 0px #2c1905',
-        neoSm:  '3px 3px 0px #2c1905',
-        neoXl:  '8px 8px 0px #2c1905',
+        neo:    '4px 4px 0px var(--shadow-color)',
+        neoLg:  '6px 6px 0px var(--shadow-color)',
+        neoSm:  '3px 3px 0px var(--shadow-color)',
+        neoXl:  '8px 8px 0px var(--shadow-color)',
         dark:   '5px 5px 0px #000000',
       },
       borderRadius: {

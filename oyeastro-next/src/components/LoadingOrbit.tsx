@@ -63,7 +63,7 @@ export default function LoadingOrbit() {
         animate={{ opacity: [0.5, 1, 0.5] }}
         transition={{ duration: 2, repeat: Infinity }}
       >
-        <p className="font-display text-xl font-bold text-espresso">Reading your cosmos...</p>
+        <p className="font-display text-xl font-bold text-white">Reading your cosmos...</p>
         <p className="text-textMuted text-sm mt-1">Swiss Ephemeris calculating planetary positions ✨</p>
       </motion.div>
     </motion.div>

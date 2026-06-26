@@ -11,7 +11,7 @@ export default function ContactPage() {
     ;(e.target as HTMLFormElement).reset()
   }
 
-  const inputClass = "w-full p-3.5 border-2 border-espresso rounded-neoSm font-body text-sm font-medium text-espresso bg-white neo-input focus:outline-none transition-all"
+  const inputClass = "w-full p-3.5 border-2 border-espresso rounded-neoSm font-body text-sm font-medium text-white bg-[#0b0d26] neo-input focus:outline-none transition-all"
 
   return (
     <main className="min-h-screen flex flex-col justify-between">
@@ -20,13 +20,13 @@ export default function ContactPage() {
         <div className="max-w-3xl mx-auto px-4 md:px-8 py-10">
           <Link
             href="/"
-            className="inline-block mb-6 font-display font-extrabold text-espresso hover:text-brightOrange transition-colors"
+            className="inline-block mb-6 font-display font-extrabold text-white hover:text-brightOrange transition-colors"
           >
             👈 Back to Board
           </Link>
 
-          <div className="bg-white border-2 border-espresso rounded-neoLg p-8 shadow-neoLg flex flex-col gap-6">
-            <h1 className="font-display text-3xl md:text-4xl font-black text-espresso">
+          <div className="bg-cardBg border-2 border-espresso rounded-neoLg p-8 shadow-neoLg flex flex-col gap-6">
+            <h1 className="font-display text-3xl md:text-4xl font-black text-white">
               Contact Our Cosmic Team
             </h1>
 
@@ -35,8 +35,8 @@ export default function ContactPage() {
             </p>
 
             <div className="bg-pastelOrange/20 border-2 border-espresso rounded-neoLg p-6 shadow-neoSm flex flex-col gap-2">
-              <h3 className="font-display text-lg font-black text-espresso">Direct Inquiries</h3>
-              <p className="font-body text-sm font-extrabold text-espresso mt-1">
+              <h3 className="font-display text-lg font-black text-white">Direct Inquiries</h3>
+              <p className="font-body text-sm font-extrabold text-white mt-1">
                 📧 Support Email:{' '}
                 <a href="mailto:shivampandeyy97@gmail.com" className="text-brightOrange hover:underline">
                   shivampandeyy97@gmail.com
@@ -47,7 +47,7 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <h2 className="font-display text-xl font-bold text-espresso border-b border-espresso/10 pb-1 mt-4">
+            <h2 className="font-display text-xl font-bold text-white border-b border-espresso/30 pb-1 mt-4">
               Send Us a Message
             </h2>
 

@@ -30,17 +30,17 @@ export default function BlogPostPage({ params }: Props) {
         <div className="max-w-3xl mx-auto px-4 md:px-8 py-10">
           <Link
             href="/"
-            className="inline-block mb-6 font-display font-extrabold text-espresso hover:text-brightOrange transition-colors"
+            className="inline-block mb-6 font-display font-extrabold text-white hover:text-brightOrange transition-colors"
           >
             👈 Back to Board
           </Link>
 
-          <div className="bg-white border-2 border-espresso rounded-neoLg p-8 shadow-neoLg flex flex-col gap-6">
+          <div className="bg-cardBg border-2 border-espresso rounded-neoLg p-8 shadow-neoLg flex flex-col gap-6">
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-brightOrange bg-pastelOrange px-2.5 py-0.5 border border-espresso rounded-full">
                 {post.category}
               </span>
-              <h1 className="font-display text-3xl md:text-4xl font-black text-espresso mt-3 leading-tight">
+              <h1 className="font-display text-3xl md:text-4xl font-black text-white mt-3 leading-tight">
                 {post.title}
               </h1>
               <p className="text-xs font-bold text-textMuted mt-2">
@@ -49,7 +49,7 @@ export default function BlogPostPage({ params }: Props) {
             </div>
 
             {/* Intro */}
-            <p className="font-body text-sm font-semibold text-espresso leading-relaxed border-l-4 border-l-brightOrange pl-4">
+            <p className="font-body text-sm font-semibold text-white leading-relaxed border-l-4 border-l-brightOrange pl-4">
               {post.intro}
             </p>
 
@@ -57,7 +57,7 @@ export default function BlogPostPage({ params }: Props) {
             {post.sections.map((section, idx) => (
               <div key={idx} className="flex flex-col gap-3">
                 {section.heading && (
-                  <h2 className="font-display text-xl font-extrabold text-espresso mt-4 border-b border-espresso/10 pb-1">
+                  <h2 className="font-display text-xl font-extrabold text-white mt-4 border-b border-espresso/30 pb-1">
                     {section.heading}
                   </h2>
                 )}
@@ -76,7 +76,7 @@ export default function BlogPostPage({ params }: Props) {
 
             {/* Outro */}
             {post.outro && (
-              <p className="font-body text-sm font-semibold text-espresso leading-relaxed border-t border-espresso/10 pt-4 italic">
+              <p className="font-body text-sm font-semibold text-white leading-relaxed border-t border-espresso/30 pt-4 italic">
                 {post.outro}
               </p>
             )}

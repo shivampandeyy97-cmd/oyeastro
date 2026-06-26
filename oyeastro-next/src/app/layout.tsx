@@ -39,9 +39,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${syne.variable}`}>
+    <html lang="en" className={`dark ${spaceGrotesk.variable} ${syne.variable}`}>
       <head />
-      <body className="font-body bg-bgWarm text-espresso min-h-screen overflow-x-hidden relative">
+      <body className="font-body bg-bgWarm text-textPrimary min-h-screen overflow-x-hidden relative">
         <MeteorShower />
         {children}
 

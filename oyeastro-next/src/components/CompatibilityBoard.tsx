@@ -128,24 +128,24 @@ export default function CompatibilityBoard() {
     }
   }
 
-  const inputClass = "w-full pl-10 pr-3 py-3 border-2 border-espresso rounded-neoSm font-body text-sm font-medium text-espresso bg-white neo-input focus:outline-none transition-all"
+  const inputClass = "w-full pl-10 pr-3 py-3 border-2 border-espresso rounded-neoSm font-body text-sm font-medium text-white bg-[#0b0d26] neo-input focus:outline-none transition-all"
 
   return (
     <div className="w-full max-w-5xl mx-auto px-4 md:px-8 mt-6">
       {/* Intake Forms Panel */}
       {!result && !isLoading && (
         <form onSubmit={handleSubmit} className="bg-cardBg border-2 border-espresso rounded-neoLg p-8 shadow-neoLg flex flex-col gap-6 relative">
-          <h1 className="font-display text-2xl md:text-3xl font-extrabold text-center text-espresso">
-            💞 Cosmic Compatibility Matcher
+          <h1 className="font-display text-2xl md:text-3xl font-extrabold text-center text-white">
+            💞 Ultimate Vibe Chemistry Matcher
           </h1>
           <p className="text-textSecondary text-sm text-center -mt-3">
-            Real 8-Kuta Vedic Ashtakoot (36 points) analysis & Gemini-narrated match alignment.
+            8-level cosmic chemistry vibe check (36 points score) & Gemini match analysis.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Person A Box */}
             <div className="flex flex-col gap-4 bg-pastelPurple/30 border-2 border-espresso border-dashed rounded-neoLg p-6">
-              <h2 className="font-display text-lg font-extrabold text-espresso border-b-2 border-espresso pb-1">
+              <h2 className="font-display text-lg font-extrabold text-white border-b-2 border-espresso/30 pb-1">
                 Person A (You)
               </h2>
 
@@ -213,7 +213,7 @@ export default function CompatibilityBoard() {
 
             {/* Person B Box */}
             <div className="flex flex-col gap-4 bg-pastelOrange/20 border-2 border-espresso border-dashed rounded-neoLg p-6">
-              <h2 className="font-display text-lg font-extrabold text-espresso border-b-2 border-espresso pb-1">
+              <h2 className="font-display text-lg font-extrabold text-white border-b-2 border-espresso/30 pb-1">
                 Person B (Them)
               </h2>
 
@@ -298,7 +298,7 @@ export default function CompatibilityBoard() {
       {isLoading && (
         <div className="my-16 flex flex-col items-center gap-4">
           <LoadingOrbit />
-          <span className="font-display font-bold text-espresso text-sm tracking-wider">Matching your orbits...</span>
+          <span className="font-display font-bold text-textSecondary text-sm tracking-wider">Matching your orbits...</span>
         </div>
       )}
 
@@ -308,30 +308,30 @@ export default function CompatibilityBoard() {
           <div className="bg-cardBg border-2 border-espresso rounded-neoLg p-6 md:p-8 shadow-neoLg flex flex-col items-center gap-6 relative">
             <button
               onClick={() => setResult(null)}
-              className="absolute left-6 top-6 px-4 py-2 border-2 border-espresso bg-white font-display text-xs font-extrabold rounded-neoSm shadow-neoSm hover:scale-[1.02] transition-transform cursor-pointer"
+              className="absolute left-6 top-6 px-4 py-2 border-2 border-espresso bg-[#0b0d26] text-white font-display text-xs font-extrabold rounded-neoSm shadow-neoSm hover:scale-[1.02] hover:bg-pastelPurple/20 transition-transform cursor-pointer"
             >
               ← Back to Matcher
             </button>
 
             {/* Score circle */}
             <div className="w-40 h-40 rounded-full border-4 border-espresso bg-pastelPink flex flex-col items-center justify-center shadow-neo mt-12 md:mt-0">
-              <span className="font-display text-4xl md:text-5xl font-black text-espresso">
+              <span className="font-display text-4xl md:text-5xl font-black text-white">
                 {result.totalScore}
               </span>
               <span className="text-xs font-bold text-textSecondary uppercase tracking-wider -mt-1">
                 / 36 pts
               </span>
-              <span className="text-xs font-extrabold text-brightPurple mt-1 bg-white border border-espresso px-2 py-0.5 rounded-full">
+              <span className="text-xs font-extrabold text-brightPurple mt-1 bg-[#0b0d26] border border-espresso px-2 py-0.5 rounded-full">
                 {result.percentage}% Match
               </span>
             </div>
 
             {/* Verdict */}
             <div className="text-center max-w-xl">
-              <h2 className="font-display text-2xl font-black text-espresso mb-2">
+              <h2 className="font-display text-2xl font-black text-white mb-2">
                 The Cosmic Verdict
               </h2>
-              <p className="font-body text-sm font-bold text-espresso leading-relaxed italic bg-pastelOrange/25 border-2 border-dashed border-espresso/20 rounded-neoSm p-4">
+              <p className="font-body text-sm font-bold text-white leading-relaxed italic bg-pastelOrange/25 border-2 border-dashed border-espresso/20 rounded-neoSm p-4">
                 "{result.summary}"
               </p>
             </div>
@@ -340,9 +340,9 @@ export default function CompatibilityBoard() {
             {result.narrative && (
               <div className="bg-pastelPurple/20 border-2 border-espresso rounded-neoLg p-6 max-w-2xl w-full flex flex-col gap-2">
                 <span className="self-start text-[10px] font-bold uppercase tracking-wider text-brightPurple bg-pastelPurple px-2.5 py-0.5 border-2 border-espresso rounded-full shadow-neoSm">
-                  Gemini Cosmic Narrative
+                  Gemini Match Analysis
                 </span>
-                <p className="font-body text-sm font-semibold text-espresso leading-relaxed mt-2">
+                <p className="font-body text-sm font-semibold text-purple-200 leading-relaxed mt-2">
                   {result.narrative}
                 </p>
               </div>
@@ -350,21 +350,21 @@ export default function CompatibilityBoard() {
 
             {/* Mangal Dosha flags */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl border-t-2 border-espresso/10 pt-6">
-              <div className="bg-white border-2 border-espresso rounded-neoSm p-3 shadow-neoSm flex justify-between items-center text-xs font-bold">
-                <span>{result.personA.meta.name}'s Mars Vibe</span>
+              <div className="bg-[#0b0d26] text-white border-2 border-espresso rounded-neoSm p-3 shadow-neoSm flex justify-between items-center text-xs font-bold">
+                <span>{result.personA.meta.name}'s Energy Temperature</span>
                 <span className={result.mangalDoshaA ? "text-brightPink bg-pastelPink border border-espresso px-2 py-0.5 rounded" : "text-brightGreen bg-pastelGreen border border-espresso px-2 py-0.5 rounded"}>
-                  {result.mangalDoshaA ? "⚠️ Mangal Dosha" : "✅ No Dosha"}
+                  {result.mangalDoshaA ? "⚠️ Cosmic Red Flags" : "✅ Chill Energy"}
                 </span>
               </div>
-              <div className="bg-white border-2 border-espresso rounded-neoSm p-3 shadow-neoSm flex justify-between items-center text-xs font-bold">
-                <span>{result.personB.meta.name}'s Mars Vibe</span>
+              <div className="bg-[#0b0d26] text-white border-2 border-espresso rounded-neoSm p-3 shadow-neoSm flex justify-between items-center text-xs font-bold">
+                <span>{result.personB.meta.name}'s Energy Temperature</span>
                 <span className={result.mangalDoshaB ? "text-brightPink bg-pastelPink border border-espresso px-2 py-0.5 rounded" : "text-brightGreen bg-pastelGreen border border-espresso px-2 py-0.5 rounded"}>
-                  {result.mangalDoshaB ? "⚠️ Mangal Dosha" : "✅ No Dosha"}
+                  {result.mangalDoshaB ? "⚠️ Cosmic Red Flags" : "✅ Chill Energy"}
                 </span>
               </div>
               {result.hasMangalDoshaCancellation && (
-                <div className="bg-pastelGreen border-2 border-espresso rounded-neoSm p-3 shadow-neoSm text-xs font-bold text-espresso text-center col-span-2">
-                  💫 Double Trouble! Both have Mangal Dosha, which cancel out naturally. Banter remains high.
+                <div className="bg-[#0b2f21] border-2 border-espresso rounded-neoSm p-3 shadow-neoSm text-xs font-bold text-white text-center col-span-2">
+                  💫 Double Trouble! Both have Cosmic Red Flags, which cancel out naturally. Banter remains high.
                 </div>
               )}
             </div>
@@ -380,18 +380,18 @@ export default function CompatibilityBoard() {
 
           {/* 8 Kutas breakdown table */}
           <div className="bg-cardBg border-2 border-espresso rounded-neoLg p-6 md:p-8 shadow-neoLg">
-            <h3 className="font-display text-xl font-black text-espresso mb-4 text-center">
-              Ashtakoot 8-Kuta Score Breakdown
+            <h3 className="font-display text-xl font-black text-white mb-4 text-center">
+              Cosmic Vibe Sync Breakdown
             </h3>
             <div className="flex flex-col gap-3">
               {result.kutas.map((kuta, index) => (
                 <div
                   key={index}
-                  className="bg-white border-2 border-espresso rounded-neoSm p-4 shadow-neoSm flex flex-col md:flex-row md:items-center justify-between gap-3"
+                  className="bg-[#0b0d26] border-2 border-espresso rounded-neoSm p-4 shadow-neoSm flex flex-col md:flex-row md:items-center justify-between gap-3 text-white"
                 >
                   <div className="flex flex-col gap-1 md:max-w-xl">
                     <div className="flex items-center gap-2">
-                      <span className="font-display font-extrabold text-espresso text-base">
+                      <span className="font-display font-extrabold text-white text-base">
                         {kuta.name}
                       </span>
                       <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded border border-espresso ${
@@ -405,7 +405,7 @@ export default function CompatibilityBoard() {
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-1.5 self-end md:self-center font-display text-lg font-black text-espresso">
+                  <div className="flex items-center gap-1.5 self-end md:self-center font-display text-lg font-black text-white">
                     <span>{kuta.scored}</span>
                     <span className="text-xs font-bold text-textMuted uppercase">/ {kuta.maxPoints} pts</span>
                   </div>

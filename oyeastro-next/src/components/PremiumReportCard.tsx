@@ -225,11 +225,11 @@ export default function PremiumReportCard({ chart }: Props) {
               {/* Tabs list */}
               <div className="flex bg-[#131438] border border-purple-500/10 rounded-full p-1 self-center w-full justify-between flex-wrap gap-1 md:gap-0">
                 {[
-                  { id: 'dasha', label: '📅 Era' },
-                  { id: 'transits', label: '🪐 Transits' },
+                  { id: 'dasha', label: '📅 Life Chapter' },
+                  { id: 'transits', label: '🪐 Star Shifts' },
                   { id: 'career', label: '💼 Job/Cash' },
-                  { id: 'love', label: '💖 Love' },
-                  { id: 'health', label: '🔋 Vibe' },
+                  { id: 'love', label: '💖 Love/Rizz' },
+                  { id: 'health', label: '🔋 Vibe Energy' },
                 ].map((t) => (
                   <button
                     key={t.id}
@@ -284,19 +284,19 @@ export default function PremiumReportCard({ chart }: Props) {
         {/* Feature List */}
         <ul className="flex flex-col gap-2.5 text-xs font-bold text-purple-200 border-y border-purple-500/10 py-4 my-1">
           <li className="flex items-center gap-2">
-            <span>📅</span> Full Vimshottari Dasha expansion (sub-period analysis)
+            <span>📅</span> Full Life Chapter breakdown & timeline analysis
           </li>
           <li className="flex items-center gap-2">
-            <span>🪐</span> Significant Transit Dates (Jupiter, Saturn, Rahu)
+            <span>🪐</span> Major Star Shifts & outer planet transitions
           </li>
           <li className="flex items-center gap-2">
-            <span>💼</span> Career & Money Windows (when to launch or chill)
+            <span>💼</span> Career & Cash Windows (when to make big moves)
           </li>
           <li className="flex items-center gap-2">
-            <span>💖</span> Relationship & Love Forecasts (spicy periods)
+            <span>💖</span> Rizz, Connection & Relationship Forecasts
           </li>
           <li className="flex items-center gap-2">
-            <span>🔋</span> Health & Energy drain calendars
+            <span>🔋</span> Daily Energy & Vibe Drain calendars
           </li>
         </ul>
 

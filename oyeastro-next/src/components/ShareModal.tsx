@@ -59,7 +59,7 @@ export default function ShareModal({ chart, isOpen, onClose, birthData }: Props)
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-espresso/70 backdrop-blur-sm">
-      <div className="bg-bgWarm border-4 border-espresso rounded-neoLg p-6 shadow-[8px_8px_0px_#2c1905] max-w-lg w-full flex flex-col gap-4 relative animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-bgWarm border-4 border-espresso rounded-neoLg p-6 shadow-neo max-w-lg w-full flex flex-col gap-4 relative animate-in fade-in zoom-in-95 duration-200">
         <button
           onClick={onClose}
           className="absolute -right-3 -top-3 w-10 h-10 bg-brightPink text-white border-2 border-espresso rounded-full shadow-neoSm flex items-center justify-center font-display text-lg font-black hover:scale-105 transition-transform cursor-pointer"
@@ -67,16 +67,16 @@ export default function ShareModal({ chart, isOpen, onClose, birthData }: Props)
           ✕
         </button>
 
-        <h3 className="font-display font-extrabold text-2xl text-espresso text-center">
+        <h3 className="font-display font-extrabold text-2xl text-white text-center">
           Share Your Cosmos
         </h3>
 
         {/* Format Selectors */}
-        <div className="flex border-2 border-espresso rounded-neoSm bg-white overflow-hidden shadow-neoSm">
+        <div className="flex border-2 border-espresso rounded-neoSm bg-[#0b0d26] overflow-hidden shadow-neoSm">
           <button
             onClick={() => setFormat('wide')}
             className={`flex-1 py-2 text-xs font-bold transition-colors ${
-              format === 'wide' ? 'bg-brightPurple text-white' : 'bg-white text-espresso hover:bg-pastelOrange/20'
+              format === 'wide' ? 'bg-brightPurple text-white' : 'bg-[#0b0d26] text-white hover:bg-pastelPurple/20'
             }`}
           >
             Wide (16:9 Landscape)
@@ -84,7 +84,7 @@ export default function ShareModal({ chart, isOpen, onClose, birthData }: Props)
           <button
             onClick={() => setFormat('story')}
             className={`flex-1 py-2 text-xs font-bold transition-colors border-l-2 border-espresso ${
-              format === 'story' ? 'bg-brightPurple text-white' : 'bg-white text-espresso hover:bg-pastelOrange/20'
+              format === 'story' ? 'bg-brightPurple text-white' : 'bg-[#0b0d26] text-white hover:bg-pastelPurple/20'
             }`}
           >
             Story (9:16 Portrait)
@@ -112,7 +112,7 @@ export default function ShareModal({ chart, isOpen, onClose, birthData }: Props)
 
           <button
             onClick={handleDownload}
-            className="w-full py-3 bg-white text-espresso font-display text-sm font-extrabold border-2 border-espresso rounded-neoSm shadow-neo hover:translate-y-[-2px] hover:shadow-neoLg active:translate-y-[2px] transition-all cursor-pointer"
+            className="w-full py-3 bg-[#0b0d26] text-white font-display text-sm font-extrabold border-2 border-espresso rounded-neoSm shadow-neo hover:translate-y-[-2px] hover:shadow-neoLg active:translate-y-[2px] hover:bg-pastelPurple/20 transition-all cursor-pointer"
           >
             💾 Download PNG Image
           </button>

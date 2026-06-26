@@ -23,13 +23,13 @@ function computeVarna(a: ChartResult, b: ChartResult): KutaScore {
   const varnaB = getVarna(b.houseData.lagnaSignIndex)
   const compatible = varnaA >= varnaB
   return {
-    name: 'Varna',
+    name: 'Work & Ambition Alignment',
     maxPoints: 1,
     scored: compatible ? 1 : 0,
     compatible,
     description: compatible
-      ? 'Spiritual compatibility ✅ — matching ambition levels and spiritual orientation.'
-      : 'Spiritual mismatch ⚠️ — different life philosophies may cause friction.',
+      ? 'Drive compatibility ✅ — matching ambition levels and career orientation.'
+      : 'Drive mismatch ⚠️ — different speed of execution or life goals may cause friction.',
   }
 }
 
@@ -49,7 +49,7 @@ function computeVashya(a: ChartResult, b: ChartResult): KutaScore {
   const gB = getVashyaGroup(b.houseData.lagnaSignIndex)
   const compatible = gA === gB
   return {
-    name: 'Vashya',
+    name: 'Magnetic Attraction',
     maxPoints: 2,
     scored: compatible ? 2 : 1,
     compatible: true,
@@ -69,15 +69,15 @@ function computeTara(a: ChartResult, b: ChartResult): KutaScore {
   const favourable = [0, 2, 4, 6].includes(diff)
   const pts = favourable ? 3 : diff === 1 || diff === 3 ? 1 : 0
   return {
-    name: 'Tara',
+    name: 'Life Path Sync',
     maxPoints: 3,
     scored: pts,
     compatible: pts > 0,
     description: pts === 3
-      ? 'Nakshatra harmony ✅ — your star groups are deeply compatible. Long-term bond indicated.'
+      ? 'Star groups sync ✅ — your birth constellations are deeply compatible. Long-term bond indicated.'
       : pts > 0
-        ? 'Moderate star harmony — some friction but workable with communication.'
-        : 'Star tension ⚠️ — different energy cycles. Growth requires conscious alignment.',
+        ? 'Moderate path harmony — some friction but workable with communication.'
+        : 'Path tension ⚠️ — different energy cycles. Growth requires conscious alignment.',
   }
 }
 
@@ -97,15 +97,15 @@ function computeYoni(a: ChartResult, b: ChartResult): KutaScore {
   const friendlyA = YONI_FRIENDLY[yoniA]?.includes(yoniB)
   const pts = sameYoni ? 4 : friendlyA ? 3 : 1
   return {
-    name: 'Yoni',
+    name: 'Physical Rhythm Harmony',
     maxPoints: 4,
     scored: pts,
     compatible: pts >= 3,
     description: sameYoni
-      ? `${yoniA} + ${yoniB} ✅ — same Yoni! Maximum physical compatibility and attraction. Hot.`
+      ? `${yoniA} + ${yoniB} ✅ — matching physical frequencies! Maximum physical compatibility and attraction. Hot.`
       : friendlyA
-        ? `${yoniA} + ${yoniB} — friendly Yoni pair. Good physical harmony with natural understanding.`
-        : `${yoniA} + ${yoniB} ⚠️ — different Yoni energy. Physical rhythms may need alignment.`,
+        ? `${yoniA} + ${yoniB} — friendly physical chemistry. Good physical harmony with natural understanding.`
+        : `${yoniA} + ${yoniB} ⚠️ — different physical rhythms. Intimacy schedules may need alignment.`,
   }
 }
 
@@ -119,15 +119,15 @@ function computeGrahaMaitri(a: ChartResult, b: ChartResult): KutaScore {
   const avg = (friendshipAtoB + friendshipBtoA) / 2
   const pts = avg >= 2 ? 5 : avg >= 1 ? 3 : 1
   return {
-    name: 'Graha Maitri',
+    name: 'Intellectual Connection',
     maxPoints: 5,
     scored: pts,
     compatible: pts >= 3,
     description: pts === 5
-      ? `${lordA} + ${lordB} ✅ — planetary best friends! Natural understanding, shared goals, ride or die energy.`
+      ? `${lordA} + ${lordB} ✅ — stellar best friends! Natural understanding, shared goals, ride or die energy.`
       : pts >= 3
-        ? `${lordA} + ${lordB} — neutral-to-friendly planets. Good friendship foundation, communication key.`
-        : `${lordA} + ${lordB} ⚠️ — planetary friction. Different worldviews; compromise required.`,
+        ? `${lordA} + ${lordB} — neutral-to-friendly energy. Good friendship foundation, communication key.`
+        : `${lordA} + ${lordB} ⚠️ — mental friction. Different worldviews; compromise required.`,
   }
 }
 
@@ -145,15 +145,15 @@ function computeGana(a: ChartResult, b: ChartResult): KutaScore {
   const compatible = same || (ganaA === 'Deva' && ganaB === 'Manushya') || (ganaA === 'Manushya' && ganaB === 'Deva')
   const pts = same ? 6 : compatible ? 3 : 0
   return {
-    name: 'Gana',
+    name: 'Temperament Compatibility',
     maxPoints: 6,
     scored: pts,
     compatible: pts > 0,
     description: same
-      ? `${ganaA} + ${ganaB} ✅ — same energy tribe! Perfect temperamental harmony. You just get each other.`
+      ? `${ganaA} + ${ganaB} ✅ — same temperament type! Perfect personality harmony. You just get each other.`
       : compatible
         ? `${ganaA} + ${ganaB} — workable pairing. Some personality differences but mutual respect holds it together.`
-        : `${ganaA} + ${ganaB} ⚠️ — temperamental clash. Fundamentally different natures; needs lots of patience.`,
+        : `${ganaA} + ${ganaB} ⚠️ — temperament clash. Fundamentally different natures; needs lots of patience.`,
   }
 }
 
@@ -168,13 +168,13 @@ function computeBhakoot(a: ChartResult, b: ChartResult): KutaScore {
     || ([1, 11].includes(diff))
   const pts = inauspicious ? 0 : 7
   return {
-    name: 'Bhakoot',
+    name: 'Emotional Resonance',
     maxPoints: 7,
     scored: pts,
     compatible: !inauspicious,
     description: pts === 7
-      ? `${a.bigThree.moon.sign} + ${b.bigThree.moon.sign} ✅ — harmonious moon signs. Emotional resonance, great intuitive understanding.`
-      : `${a.bigThree.moon.sign} + ${b.bigThree.moon.sign} ⚠️ — 6/8 or 2/12 moon tension. Health and emotional cycles may clash.`,
+      ? `${a.bigThree.moon.sign} + ${b.bigThree.moon.sign} ✅ — harmonious heart signs. Emotional resonance, great intuitive understanding.`
+      : `${a.bigThree.moon.sign} + ${b.bigThree.moon.sign} ⚠️ — moon tension (6/8 or 2/12 pattern). Health and emotional cycles may clash.`,
   }
 }
 
@@ -190,13 +190,13 @@ function computeNadi(a: ChartResult, b: ChartResult): KutaScore {
   const nadiB = getMoonNadi(b)
   const same = nadiA === nadiB
   return {
-    name: 'Nadi',
+    name: 'Biological Energy Sync',
     maxPoints: 8,
     scored: same ? 0 : 8,
     compatible: !same,
     description: !same
-      ? `${nadiA} + ${nadiB} ✅ — different Nadi! Full 8 points. Complementary energies = balanced relationship.`
-      : `${nadiA} + ${nadiA} ⚠️ — Nadi Dosha! Same nadi can indicate health issues for offspring. Consult a pandit.`,
+      ? `${nadiA} + ${nadiB} ✅ — balanced energy type! Full 8 points. Complementary energies = balanced relationship.`
+      : `${nadiA} + ${nadiA} ⚠️ — biological energy clash! Same body constitution can indicate friction. Work on balancing your mutual lifestyle routines.`,
   }
 }
 

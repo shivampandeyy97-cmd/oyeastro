@@ -5,19 +5,19 @@
 @tailwind utilities;
 
 :root {
-  --bg-color: #fffdf0;
-  --card-bg: #ffffff;
-  --espresso: #2c1905;
-  --shadow-color: #2c1905;
-  --text-primary: #2c1905;
-  --text-secondary: #5e4630;
-  --text-muted: #8d7560;
-  --pastel-pink: #ffe4e9;
-  --pastel-purple: #eae6ff;
-  --pastel-green: #e1f7ec;
-  --pastel-blue: #e0f2fe;
-  --pastel-orange: #ffebd8;
-  --bright-pink: #ff6b8b;
+  --bg-color: #03040c; /* Deep Cosmic Space Black */
+  --card-bg: #090a1e;  /* Deep Purple-Dark Card */
+  --espresso: #05060f; /* Navy Black for crisp neobrutalist borders */
+  --shadow-color: #7c3aed; /* Neon Purple Shadow */
+  --text-primary: #f8fafc; /* Slate White */
+  --text-secondary: #c084fc; /* Neon Lavender */
+  --text-muted: #94a3b8; /* Cool Slate Grey */
+  --pastel-pink: #2e122b; /* Deep Neon Pink */
+  --pastel-purple: #1e1b4b; /* Deep Indigo */
+  --pastel-green: #064e3b; /* Deep Emerald */
+  --pastel-blue: #0c4a6e; /* Deep Sky Blue */
+  --pastel-orange: #451a03; /* Deep Rust Orange */
+  --bright-pink: #ff3b69;
   --bright-purple: #8a5cf5;
   --bright-cyan: #0ea5e9;
   --bright-green: #10b981;
@@ -26,18 +26,18 @@
 }
 
 .dark {
-  --bg-color: #0b0c20;
-  --card-bg: #12132d;
-  --espresso: #ffffff;
+  --bg-color: #03040c;
+  --card-bg: #090a1e;
+  --espresso: #05060f;
   --shadow-color: #7c3aed;
-  --text-primary: #ffffff;
+  --text-primary: #f8fafc;
   --text-secondary: #c084fc;
-  --text-muted: #a78bfa;
-  --pastel-pink: #1d1b33;
-  --pastel-purple: #171430;
-  --pastel-green: #0b221a;
-  --pastel-blue: #091a32;
-  --pastel-orange: #281a10;
+  --text-muted: #94a3b8;
+  --pastel-pink: #2e122b;
+  --pastel-purple: #1e1b4b;
+  --pastel-green: #064e3b;
+  --pastel-blue: #0c4a6e;
+  --pastel-orange: #451a03;
 }
 
 * {
@@ -89,12 +89,17 @@ body {
 .chart-text-planets {
   font-size: 10px;
   font-weight: 700;
-  fill: #2c1905;
+  fill: var(--text-primary);
 }
 .chart-text-house {
   font-size: 7px;
-  fill: #8d7560;
+  fill: var(--text-muted);
   pointer-events: none;
+}
+.chart-grid-line {
+  stroke: var(--text-secondary);
+  stroke-width: 1.8;
+  opacity: 0.35;
 }
 .house-sector {
   fill: transparent;
@@ -102,7 +107,7 @@ body {
   transition: fill 0.2s;
 }
 .house-sector:hover {
-  fill: rgba(234, 179, 8, 0.15);
+  fill: rgba(124, 58, 237, 0.15);
 }
 
 /* Vinyl Spin */

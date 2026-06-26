@@ -1,4 +1,3 @@
 [build]
   base = "oyeastro-next"
   command = "npm run build"
-  publish = ".next"

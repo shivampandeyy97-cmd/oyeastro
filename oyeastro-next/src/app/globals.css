@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-color: #fffdf0;
+  --card-bg: #ffffff;
+  --espresso: #2c1905;
+  --shadow-color: #2c1905;
+  --text-primary: #2c1905;
+  --text-secondary: #5e4630;
+  --text-muted: #8d7560;
+  --pastel-pink: #ffe4e9;
+  --pastel-purple: #eae6ff;
+  --pastel-green: #e1f7ec;
+  --pastel-blue: #e0f2fe;
+  --pastel-orange: #ffebd8;
+  --bright-pink: #ff6b8b;
+  --bright-purple: #8a5cf5;
+  --bright-cyan: #0ea5e9;
+  --bright-green: #10b981;
+  --bright-orange: #f97316;
+  --bright-gold: #eab308;
+}
+
+.dark {
+  --bg-color: #0b0c20;
+  --card-bg: #12132d;
+  --espresso: #ffffff;
+  --shadow-color: #7c3aed;
+  --text-primary: #ffffff;
+  --text-secondary: #c084fc;
+  --text-muted: #a78bfa;
+  --pastel-pink: #1d1b33;
+  --pastel-purple: #171430;
+  --pastel-green: #0b221a;
+  --pastel-blue: #091a32;
+  --pastel-orange: #281a10;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-color); }
+::-webkit-scrollbar-thumb {
+  background: var(--espresso);
+  border: 2px solid var(--bg-color);
+  border-radius: 4px;
+}
+
+/* Masonry Board */
+.masonry-board {
+  columns: 3 320px;
+  column-gap: 1.5rem;
+  width: 100%;
+}
+
+.masonry-board .pin-card {
+  break-inside: avoid;
+  margin-bottom: 1.5rem;
+}
+
+/* SVG Chart styles */
+.chart-text-rashi {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  fill: #f97316;
+}
+.chart-text-planets {
+  font-size: 10px;
+  font-weight: 700;
+  fill: #2c1905;
+}
+.chart-text-house {
+  font-size: 7px;
+  fill: #8d7560;
+  pointer-events: none;
+}
+.house-sector {
+  fill: transparent;
+  cursor: pointer;
+  transition: fill 0.2s;
+}
+.house-sector:hover {
+  fill: rgba(234, 179, 8, 0.15);
+}
+
+/* Vinyl Spin */
+@keyframes spinVinyl {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.vinyl-spinning {
+  animation: spinVinyl 12s linear infinite;
+}
+
+/* Polaroid hover */
+.polaroid-shot {
+  transition: transform 0.25s ease;
+}
+.polaroid-shot:hover {
+  transform: scale(1.04) rotate(0deg) !important;
+}
+
+/* Input focus */
+.neo-input:focus {
+  box-shadow: 3px 3px 0px var(--espresso);
+  outline: none;
+}
+
+/* Gauge animation */
+@keyframes gaugeReveal {
+  from { stroke-dashoffset: 283; }
+  to   { stroke-dashoffset: var(--gauge-offset); }
+}
+.gauge-arc {
+  animation: gaugeReveal 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Twinkling Stars */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+.animate-twinkle {
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+/* Meteor / Shooting Star Animation */
+@keyframes shootingStar {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(-35deg) scale(0.6);
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  20% {
+    transform: translate3d(-600px, 420px, 0) rotate(-35deg) scale(1.2);
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(-600px, 420px, 0) rotate(-35deg) scale(1.2);
+    opacity: 0;
+  }
+}
+.animate-meteor {
+  animation: shootingStar 7s linear infinite;
+}
+
+/* Slow Spin for Asteroids */
+@keyframes slowSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-slow-spin {
+  animation: slowSpin 35s linear infinite;
+}
+
+/* Floating animation for Asteroids */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(8deg); }
+}
+.animate-float {
+  animation: float 12s ease-in-out infinite;
+}
+

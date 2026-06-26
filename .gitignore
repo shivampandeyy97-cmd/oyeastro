@@ -1,3 +1,6 @@
 .DS_Store
 .gemini/
 *.log
+
+# Local Netlify folder
+.netlify

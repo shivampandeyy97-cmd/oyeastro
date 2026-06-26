@@ -282,7 +282,7 @@ export default function CompatibilityBoard() {
 
           <button
             type="submit"
-            className="px-10 py-4 bg-brightOrange text-white font-display text-lg font-extrabold border-2 border-espresso rounded-neoSm shadow-neo hover:scale-102 transition-transform cursor-pointer"
+            className="px-10 py-4 bg-brightOrange text-white font-display text-lg font-extrabold border-2 border-espresso rounded-neoSm shadow-neo hover:scale-[1.02] transition-transform cursor-pointer"
           >
             🔮 Match Our Vibes
           </button>
@@ -308,7 +308,7 @@ export default function CompatibilityBoard() {
           <div className="bg-cardBg border-2 border-espresso rounded-neoLg p-6 md:p-8 shadow-neoLg flex flex-col items-center gap-6 relative">
             <button
               onClick={() => setResult(null)}
-              className="absolute left-6 top-6 px-4 py-2 border-2 border-espresso bg-white font-display text-xs font-extrabold rounded-neoSm shadow-neoSm hover:scale-102 transition-transform cursor-pointer"
+              className="absolute left-6 top-6 px-4 py-2 border-2 border-espresso bg-white font-display text-xs font-extrabold rounded-neoSm shadow-neoSm hover:scale-[1.02] transition-transform cursor-pointer"
             >
               ← Back to Matcher
             </button>
@@ -372,7 +372,7 @@ export default function CompatibilityBoard() {
             {/* Share Card Trigger */}
             <button
               onClick={handleDownloadCard}
-              className="mt-2 px-8 py-3 bg-brightPurple text-white font-display text-sm font-extrabold border-2 border-espresso rounded-neoSm shadow-neo hover:scale-102 transition-transform cursor-pointer"
+              className="mt-2 px-8 py-3 bg-brightPurple text-white font-display text-sm font-extrabold border-2 border-espresso rounded-neoSm shadow-neo hover:scale-[1.02] transition-transform cursor-pointer"
             >
               📥 Download Match Share Card (PNG)
             </button>

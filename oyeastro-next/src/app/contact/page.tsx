@@ -84,7 +84,7 @@ export default function ContactPage() {
 
               <button
                 type="submit"
-                className="self-start px-8 py-3 bg-brightOrange text-white font-display text-sm font-extrabold border-2 border-espresso rounded-neoSm shadow-neo hover:scale-102 transition-transform cursor-pointer mt-2"
+                className="self-start px-8 py-3 bg-brightOrange text-white font-display text-sm font-extrabold border-2 border-espresso rounded-neoSm shadow-neo hover:scale-[1.02] transition-transform cursor-pointer mt-2"
               >
                 Send Message
               </button>

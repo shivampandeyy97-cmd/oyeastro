@@ -18,13 +18,9 @@ export default function ShareModal({ chart, isOpen, onClose, birthData }: Props)
   if (!isOpen) return null
 
   // Build OG card URL
-  const quote = `Rising: ${bigThree.rising.sign} · Sun: ${bigThree.sun.sign} · Moon: ${bigThree.moon.sign}`
+  const quote = `Dasha Era: ${chart.dasha.eraTitle} • Vibe: ${vibeScore.label}`
   const ogParams = new URLSearchParams({
     name: meta.name,
-    lagna: bigThree.rising.sign,
-    sun: bigThree.sun.sign,
-    moon: bigThree.moon.sign,
-    vibe: vibeScore.score.toString(),
     quote: quote,
     format: format,
   })

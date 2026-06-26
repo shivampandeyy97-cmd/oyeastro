@@ -4,10 +4,6 @@ import type { ChartResult } from '@/lib/astro/types'
 import CosmicVibeCard from './cards/CosmicVibeCard'
 import PremiumReportCard from './PremiumReportCard'
 import KundliCard from './cards/KundliCard'
-import BigThreeCard from './cards/BigThreeCard'
-import VibeScoreCard from './cards/VibeScoreCard'
-import DashaPlaylistCard from './cards/DashaPlaylistCard'
-import HoroscopeCard from './cards/HoroscopeCard'
 import ShareCard from './cards/ShareCard'
 
 interface Props {
@@ -46,20 +42,7 @@ export default function MasonryBoard({ chart, birthData, onShare }: Props) {
         {/* 1. Kundli Card */}
         <KundliCard chart={chart} />
 
-
-        {/* 2. Horoscope Card */}
-        <HoroscopeCard chart={chart} />
-
-        {/* 3. Big Three Card */}
-        <BigThreeCard chart={chart} />
-
-        {/* 4. Dasha Playlist Card */}
-        <DashaPlaylistCard chart={chart} />
-
-        {/* 5. Vibe Score Card */}
-        <VibeScoreCard chart={chart} />
-
-        {/* 6. Action Center (Share) Card */}
+        {/* 2. Action Center (Share) Card */}
         <ShareCard onShare={onShare} />
       </div>
     </div>

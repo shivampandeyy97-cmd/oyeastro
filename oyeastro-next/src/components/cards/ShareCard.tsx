@@ -16,7 +16,7 @@ export default function ShareCard({ onShare }: Props) {
 
       <button
         onClick={onShare}
-        className="w-full py-3.5 bg-brightPurple text-white font-display text-base font-extrabold border-2 border-espresso rounded-neoSm shadow-neo hover:scale-102 hover:shadow-neoLg transition-all cursor-pointer"
+        className="w-full py-3.5 bg-brightPurple text-white font-display text-base font-extrabold border-2 border-espresso rounded-neoSm shadow-neo hover:scale-[1.02] hover:shadow-neoLg transition-all cursor-pointer"
       >
         ✨ Generate IG Story Card
       </button>

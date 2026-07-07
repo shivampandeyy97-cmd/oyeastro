@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Space_Grotesk, Syne } from 'next/font/google'
 import Script from 'next/script'
 import MeteorShower from '@/components/MeteorShower'
+import { GameProvider } from '@/components/GameContext'
 import './globals.css'
 
 const spaceGrotesk = Space_Grotesk({
@@ -42,8 +43,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`dark ${spaceGrotesk.variable} ${syne.variable}`}>
       <head />
       <body className="font-body bg-bgWarm text-textPrimary min-h-screen overflow-x-hidden relative">
-        <MeteorShower />
-        {children}
+        <GameProvider>
+          <MeteorShower />
+          {children}
+        </GameProvider>
 
         {/* Google Analytics */}
         <Script
@@ -83,3 +86,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
+

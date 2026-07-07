@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from 'react'
 import type { BirthData, CompatibilityResult } from '@/lib/astro/types'
 import LoadingOrbit from './LoadingOrbit'
+import { useGame } from '@/components/GameContext'
+import { audioSystem } from '@/lib/audio'
 
 interface CitySuggestion {
   display_name: string
@@ -11,6 +13,7 @@ interface CitySuggestion {
 }
 
 export default function CompatibilityBoard() {
+  const { completeQuest } = useGame()
   // Person A
   const [nameA, setNameA] = useState('')
   const [dateA, setDateA] = useState('')
@@ -71,10 +74,16 @@ export default function CompatibilityBoard() {
     }, 400)
   }, [placeB])
 
+  const handleInputChange = (fieldSetter: (val: string) => void, val: string) => {
+    fieldSetter(val)
+    audioSystem.playClick()
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!dateA || !timeA || !placeA || !dateB || !timeB || !placeB) return
 
+    audioSystem.playChestOpen()
     setIsLoading(true)
     setError(null)
     setResult(null)
@@ -94,6 +103,9 @@ export default function CompatibilityBoard() {
       }
       const data = await res.json() as CompatibilityResult
       setResult(data)
+      // Play level unlock sound on match success
+      audioSystem.playLevelUp()
+      completeQuest('check_compatibility')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please check your inputs.')
     } finally {
@@ -103,6 +115,7 @@ export default function CompatibilityBoard() {
 
   const handleDownloadCard = async () => {
     if (!result) return
+    audioSystem.playClick()
     const quote = result.summary.split('—')[1]?.trim() || 'The stars have spoken.'
     const ogParams = new URLSearchParams({
       nameA: result.personA.meta.name,
@@ -123,38 +136,42 @@ export default function CompatibilityBoard() {
       a.click()
       document.body.removeChild(a)
       URL.revokeObjectURL(blobUrl)
+      completeQuest('download_share')
     } catch {
       window.open(url, '_blank')
+      completeQuest('download_share')
     }
   }
 
-  const inputClass = "w-full pl-10 pr-3 py-3 border-2 border-espresso rounded-neoSm font-body text-sm font-medium text-white bg-[#0b0d26] neo-input focus:outline-none transition-all"
+  const inputClass = "w-full pl-10 pr-3 py-3 border-3 border-black rounded-2xl font-body text-sm font-bold text-white bg-[#0b0d2a] focus:shadow-[2px_2px_0px_#00f5d4] focus:outline-none transition-all placeholder-white/30"
 
   return (
     <div className="w-full max-w-5xl mx-auto px-4 md:px-8 mt-6">
       {/* Intake Forms Panel */}
       {!result && !isLoading && (
-        <form onSubmit={handleSubmit} className="bg-cardBg border-2 border-espresso rounded-neoLg p-8 shadow-neoLg flex flex-col gap-6 relative">
-          <h1 className="font-display text-2xl md:text-3xl font-extrabold text-center text-white">
-            💞 Ultimate Vibe Chemistry Matcher
-          </h1>
-          <p className="text-textSecondary text-sm text-center -mt-3">
-            8-level cosmic chemistry vibe check (36 points score) & Gemini match analysis.
-          </p>
+        <form onSubmit={handleSubmit} className="bg-cardBg border-4 border-black rounded-3xl p-6 md:p-8 shadow-[6px_6px_0px_#00f5d4] flex flex-col gap-6 relative">
+          <div className="text-center">
+            <h1 className="font-graffiti text-3xl md:text-4xl text-white tracking-wide">
+              💞 Ultimate Vibe Matcher
+            </h1>
+            <p className="text-xs font-black uppercase text-brightGreen tracking-wider mt-2">
+              Sync orbits across 8 cosmic parameters (36 max points score)
+            </p>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-2">
             {/* Person A Box */}
-            <div className="flex flex-col gap-4 bg-pastelPurple/30 border-2 border-espresso border-dashed rounded-neoLg p-6">
-              <h2 className="font-display text-lg font-extrabold text-white border-b-2 border-espresso/30 pb-1">
+            <div className="flex flex-col gap-4 bg-pastelPurple/40 border-3 border-dashed border-black rounded-3xl p-6">
+              <h2 className="font-display text-lg font-black text-brightCyan border-b-2 border-black/40 pb-2">
                 Person A (You)
               </h2>
 
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold uppercase tracking-wider text-textSecondary">Name</label>
+                <label className="text-xs font-black uppercase tracking-wider text-textMuted">Nickname</label>
                 <input
                   type="text"
                   value={nameA}
-                  onChange={e => setNameA(e.target.value)}
+                  onChange={e => handleInputChange(setNameA, e.target.value)}
                   placeholder="e.g. Alex"
                   className={inputClass}
                   required
@@ -162,33 +179,33 @@ export default function CompatibilityBoard() {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold uppercase tracking-wider text-textSecondary">Birth Date</label>
+                <label className="text-xs font-black uppercase tracking-wider text-textMuted">Birth Date</label>
                 <input
                   type="date"
                   value={dateA}
-                  onChange={e => setDateA(e.target.value)}
+                  onChange={e => handleInputChange(setDateA, e.target.value)}
                   className={inputClass}
                   required
                 />
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold uppercase tracking-wider text-textSecondary">Birth Time</label>
+                <label className="text-xs font-black uppercase tracking-wider text-textMuted">Birth Time</label>
                 <input
                   type="time"
                   value={timeA}
-                  onChange={e => setTimeA(e.target.value)}
+                  onChange={e => handleInputChange(setTimeA, e.target.value)}
                   className={inputClass}
                   required
                 />
               </div>
 
               <div className="flex flex-col gap-1 relative">
-                <label className="text-xs font-bold uppercase tracking-wider text-textSecondary">Birth Place</label>
+                <label className="text-xs font-black uppercase tracking-wider text-textMuted">Birth City</label>
                 <input
                   type="text"
                   value={placeA}
-                  onChange={e => { setPlaceA(e.target.value); setShowSuggestionsA(true) }}
+                  onChange={e => { handleInputChange(setPlaceA, e.target.value); setShowSuggestionsA(true) }}
                   onBlur={() => setTimeout(() => setShowSuggestionsA(false), 200)}
                   placeholder="e.g. Mumbai, India"
                   className={inputClass}
@@ -196,12 +213,12 @@ export default function CompatibilityBoard() {
                   autoComplete="off"
                 />
                 {showSuggestionsA && suggestionsA.length > 0 && (
-                  <ul className="absolute top-full left-0 right-0 mt-1 bg-white border-2 border-espresso rounded-neoSm shadow-neo z-50 overflow-hidden">
+                  <ul className="absolute top-full left-0 right-0 mt-2 bg-[#090a24] text-white border-3 border-black rounded-2xl shadow-[4px_4px_0_#000] z-50 overflow-hidden">
                     {suggestionsA.map((s, i) => (
                       <li
                         key={i}
-                        className="px-3 py-2 text-xs cursor-pointer hover:bg-pastelOrange border-b border-espresso/10 last:border-0 truncate"
-                        onMouseDown={() => { setPlaceA(s.display_name.split(',').slice(0, 3).join(',')); setSuggestionsA([]) }}
+                        className="px-4 py-3 text-xs font-bold cursor-pointer hover:bg-brightPink hover:text-white border-b-2 border-black/40 last:border-0 truncate"
+                        onMouseDown={() => { handleInputChange(setPlaceA, s.display_name.split(',').slice(0, 3).join(',')); setSuggestionsA([]) }}
                       >
                         📍 {s.display_name.split(',').slice(0, 3).join(', ')}
                       </li>
@@ -212,17 +229,17 @@ export default function CompatibilityBoard() {
             </div>
 
             {/* Person B Box */}
-            <div className="flex flex-col gap-4 bg-pastelOrange/20 border-2 border-espresso border-dashed rounded-neoLg p-6">
-              <h2 className="font-display text-lg font-extrabold text-white border-b-2 border-espresso/30 pb-1">
+            <div className="flex flex-col gap-4 bg-pastelOrange/20 border-3 border-dashed border-black rounded-3xl p-6">
+              <h2 className="font-display text-lg font-black text-brightOrange border-b-2 border-black/40 pb-2">
                 Person B (Them)
               </h2>
 
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold uppercase tracking-wider text-textSecondary">Name</label>
+                <label className="text-xs font-black uppercase tracking-wider text-textMuted">Nickname</label>
                 <input
                   type="text"
                   value={nameB}
-                  onChange={e => setNameB(e.target.value)}
+                  onChange={e => handleInputChange(setNameB, e.target.value)}
                   placeholder="e.g. Sarah"
                   className={inputClass}
                   required
@@ -230,33 +247,33 @@ export default function CompatibilityBoard() {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold uppercase tracking-wider text-textSecondary">Birth Date</label>
+                <label className="text-xs font-black uppercase tracking-wider text-textMuted">Birth Date</label>
                 <input
                   type="date"
                   value={dateB}
-                  onChange={e => setDateB(e.target.value)}
+                  onChange={e => handleInputChange(setDateB, e.target.value)}
                   className={inputClass}
                   required
                 />
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold uppercase tracking-wider text-textSecondary">Birth Time</label>
+                <label className="text-xs font-black uppercase tracking-wider text-textMuted">Birth Time</label>
                 <input
                   type="time"
                   value={timeB}
-                  onChange={e => setTimeB(e.target.value)}
+                  onChange={e => handleInputChange(setTimeB, e.target.value)}
                   className={inputClass}
                   required
                 />
               </div>
 
               <div className="flex flex-col gap-1 relative">
-                <label className="text-xs font-bold uppercase tracking-wider text-textSecondary">Birth Place</label>
+                <label className="text-xs font-black uppercase tracking-wider text-textMuted">Birth City</label>
                 <input
                   type="text"
                   value={placeB}
-                  onChange={e => { setPlaceB(e.target.value); setShowSuggestionsB(true) }}
+                  onChange={e => { handleInputChange(setPlaceB, e.target.value); setShowSuggestionsB(true) }}
                   onBlur={() => setTimeout(() => setShowSuggestionsB(false), 200)}
                   placeholder="e.g. Delhi, India"
                   className={inputClass}
@@ -264,12 +281,12 @@ export default function CompatibilityBoard() {
                   autoComplete="off"
                 />
                 {showSuggestionsB && suggestionsB.length > 0 && (
-                  <ul className="absolute top-full left-0 right-0 mt-1 bg-white border-2 border-espresso rounded-neoSm shadow-neo z-50 overflow-hidden">
+                  <ul className="absolute top-full left-0 right-0 mt-2 bg-[#090a24] text-white border-3 border-black rounded-2xl shadow-[4px_4px_0_#000] z-50 overflow-hidden">
                     {suggestionsB.map((s, i) => (
                       <li
                         key={i}
-                        className="px-3 py-2 text-xs cursor-pointer hover:bg-pastelOrange border-b border-espresso/10 last:border-0 truncate"
-                        onMouseDown={() => { setPlaceB(s.display_name.split(',').slice(0, 3).join(',')); setSuggestionsB([]) }}
+                        className="px-4 py-3 text-xs font-bold cursor-pointer hover:bg-brightPink hover:text-white border-b-2 border-black/40 last:border-0 truncate"
+                        onMouseDown={() => { handleInputChange(setPlaceB, s.display_name.split(',').slice(0, 3).join(',')); setSuggestionsB([]) }}
                       >
                         📍 {s.display_name.split(',').slice(0, 3).join(', ')}
                       </li>
@@ -282,7 +299,7 @@ export default function CompatibilityBoard() {
 
           <button
             type="submit"
-            className="px-10 py-4 bg-brightOrange text-white font-display text-lg font-extrabold border-2 border-espresso rounded-neoSm shadow-neo hover:scale-[1.02] transition-transform cursor-pointer"
+            className="arcade-btn px-12 py-4.5 text-base mt-2"
           >
             🔮 Match Our Vibes
           </button>
@@ -290,7 +307,8 @@ export default function CompatibilityBoard() {
       )}
 
       {error && (
-        <div className="max-w-xl mx-auto my-6 px-4 py-3 bg-pastelPink text-brightPink border-2 border-espresso rounded-neoSm font-bold text-center shadow-neoSm">
+        <div className="max-w-xl mx-auto my-6 px-6 py-4.5 bg-pastelPink text-brightPink border-4 border-black rounded-3xl font-black text-center shadow-[4px_4px_0_#000] relative">
+          <span className="absolute -top-3 left-4 text-xs font-black bg-brightPink text-white px-2 py-0.5 border-2 border-black rounded-full">Error</span>
           ⚠️ {error}
         </div>
       )}
@@ -298,73 +316,73 @@ export default function CompatibilityBoard() {
       {isLoading && (
         <div className="my-16 flex flex-col items-center gap-4">
           <LoadingOrbit />
-          <span className="font-display font-bold text-textSecondary text-sm tracking-wider">Matching your orbits...</span>
+          <span className="font-display font-black text-brightCyan text-sm tracking-wider animate-pulse uppercase">Syncing orbits at high speed...</span>
         </div>
       )}
 
       {/* Results Display */}
       {result && !isLoading && (
         <div className="flex flex-col gap-8 animate-in fade-in zoom-in-95 duration-300">
-          <div className="bg-cardBg border-2 border-espresso rounded-neoLg p-6 md:p-8 shadow-neoLg flex flex-col items-center gap-6 relative">
+          <div className="bg-cardBg border-4 border-black rounded-3xl p-6 md:p-8 shadow-[6px_6px_0px_#00f5d4] flex flex-col items-center gap-6 relative">
             <button
-              onClick={() => setResult(null)}
-              className="absolute left-6 top-6 px-4 py-2 border-2 border-espresso bg-[#0b0d26] text-white font-display text-xs font-extrabold rounded-neoSm shadow-neoSm hover:scale-[1.02] hover:bg-pastelPurple/20 transition-transform cursor-pointer"
+              onClick={() => { audioSystem.playClick(); setResult(null) }}
+              className="absolute left-6 top-6 px-4 py-2 border-3 border-black bg-black text-white font-display text-xs font-black rounded-2xl shadow-[2px_2px_0_#000] hover:translate-y-[-1px] active:translate-y-[1px] transition-transform cursor-pointer"
             >
-              ← Back to Matcher
+              ← Retry Match
             </button>
 
             {/* Score circle */}
-            <div className="w-40 h-40 rounded-full border-4 border-espresso bg-pastelPink flex flex-col items-center justify-center shadow-neo mt-12 md:mt-0">
-              <span className="font-display text-4xl md:text-5xl font-black text-white">
+            <div className="w-40 h-40 rounded-full border-4 border-black bg-pastelPink flex flex-col items-center justify-center shadow-[4px_4px_0_#000] mt-12 md:mt-0 relative overflow-hidden animate-pulse">
+              <span className="font-display text-5xl font-black text-white">
                 {result.totalScore}
               </span>
-              <span className="text-xs font-bold text-textSecondary uppercase tracking-wider -mt-1">
+              <span className="text-[10px] font-black text-textSecondary uppercase tracking-wider -mt-1">
                 / 36 pts
               </span>
-              <span className="text-xs font-extrabold text-brightPurple mt-1 bg-[#0b0d26] border border-espresso px-2 py-0.5 rounded-full">
+              <span className="text-xs font-black text-black mt-2 bg-brightGreen border-2 border-black px-2.5 py-0.5 rounded-full shadow-[1.5px_1.5px_0_#000]">
                 {result.percentage}% Match
               </span>
             </div>
 
             {/* Verdict */}
             <div className="text-center max-w-xl">
-              <h2 className="font-display text-2xl font-black text-white mb-2">
-                The Cosmic Verdict
+              <h2 className="font-graffiti text-2xl text-white mb-3">
+                Cosmic Scoreboard Verdict
               </h2>
-              <p className="font-body text-sm font-bold text-white leading-relaxed italic bg-pastelOrange/25 border-2 border-dashed border-espresso/20 rounded-neoSm p-4">
+              <p className="font-body text-sm font-bold text-white leading-relaxed italic bg-pastelOrange/25 border-3 border-dashed border-black/40 rounded-3xl p-5 shadow-inner">
                 "{result.summary}"
               </p>
             </div>
 
             {/* AI narrative */}
             {result.narrative && (
-              <div className="bg-pastelPurple/20 border-2 border-espresso rounded-neoLg p-6 max-w-2xl w-full flex flex-col gap-2">
-                <span className="self-start text-[10px] font-bold uppercase tracking-wider text-brightPurple bg-pastelPurple px-2.5 py-0.5 border-2 border-espresso rounded-full shadow-neoSm">
-                  Gemini Match Analysis
+              <div className="bg-[#0b0d2c] border-3 border-black rounded-3xl p-6 max-w-2xl w-full flex flex-col gap-2 shadow-[3px_3px_0_#000]">
+                <span className="self-start text-[10px] font-black uppercase tracking-wider text-black bg-brightPurple px-3 py-1 border-2 border-black rounded-full shadow-[2.5px_2.5px_0_#000] rotate-[-2deg]">
+                  Gemini Synastry Breakdown
                 </span>
-                <p className="font-body text-sm font-semibold text-purple-200 leading-relaxed mt-2">
+                <p className="font-body text-sm font-bold text-purple-200 leading-relaxed mt-2.5">
                   {result.narrative}
                 </p>
               </div>
             )}
 
             {/* Mangal Dosha flags */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl border-t-2 border-espresso/10 pt-6">
-              <div className="bg-[#0b0d26] text-white border-2 border-espresso rounded-neoSm p-3 shadow-neoSm flex justify-between items-center text-xs font-bold">
-                <span>{result.personA.meta.name}'s Energy Temperature</span>
-                <span className={result.mangalDoshaA ? "text-brightPink bg-pastelPink border border-espresso px-2 py-0.5 rounded" : "text-brightGreen bg-pastelGreen border border-espresso px-2 py-0.5 rounded"}>
-                  {result.mangalDoshaA ? "⚠️ Cosmic Red Flags" : "✅ Chill Energy"}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl border-t-2 border-black/20 pt-6">
+              <div className="bg-[#0b0d2a] text-white border-3 border-black rounded-2xl p-4.5 shadow-[3px_3px_0_#000] flex justify-between items-center text-xs font-bold">
+                <span className="font-black text-white">{result.personA.meta.name}'s Heat</span>
+                <span className={result.mangalDoshaA ? "text-white bg-brightPink border-2 border-black px-3 py-1 rounded-full text-[10px] font-black uppercase shadow-[1.5px_1.5px_0_#000]" : "text-black bg-brightGreen border-2 border-black px-3 py-1 rounded-full text-[10px] font-black uppercase shadow-[1.5px_1.5px_0_#000]"}>
+                  {result.mangalDoshaA ? "⚠️ Aggressive" : "✅ Chill"}
                 </span>
               </div>
-              <div className="bg-[#0b0d26] text-white border-2 border-espresso rounded-neoSm p-3 shadow-neoSm flex justify-between items-center text-xs font-bold">
-                <span>{result.personB.meta.name}'s Energy Temperature</span>
-                <span className={result.mangalDoshaB ? "text-brightPink bg-pastelPink border border-espresso px-2 py-0.5 rounded" : "text-brightGreen bg-pastelGreen border border-espresso px-2 py-0.5 rounded"}>
-                  {result.mangalDoshaB ? "⚠️ Cosmic Red Flags" : "✅ Chill Energy"}
+              <div className="bg-[#0b0d2a] text-white border-3 border-black rounded-2xl p-4.5 shadow-[3px_3px_0_#000] flex justify-between items-center text-xs font-bold">
+                <span className="font-black text-white">{result.personB.meta.name}'s Heat</span>
+                <span className={result.mangalDoshaB ? "text-white bg-brightPink border-2 border-black px-3 py-1 rounded-full text-[10px] font-black uppercase shadow-[1.5px_1.5px_0_#000]" : "text-black bg-brightGreen border-2 border-black px-3 py-1 rounded-full text-[10px] font-black uppercase shadow-[1.5px_1.5px_0_#000]"}>
+                  {result.mangalDoshaB ? "⚠️ Aggressive" : "✅ Chill"}
                 </span>
               </div>
               {result.hasMangalDoshaCancellation && (
-                <div className="bg-[#0b2f21] border-2 border-espresso rounded-neoSm p-3 shadow-neoSm text-xs font-bold text-white text-center col-span-2">
-                  💫 Double Trouble! Both have Cosmic Red Flags, which cancel out naturally. Banter remains high.
+                <div className="bg-pastelGreen border-3 border-black rounded-2xl p-4.5 shadow-[3px_3px_0_#000] text-xs font-black text-white text-center col-span-2">
+                  💫 Double Trouble! Both runners have matching solar heat levels, neutralizing the friction. Perfect banter balance.
                 </div>
               )}
             </div>
@@ -372,42 +390,42 @@ export default function CompatibilityBoard() {
             {/* Share Card Trigger */}
             <button
               onClick={handleDownloadCard}
-              className="mt-2 px-8 py-3 bg-brightPurple text-white font-display text-sm font-extrabold border-2 border-espresso rounded-neoSm shadow-neo hover:scale-[1.02] transition-transform cursor-pointer"
+              className="arcade-btn px-8 py-3.5 text-xs font-black mt-2"
             >
               📥 Download Match Share Card (PNG)
             </button>
           </div>
 
           {/* 8 Kutas breakdown table */}
-          <div className="bg-cardBg border-2 border-espresso rounded-neoLg p-6 md:p-8 shadow-neoLg">
-            <h3 className="font-display text-xl font-black text-white mb-4 text-center">
-              Cosmic Vibe Sync Breakdown
+          <div className="bg-cardBg border-4 border-black rounded-3xl p-6 md:p-8 shadow-[6px_6px_0px_#00f5d4]">
+            <h3 className="font-graffiti text-xl text-white mb-6 text-center">
+              Synastry Parameter Breakdown
             </h3>
             <div className="flex flex-col gap-3">
               {result.kutas.map((kuta, index) => (
                 <div
                   key={index}
-                  className="bg-[#0b0d26] border-2 border-espresso rounded-neoSm p-4 shadow-neoSm flex flex-col md:flex-row md:items-center justify-between gap-3 text-white"
+                  className="bg-[#0b0d2a] border-3 border-black rounded-2xl p-4 shadow-[3px_3px_0_#000] flex flex-col md:flex-row md:items-center justify-between gap-3 text-white hover:scale-[1.01] transition-transform"
                 >
                   <div className="flex flex-col gap-1 md:max-w-xl">
                     <div className="flex items-center gap-2">
-                      <span className="font-display font-extrabold text-white text-base">
+                      <span className="font-display font-black text-white text-base">
                         {kuta.name}
                       </span>
-                      <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded border border-espresso ${
-                        kuta.compatible ? "bg-pastelGreen text-brightGreen" : "bg-pastelPink text-brightPink"
+                      <span className={`text-[9px] font-black px-2.5 py-0.5 rounded-full border-2 border-black shadow-[1.5px_1.5px_0_#000] uppercase ${
+                        kuta.compatible ? "bg-brightGreen text-black" : "bg-brightPink text-white"
                       }`}>
                         {kuta.compatible ? "Compatible" : "Tension"}
                       </span>
                     </div>
-                    <span className="text-xs font-semibold text-textSecondary leading-relaxed">
+                    <span className="text-xs font-semibold text-textMuted leading-relaxed">
                       {kuta.description}
                     </span>
                   </div>
 
                   <div className="flex items-center gap-1.5 self-end md:self-center font-display text-lg font-black text-white">
-                    <span>{kuta.scored}</span>
-                    <span className="text-xs font-bold text-textMuted uppercase">/ {kuta.maxPoints} pts</span>
+                    <span className="text-brightGold">{kuta.scored}</span>
+                    <span className="text-xs font-black text-textMuted uppercase">/ {kuta.maxPoints} pts</span>
                   </div>
                 </div>
               ))}
@@ -418,3 +436,4 @@ export default function CompatibilityBoard() {
     </div>
   )
 }
+

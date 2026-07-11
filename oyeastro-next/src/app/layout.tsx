@@ -1,52 +1,48 @@
 import type { Metadata } from 'next'
-import { Space_Grotesk, Syne } from 'next/font/google'
+import { Fraunces, DM_Sans } from 'next/font/google'
 import Script from 'next/script'
-import MeteorShower from '@/components/MeteorShower'
-import { GameProvider } from '@/components/GameContext'
 import './globals.css'
 
-const spaceGrotesk = Space_Grotesk({
+const fraunces = Fraunces({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-space-grotesk',
+  weight: ['300', '400', '500'],
+  variable: '--font-fraunces',
+  style: ['normal', 'italic'],
   display: 'swap',
 })
 
-const syne = Syne({
+const dmSans = DM_Sans({
   subsets: ['latin'],
-  weight: ['700', '800'],
-  variable: '--font-syne',
+  weight: ['300', '400', '500'],
+  variable: '--font-dm-sans',
   display: 'swap',
 })
 
 export const metadata: Metadata = {
-  title: 'OyeAstro — Vedic Astrology Vibe Check',
-  description: 'Real Vedic Kundli calculator for Gen Z. Get your Big Three, Dasha era, Ashtakoot compatibility, and cosmic vibe score — no signup, no paywall.',
+  title: 'Nakshatra — Your Cosmic Vibe Check',
+  description: 'Enter your birth details. Get a deeply personal read on today, your week, and what\'s coming — backed by 5000 years of Vedic astrology, written for right now.',
   keywords: ['vedic astrology', 'kundli', 'birth chart', 'dasha', 'nakshatra', 'compatibility', 'gen z astrology'],
   openGraph: {
-    title: 'OyeAstro — Aesthetic Vedic Astrology',
-    description: 'Calculate your real Vedic chart, Dasha playlist, and cosmic vibe score.',
+    title: 'Nakshatra — Your Cosmic Vibe Check',
+    description: 'Enter your birth details. Get a deeply personal read on today, your week, and what\'s coming — backed by 5000 years of Vedic astrology, written for right now.',
     url: 'https://oyeastro.com',
-    siteName: 'OyeAstro',
+    siteName: 'Nakshatra',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'OyeAstro — Vedic Astrology Vibe Check',
-    description: 'Your real Vedic birth chart, Gen-Z style.',
+    title: 'Nakshatra — Your Cosmic Vibe Check',
+    description: 'Your real Vedic birth chart, written for right now.',
   },
   metadataBase: new URL('https://oyeastro.com'),
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`dark ${spaceGrotesk.variable} ${syne.variable}`}>
+    <html lang="en" className={`${fraunces.variable} ${dmSans.variable}`}>
       <head />
-      <body className="font-body bg-bgWarm text-textPrimary min-h-screen overflow-x-hidden relative">
-        <GameProvider>
-          <MeteorShower />
-          {children}
-        </GameProvider>
+      <body className="font-body bg-ivory text-ink min-h-screen overflow-x-hidden relative">
+        {children}
 
         {/* Google Analytics */}
         <Script
@@ -86,4 +82,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
-

@@ -2,26 +2,34 @@ import Link from 'next/link'
 
 export default function Footer() {
   return (
-    <footer className="mt-24 py-10 px-6 border-t-2 border-espresso bg-cardBg text-center flex flex-col gap-4">
-      <div className="flex justify-center gap-6 text-sm font-bold flex-wrap">
-        <Link href="/about"   className="text-textSecondary hover:text-white transition-colors">About Us</Link>
-        <Link href="/contact" className="text-textSecondary hover:text-white transition-colors">Contact Us</Link>
-        <Link href="/privacy" className="text-textSecondary hover:text-white transition-colors">Privacy Policy</Link>
-        <Link href="/terms"   className="text-textSecondary hover:text-white transition-colors">Terms & Conditions</Link>
-        <Link href="/blog/big-three" className="text-textSecondary hover:text-white transition-colors">Blog</Link>
+    <footer className="bg-cream px-12 py-10 border-t-[0.5px] border-border mt-20">
+      <div className="flex flex-col gap-5 md:flex-row md:justify-between md:items-center max-w-5xl mx-auto">
+        <div className="flex flex-col gap-1 text-left">
+          <div className="font-display text-lg font-medium text-ink">
+            nakshatra<span className="text-coral">.</span>
+          </div>
+          <p className="text-xs text-ink-faint">
+            Vedic astrology for people who don't call it astrology.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-7 text-xs text-ink-faint">
+          <Link href="/about" className="hover:text-ink transition-colors">
+            About Us
+          </Link>
+          <Link href="/contact" className="hover:text-ink transition-colors">
+            Contact Us
+          </Link>
+          <Link href="/privacy" className="hover:text-ink transition-colors">
+            Privacy Policy
+          </Link>
+          <Link href="/terms" className="hover:text-ink transition-colors">
+            Terms &amp; Conditions
+          </Link>
+        </div>
       </div>
-      <div className="text-textMuted text-sm">
-        © 2026 OyeAstro. All cosmic rights reserved.{' '}
-        <br className="md:hidden" />
-        Help &amp; inquiries:{' '}
-        <a href="mailto:shivampandeyy97@gmail.com" className="underline underline-offset-2 hover:text-white transition-colors">
-          shivampandeyy97@gmail.com
-        </a>
+      <div className="text-center text-[10px] text-ink-faint mt-8 border-t border-border/40 pt-6">
+        © 2026 Nakshatra. All cosmic rights reserved. Vedic Calculations under Lahiri Ayanamsa.
       </div>
-      <p className="text-xs text-textMuted max-w-lg mx-auto">
-        OyeAstro uses the Vedic (Sidereal) system with Lahiri Ayanamsa and Swiss Ephemeris.
-        For entertainment purposes. Not a substitute for professional guidance.
-      </p>
     </footer>
   )
 }

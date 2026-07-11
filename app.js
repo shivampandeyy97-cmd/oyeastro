@@ -1,523 +1,305 @@
 /**
- * OyeAstro - Client UI Controller
- * Integrates calculations, SVG rendering, and Pinterest layout event bindings.
+ * Nakshatra - Client UI Controller
+ * Handles form bindings, Vedic calculations, dynamic tab-switching, and compatibility matching.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
   const intakeForm = document.getElementById("intake-form");
-  const loveForm = document.getElementById("love-form");
-  const flamesForm = document.getElementById("flames-form");
+  const resultsVibeCard = document.getElementById("results-vibe-card");
   
-  const boardSection = document.getElementById("masonry-board-container");
-  const radarResults = document.getElementById("radar-results-card");
-  const radarClose = document.getElementById("radar-close-btn");
+  // Compatibility elements
+  const compatFormContainer = document.getElementById("compat-form-container");
+  const compatResultsContainer = document.getElementById("compat-results-container");
+  const compatSubmitBtn = document.getElementById("compat-submit-btn");
+  const compatResetBtn = document.getElementById("compat-reset-btn");
   
-  let currentProfileData = null;
-  let audioTimerInterval = null;
-  let audioProgressSeconds = 0;
-  let isPlaying = false;
-  let currentAudio = null;
+  let currentProfile = null;
+  let activeTab = "today";
 
-  // Handle Tab Switching
-  const tabButtons = document.querySelectorAll(".tab-btn");
-  tabButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      // Deactivate all tabs
-      tabButtons.forEach(t => t.classList.remove("active"));
-      // Hide all calculator forms
-      document.querySelectorAll(".calculator-form").forEach(f => f.style.display = "none");
-      // Hide relationship calculator results
-      if (radarResults) radarResults.style.display = "none";
-      
-      // Activate clicked tab
-      btn.classList.add("active");
-      
-      const tabTarget = btn.getAttribute("data-tab");
-      if (tabTarget === "astro-vibe" && intakeForm) {
-        intakeForm.style.display = "flex";
-      } else if (tabTarget === "love-radar" && loveForm) {
-        loveForm.style.display = "flex";
-      } else if (tabTarget === "flames-radar" && flamesForm) {
-        flamesForm.style.display = "flex";
+  // Tab switching state definitions
+  const getTabVibeData = (profile, tab) => {
+    const rashiIndex = profile.bigThree.rising.index;
+    const moonIndex = profile.bigThree.moon.index;
+    
+    // Deterministic metrics based on signs & tabs
+    const metricsMap = {
+      today: {
+        love: { label: ["Chill", "Sweet", "Tender", "Intense", "Quiet"][moonIndex % 5], color: "#FF7A45" },
+        money: { label: ["Flowing", "Saving", "Tending", "Prudent", "Steady"][rashiIndex % 5], color: "#6DB88A" },
+        energy: { label: ["Chaotic", "Focused", "Resting", "Electric", "Dreamy"][(moonIndex + rashiIndex) % 5], color: "#D4A800" }
+      },
+      week: {
+        love: { label: ["Electric", "Steady", "Quiet", "Sparky", "Drama-free"][rashiIndex % 5], color: "#FF7A45" },
+        money: { label: ["Growing", "Stable", "Spend-y", "Flowing", "Balanced"][moonIndex % 5], color: "#6DB88A" },
+        energy: { label: ["High-Key", "Solitary", "Balanced", "Hyperactive", "Recharged"][(rashiIndex + 2) % 5], color: "#D4A800" }
+      },
+      month: {
+        love: { label: ["Lover Era", "Solo Era", "Healing Era", "Intimate Era", "Banter Era"][(moonIndex + 1) % 5], color: "#FF7A45" },
+        money: { label: ["Abundant", "Building", "Learning", "Frugal", "Expanding"][(rashiIndex + 1) % 5], color: "#6DB88A" },
+        energy: { label: ["Transformative", "Disciplined", "Expressive", "Calm", "Driven"][(moonIndex + rashiIndex + 1) % 5], color: "#D4A800" }
       }
+    };
+
+    const copyMap = {
+      today: profile.horoscope,
+      week: profile.bigThree.rising.copy + " Focus on grounding your daily energy and aligning with your " + profile.bigThree.sun.sign + " core identity.",
+      month: profile.dasha.activeEraCopy
+    };
+
+    return {
+      metrics: metricsMap[tab],
+      insight: copyMap[tab]
+    };
+  };
+
+  // Switch tabs function
+  const updateVibeCardTab = (tab) => {
+    if (!currentProfile) return;
+    activeTab = tab;
+    
+    // Toggle class list
+    document.querySelectorAll(".vc-tab").forEach(t => {
+      if (t.getAttribute("data-tab") === tab) {
+        t.className = "vc-tab on";
+      } else {
+        t.className = "vc-tab off";
+      }
+    });
+
+    const data = getTabVibeData(currentProfile, tab);
+    
+    // Update metrics
+    const loveVal = document.getElementById("metric-love-val");
+    const moneyVal = document.getElementById("metric-money-val");
+    const energyVal = document.getElementById("metric-energy-val");
+    
+    if (loveVal) {
+      loveVal.textContent = data.metrics.love.label;
+      loveVal.style.color = data.metrics.love.color;
+    }
+    if (moneyVal) {
+      moneyVal.textContent = data.metrics.money.label;
+      moneyVal.style.color = data.metrics.money.color;
+    }
+    if (energyVal) {
+      energyVal.textContent = data.metrics.energy.label;
+      energyVal.style.color = data.metrics.energy.color;
+    }
+
+    // Update insight
+    const insightVal = document.getElementById("card-insight-val");
+    if (insightVal) {
+      insightVal.textContent = `"${data.insight}"`;
+    }
+  };
+
+  // Wire up tabs click events
+  document.querySelectorAll(".vc-tab").forEach(tabBtn => {
+    tabBtn.addEventListener("click", function() {
+      const tabName = this.getAttribute("data-tab");
+      updateVibeCardTab(tabName);
     });
   });
 
-  // Close Radar Results
-  if (radarClose && radarResults) {
-    radarClose.addEventListener("click", () => {
-      radarResults.style.display = "none";
-    });
-  }
-
-  // Handle Intake Form Submission (Vibe Check)
+  // Handle Birth intake form submission
   if (intakeForm) {
     intakeForm.addEventListener("submit", (e) => {
       e.preventDefault();
-
-      const name = document.getElementById("user-name").value || "Bestie";
+      
+      const name = document.getElementById("user-name").value.trim() || "Bestie";
+      const place = document.getElementById("birth-place").value.trim() || "Mumbai";
       const date = document.getElementById("birth-date").value;
       const time = document.getElementById("birth-time").value;
-      const place = document.getElementById("birth-place").value || "New York";
 
       if (!date || !time) {
-        alert("Please enter both Date and Time to fetch your stars!");
+        alert("Please enter your birth date and time!");
         return;
       }
 
       try {
-        // 1. Calculate Astro Profile
-        const profile = window.OyeAstroEngine.getProfile(name, date, time, place);
-        
-        // 2. Render Dashboard Elements
-        renderAstroBoard(profile);
+        // Calculate Astro Profile
+        currentProfile = window.OyeAstroEngine.getProfile(name, date, time, place);
 
-        // 3. Transition UI
-        boardSection.style.display = "block";
-        
-        // Smooth scroll to results
-        boardSection.scrollIntoView({ behavior: "smooth" });
+        // Update vibe card layout
+        const cardNameTitle = document.getElementById("card-name-title");
+        const cardLagnaVal = document.getElementById("card-lagna-val");
+        const cardNakshDashaVal = document.getElementById("card-naksh-dasha-val");
+        const resultsLabelText = document.getElementById("results-label-text");
+        const resultsHeadingText = document.getElementById("results-heading-text");
+
+        if (cardNameTitle) cardNameTitle.textContent = `${currentProfile.meta.name}'s Cosmic Vibe ✦`;
+        if (cardLagnaVal) cardLagnaVal.textContent = `${currentProfile.bigThree.rising.sign} Lagna`;
+        if (cardNakshDashaVal) {
+          cardNakshDashaVal.textContent = `${currentProfile.dasha.nakshatra} Nakshatra · ${currentProfile.dasha.ruler} Mahadasha`;
+        }
+
+        if (resultsLabelText) resultsLabelText.textContent = "Your vibe card";
+        if (resultsHeadingText) {
+          resultsHeadingText.innerHTML = `${name}'s Cosmos is <em>aligned.</em><br>Check your vibes below.`;
+        }
+
+        // Render active tab contents
+        updateVibeCardTab("today");
+
+        // Scroll to results section
+        document.getElementById("results").scrollIntoView({ behavior: "smooth" });
+
       } catch (err) {
         console.error("Astro calculation failure:", err);
-        alert("Alignment error. Check your dates!");
+        alert("Cosmic error. Please check your dates and times.");
       }
     });
   }
 
-  // Handle Love Radar Submission
-  if (loveForm) {
-    loveForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      
-      const name1 = document.getElementById("love-name1").value;
-      const name2 = document.getElementById("love-name2").value;
-      
-      const result = window.OyeAstroEngine.getLoveCompatibility(name1, name2);
-      
-      const radarTitle = document.getElementById("radar-title");
-      const radarScore = document.getElementById("radar-score-container");
-      const radarDesc = document.getElementById("radar-description");
-      
-      if (radarResults) {
-        radarResults.style.background = "var(--pastel-pink)";
-        if (radarTitle) radarTitle.textContent = "Love Vibe Radar ❤️";
-        if (radarScore) {
-          radarScore.textContent = result.score + "%";
-          radarScore.style.background = "#fff";
-        }
-        if (radarDesc) {
-          radarDesc.innerHTML = `<strong>${name1}</strong> & <strong>${name2}</strong> compatibility score:<br>${result.text}`;
-        }
-        radarResults.style.display = "block";
-        radarResults.scrollIntoView({ behavior: "smooth" });
+  // Copy Vibe Card to clipboard
+  const cardShareBtn = document.getElementById("card-share-btn");
+  if (cardShareBtn) {
+    cardShareBtn.addEventListener("click", () => {
+      if (!currentProfile) {
+        alert("Calculate your chart first to share!");
+        return;
       }
-    });
-  }
-
-  // Handle FLAMES Radar Submission
-  if (flamesForm) {
-    flamesForm.addEventListener("submit", (e) => {
-      e.preventDefault();
       
-      const name1 = document.getElementById("flames-name1").value;
-      const name2 = document.getElementById("flames-name2").value;
-      
-      const result = window.OyeAstroEngine.getFlamesResult(name1, name2);
-      
-      const radarTitle = document.getElementById("radar-title");
-      const radarScore = document.getElementById("radar-score-container");
-      const radarDesc = document.getElementById("radar-description");
-      
-      if (radarResults) {
-        radarResults.style.background = "var(--pastel-purple)";
-        if (radarTitle) radarTitle.textContent = "FLAMES Destiny Radar 🔥";
-        if (radarScore) {
-          radarScore.textContent = result.letter;
-          radarScore.style.background = "var(--pastel-orange)";
-        }
-        if (radarDesc) {
-          radarDesc.innerHTML = `<strong>${name1}</strong> & <strong>${name2}</strong> match status:<br><strong>${result.title}</strong> - ${result.text}`;
-        }
-        radarResults.style.display = "block";
-        radarResults.scrollIntoView({ behavior: "smooth" });
-      }
-    });
-  }
+      const tabData = getTabVibeData(currentProfile, activeTab);
+      const textToCopy = `✨ My Nakshatra Cosmic Vibe check [${activeTab.toUpperCase()}] ✨\n` +
+        `👤 Name: ${currentProfile.meta.name}\n` +
+        `🌅 Rising: ${currentProfile.bigThree.rising.sign} Lagna\n` +
+        `🌙 Moon Nakshatra: ${currentProfile.dasha.nakshatra}\n` +
+        `💌 Love: ${tabData.metrics.love.label}\n` +
+        `💸 Money: ${tabData.metrics.money.label}\n` +
+        `⚡ Energy: ${tabData.metrics.energy.label}\n` +
+        `Insight: "${tabData.insight}"\n` +
+        `Find your alignment at: ${window.location.origin}`;
 
-  // Event Delegation for Pin Reactions (Likes/Saves)
-  document.addEventListener("click", (e) => {
-    const reactionBtn = e.target.closest(".pin-reaction-btn");
-    if (!reactionBtn) return;
-
-    const counterSpan = reactionBtn.querySelector(".count");
-    if (!counterSpan) return;
-
-    let currentVal = counterSpan.textContent.trim();
-    let isSave = reactionBtn.classList.contains("save-btn");
-
-    // Extract numerical count (e.g. "1.2k" or "843")
-    let num = parseFloat(currentVal);
-    let suffix = currentVal.replace(/[0-9.]/g, "");
-
-    // Increment count
-    num = (num + 0.1).toFixed(1);
-    if (suffix === "") {
-      num = Math.floor(parseFloat(num));
-    }
-
-    counterSpan.textContent = num + suffix;
-
-    // Visual button bounce effect
-    reactionBtn.style.transform = "scale(0.9)";
-    setTimeout(() => {
-      reactionBtn.style.transform = "scale(1.05)";
-    }, 100);
-    setTimeout(() => {
-      reactionBtn.style.transform = "none";
-    }, 200);
-
-    // Disable multiple clicks gently
-    reactionBtn.style.pointerEvents = "none";
-    reactionBtn.style.opacity = "0.7";
-  });
-
-  // Event Delegation for Dialog Modals (Share popup)
-  document.addEventListener("click", (e) => {
-    const button = e.target.closest("button[commandfor]");
-    if (!button) return;
-
-    const targetId = button.getAttribute("commandfor");
-    const targetElement = document.getElementById(targetId);
-    const command = button.getAttribute("command");
-
-    if (targetElement && command) {
-      if (targetElement.tagName === "DIALOG") {
-        if (command === "show-modal") {
-          targetElement.showModal();
-          populateShareCard();
-        } else if (command === "close") {
-          targetElement.close();
-        }
-      }
-    }
-  });
-
-  // Render the Astro Dashboard
-  function renderAstroBoard(profile) {
-    currentProfileData = profile;
-
-    // 1. User Info Avatar card
-    const avatar = document.getElementById("user-avatar-text");
-    if (avatar) avatar.textContent = profile.meta.name.trim().charAt(0).toUpperCase();
-
-    const nameText = document.getElementById("user-name-title");
-    if (nameText) nameText.textContent = `${profile.meta.name}'s Cosmos`;
-
-    const metaText = document.getElementById("user-meta-sub");
-    if (metaText) {
-      metaText.textContent = `Born in ${profile.meta.location} | Coordinates: ${profile.meta.lat}°N, ${profile.meta.lng}°E`;
-    }
-
-    // 2. Big Three Polaroids
-    const risingName = document.getElementById("polaroid-rising-name");
-    const sunName = document.getElementById("polaroid-sun-name");
-    const moonName = document.getElementById("polaroid-moon-name");
-
-    const risingSignText = profile.bigThree.rising.sign.split(" ")[0];
-    const sunSignText = profile.bigThree.sun.sign.split(" ")[0];
-    const moonSignText = profile.bigThree.moon.sign.split(" ")[0];
-
-    if (risingName) {
-      risingName.innerHTML = `${risingSignText} <span>Rising (${profile.bigThree.rising.tag})</span>`;
-    }
-    if (sunName) {
-      sunName.innerHTML = `${sunSignText} <span>Sun (Core Ego)</span>`;
-    }
-    if (moonName) {
-      moonName.innerHTML = `${moonSignText} <span>Moon (Emotion)</span>`;
-    }
-
-    // Insert polaroid icons (simple inline graphics)
-    setPolaroidIcons(profile.bigThree);
-
-    // 3. Draw Vedic SVG Chart
-    drawVedicKundliSVG(profile.houseData, profile.bigThree.rising.index);
-
-    // 4. Spotify Player Configuration
-    resetSpotifyPlayer(profile.dasha.activeEraTrack);
-
-    // 5. Tinder Matches
-    const matchBestie = document.getElementById("tinder-bestie-name");
-    const matchBestieDesc = document.getElementById("tinder-bestie-desc");
-    const matchRival = document.getElementById("tinder-rival-name");
-    const matchRivalDesc = document.getElementById("tinder-rival-desc");
-
-    if (matchBestie) matchBestie.textContent = `${profile.socialMatch.bestie} ✨`;
-    if (matchBestieDesc) matchBestieDesc.textContent = `Vibe score: 98%. Excellent communication flow. Shared values, great chats.`;
-    
-    if (matchRival) matchRival.textContent = `${profile.socialMatch.rival} 🛑`;
-    if (matchRivalDesc) matchRivalDesc.textContent = `Caution node. Keep your distances bestie, mismatching wavelengths here.`;
-
-    // 6. Aura Energy Text
-    const auraDesc = document.getElementById("aura-text-copy");
-    if (auraDesc) {
-      auraDesc.innerHTML = `
-        Your Moon in <strong>${moonSignText}</strong> combined with <strong>${risingSignText} Rising</strong> means:
-        <br>${profile.bigThree.moon.copy}
-        <br><br>
-        <strong>Cosmic energy check:</strong> ${profile.flags.green[0]}
-      `;
-    }
-
-    // 7. Green / Red Flags
-    const flagsList = document.getElementById("flags-boxes-container");
-    if (flagsList) {
-      flagsList.innerHTML = `
-        <div class="flag-box green">🟩 <strong>Green Flag:</strong> ${profile.flags.green[1]}</div>
-        <div class="flag-box red">🟥 <strong>Red Flag:</strong> ${profile.flags.red[0]}</div>
-      `;
-    }
-
-    // 8. Remedies
-    const remedyStone = document.getElementById("remedy-stone-text");
-    const remedyColor = document.getElementById("remedy-color-text");
-    const remedyMantra = document.getElementById("remedy-mantra-text");
-    const remedyTip = document.getElementById("remedy-tip-text");
-
-    if (remedyStone) remedyStone.textContent = profile.remedies.stone;
-    if (remedyColor) remedyColor.textContent = profile.remedies.color;
-    if (remedyMantra) remedyMantra.textContent = profile.remedies.mantra;
-    if (remedyTip) remedyTip.textContent = `💡 Remedy Vibe: ${profile.remedies.tips}`;
-
-    // 9. Retro Meme Card
-    const memeText = document.getElementById("retro-meme-copy");
-    if (memeText) {
-      memeText.textContent = `A ${risingSignText} Rising choosing what outfit to wear: "I have 8 different options and none of them represent my current soul alignment."`;
-    }
-
-    // 9.5. Daily Horoscope (Horror-scope)
-    const horoscopeText = document.getElementById("horoscope-text-copy");
-    if (horoscopeText) {
-      horoscopeText.textContent = profile.horoscope;
-    }
-  }
-
-  function setPolaroidIcons(bigThree) {
-    const risingSVG = document.getElementById("polaroid-rising-svg");
-    const sunSVG = document.getElementById("polaroid-sun-svg");
-    const moonSVG = document.getElementById("polaroid-moon-svg");
-
-    if (risingSVG) {
-      risingSVG.innerHTML = `
-        <circle cx="50" cy="50" r="25" fill="none" stroke="var(--espresso)" stroke-width="2.5" />
-        <path d="M50 15 L50 85 M15 50 L85 50" stroke="var(--espresso)" stroke-width="1.5" />
-        <polygon points="50,20 45,32 55,32" fill="var(--espresso)" />
-      `;
-    }
-    if (sunSVG) {
-      sunSVG.innerHTML = `
-        <circle cx="50" cy="50" r="20" fill="none" stroke="var(--espresso)" stroke-width="3" />
-        <circle cx="50" cy="50" r="5" fill="var(--espresso)" />
-        <path d="M50 10 L50 16 M50 84 L50 90 M10 50 L16 50 M84 50 L90 50" stroke="var(--espresso)" stroke-width="2" />
-      `;
-    }
-    if (moonSVG) {
-      moonSVG.innerHTML = `
-        <path d="M30 50 A 20 20 0 1 0 70 50 A 14 14 0 1 1 30 50 Z" fill="none" stroke="var(--espresso)" stroke-width="3" />
-      `;
-    }
-  }
-
-  // Draw Traditional North Indian Kundli inside SVG
-  function drawVedicKundliSVG(houseData, risingSignIndex) {
-    const svg = document.getElementById("kundli-svg-canvas");
-    if (!svg) return;
-
-    // Center coordinates for placing text inside the 12 houses of a North Indian style diamond chart
-    const HOUSE_CENTERS = {
-      1:  { rashi: { x: 200, y: 155 }, planets: { x: 200, y: 180 } },
-      2:  { rashi: { x: 120, y: 65 },  planets: { x: 120, y: 85 } },
-      3:  { rashi: { x: 65,  y: 120 }, planets: { x: 85,  y: 120 } },
-      4:  { rashi: { x: 155, y: 200 }, planets: { x: 180, y: 200 } },
-      5:  { rashi: { x: 65,  y: 280 }, planets: { x: 85,  y: 280 } },
-      6:  { rashi: { x: 120, y: 335 }, planets: { x: 120, y: 315 } },
-      7:  { rashi: { x: 200, y: 245 }, planets: { x: 200, y: 220 } },
-      8:  { rashi: { x: 280, y: 335 }, planets: { x: 280, y: 315 } },
-      9:  { rashi: { x: 335, y: 280 }, planets: { x: 315, y: 280 } },
-      10: { rashi: { x: 245, y: 200 }, planets: { x: 220, y: 200 } },
-      11: { rashi: { x: 335, y: 120 }, planets: { x: 315, y: 120 } },
-      12: { rashi: { x: 280, y: 65 },  planets: { x: 280, y: 85 } }
-    };
-
-    // Remove any previously drawn texts (keeping grid lines & backgrounds)
-    const elementsToRemove = svg.querySelectorAll("text");
-    elementsToRemove.forEach(el => el.remove());
-
-    // Place labels for each of the 12 houses
-    for (let h = 1; h <= 12; h++) {
-      const coord = HOUSE_CENTERS[h];
-      const rashiSignNumber = ((risingSignIndex + (h - 1)) % 12) + 1;
-
-      // 1. Create Rashi sign text
-      const rashiText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      rashiText.setAttribute("x", coord.rashi.x);
-      rashiText.setAttribute("y", coord.rashi.y);
-      rashiText.setAttribute("class", "chart-text-rashi");
-      rashiText.setAttribute("text-anchor", "middle");
-      rashiText.textContent = rashiSignNumber;
-      svg.appendChild(rashiText);
-
-      // 2. Create House Number label (small indicators)
-      const hText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      let hy = coord.rashi.y - 12;
-      hText.setAttribute("x", coord.rashi.x);
-      hText.setAttribute("y", hy);
-      hText.setAttribute("class", "chart-text-house");
-      hText.setAttribute("text-anchor", "middle");
-      hText.textContent = `H${h}`;
-      svg.appendChild(hText);
-
-      // 3. Create Planets list
-      const planetsInHouse = houseData.houses[h - 1]; 
-      if (planetsInHouse && planetsInHouse.length > 0) {
-        const planetsText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        planetsText.setAttribute("x", coord.planets.x);
-        planetsText.setAttribute("y", coord.planets.y);
-        planetsText.setAttribute("class", "chart-text-planets");
-        planetsText.setAttribute("text-anchor", "middle");
-        planetsText.textContent = planetsInHouse.join(" ");
-        svg.appendChild(planetsText);
-      }
-    }
-  }
-
-  // Get Track ID based on Era Name
-  function getTrackNumber(trackName) {
-    const mappings = {
-      "The Spiritual Hermit Era": 1,
-      "The Glow-Up Era": 2,
-      "The Spotlight Era": 3,
-      "The Intuitive Feels Era": 4,
-      "The Hustle Era": 5,
-      "The Obsession Era": 6,
-      "The Blessings Era": 7,
-      "The Reality Check Era": 8,
-      "The Side Hustle Era": 1
-    };
-    return mappings[trackName] || 1;
-  }
-
-  // Spotify Player Control Engine
-  const playBtn = document.getElementById("spotify-play-btn");
-  const playIcon = document.getElementById("spotify-play-icon");
-  const vinylRecord = document.getElementById("spotify-vinyl");
-  const progressFill = document.getElementById("spotify-progress-fill");
-  const progressTime = document.getElementById("spotify-time-current");
-
-  if (playBtn) {
-    playBtn.addEventListener("click", () => {
-      isPlaying = !isPlaying;
-      
-      const trackName = currentProfileData ? currentProfileData.dasha.activeEraTrack : "The Venus Era";
-      
-      if (isPlaying) {
-        // Play
-        playIcon.innerHTML = `<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>`; // Pause SVG icon
-        vinylRecord.classList.add("playing");
-        
-        // Load and play actual audio stream
-        if (!currentAudio) {
-          const trackIndex = getTrackNumber(trackName);
-          const audioUrl = `https://www.soundhelix.com/examples/mp3/SoundHelix-Song-${trackIndex}.mp3`;
-          currentAudio = new Audio(audioUrl);
-          
-          // Auto reset player on song completion
-          currentAudio.addEventListener("ended", () => {
-            resetSpotifyPlayer(trackName);
-          });
-        }
-        
-        currentAudio.play().catch(err => {
-          console.error("Audio play blocked/failed:", err);
-        });
-        
-        audioTimerInterval = setInterval(() => {
-          audioProgressSeconds++;
-          if (audioProgressSeconds >= 180) {
-            audioProgressSeconds = 0; // loop
-          }
-          
-          // Update visual progress
-          const progressPercent = (audioProgressSeconds / 180) * 100;
-          progressFill.style.width = `${progressPercent}%`;
-          
-          const mins = Math.floor(audioProgressSeconds / 60);
-          const secs = (audioProgressSeconds % 60).toString().padStart(2, '0');
-          progressTime.textContent = `${mins}:${secs}`;
-        }, 1000);
-      } else {
-        // Pause
-        playIcon.innerHTML = `<path d="M8 5v14l11-7z"/>`; // Play SVG icon
-        vinylRecord.classList.remove("playing");
-        clearInterval(audioTimerInterval);
-        
-        if (currentAudio) {
-          currentAudio.pause();
-        }
-      }
-    });
-  }
-
-  function resetSpotifyPlayer(trackName) {
-    isPlaying = false;
-    clearInterval(audioTimerInterval);
-    audioProgressSeconds = 0;
-    
-    if (currentAudio) {
-      currentAudio.pause();
-      currentAudio = null;
-    }
-    
-    if (playIcon) playIcon.innerHTML = `<path d="M8 5v14l11-7z"/>`;
-    if (vinylRecord) vinylRecord.classList.remove("playing");
-    if (progressFill) progressFill.style.width = "0%";
-    if (progressTime) progressTime.textContent = "0:00";
-    
-    const trackNameEl = document.getElementById("spotify-track-name");
-    if (trackNameEl) trackNameEl.textContent = trackName;
-  }
-
-  // Populate sharing popup details
-  function populateShareCard() {
-    if (!currentProfileData) return;
-
-    const shareName = document.getElementById("polaroid-share-name");
-    const shareRising = document.getElementById("polaroid-share-rising");
-    const shareSun = document.getElementById("polaroid-share-sun");
-    const shareMoon = document.getElementById("polaroid-share-moon");
-    const shareEra = document.getElementById("polaroid-share-era");
-
-    if (shareName) shareName.textContent = currentProfileData.meta.name.toUpperCase();
-    if (shareRising) shareRising.textContent = currentProfileData.bigThree.rising.sign;
-    if (shareSun) shareSun.textContent = currentProfileData.bigThree.sun.sign;
-    if (shareMoon) shareMoon.textContent = currentProfileData.bigThree.moon.sign;
-    if (shareEra) shareEra.textContent = currentProfileData.dasha.activeEraTrack;
-  }
-
-  // Copy share link triggers
-  const copyBtn = document.getElementById("copy-link-btn");
-  if (copyBtn) {
-    copyBtn.addEventListener("click", () => {
-      const shareUrl = window.location.href;
-      navigator.clipboard.writeText(shareUrl).then(() => {
-        const originalText = copyBtn.textContent;
-        copyBtn.textContent = "Copied link! 💅";
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        const originalText = cardShareBtn.textContent;
+        cardShareBtn.textContent = "Copied! 💅";
         setTimeout(() => {
-          copyBtn.textContent = originalText;
+          cardShareBtn.textContent = originalText;
         }, 2000);
       }).catch(err => {
-        alert("Failed to copy link. Just screenshot this polaroid!");
+        console.error("Copy failed", err);
       });
     });
   }
+
+  // Helper hash function for deterministic values
+  const hashCode = (str) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return Math.abs(hash);
+  };
+
+  // Compatibility Submission
+  if (compatSubmitBtn) {
+    compatSubmitBtn.addEventListener("click", () => {
+      const name1 = document.getElementById("c-name1").value.trim();
+      const name2 = document.getElementById("c-name2").value.trim();
+
+      if (!name1 || !name2) {
+        alert("Please enter names for both partners!");
+        return;
+      }
+
+      // Perform compatibility check
+      const compat = window.OyeAstroEngine.getLoveCompatibility(name1, name2);
+      
+      // Deterministic signs and details
+      const rashis = window.OyeAstroEngine.RashiNames;
+      const nakshatras = ["Ashwini", "Krittika", "Rohini", "Ardra", "Pushya", "Magha", "Hasta", "Swati", "Anuradha", "Jyeshtha", "Purva Ashadha", "Revati"];
+      
+      const hash1 = hashCode(name1);
+      const hash2 = hashCode(name2);
+      
+      const rashi1 = rashis[hash1 % rashis.length];
+      const rashi2 = rashis[hash2 % rashis.length];
+      const naksh1 = nakshatras[hash1 % nakshatras.length];
+      const naksh2 = nakshatras[hash2 % nakshatras.length];
+
+      // Update Compatibility Card results
+      document.getElementById("cc-p1-name").textContent = name1;
+      document.getElementById("cc-p1-sign").textContent = `${rashi1} · ${naksh1}`;
+      document.getElementById("cc-p2-name").textContent = name2;
+      document.getElementById("cc-p2-sign").textContent = `${rashi2} · ${naksh2}`;
+      
+      document.getElementById("cc-match-pct").textContent = `${compat.score}%`;
+      
+      // Update bars
+      const barTemp = document.getElementById("cc-bar-temp");
+      const barHeart = document.getElementById("cc-bar-heart");
+      const barDestiny = document.getElementById("cc-bar-destiny");
+      const barTrust = document.getElementById("cc-bar-trust");
+
+      const scoreTemp = (hash1 % 25) + 75; // 75-99
+      const scoreHeart = (hash2 % 30) + 65; // 65-95
+      const scoreDest = ((hash1 + hash2) % 40) + 55; // 55-95
+      const scoreTrust = ((hash1 * hash2) % 25) + 75; // 75-99
+
+      if (barTemp) barTemp.style.width = `${scoreTemp}%`;
+      if (barHeart) barHeart.style.width = `${scoreHeart}%`;
+      if (barDestiny) barDestiny.style.width = `${scoreDest}%`;
+      if (barTrust) barTrust.style.width = `${scoreTrust}%`;
+
+      document.getElementById("cc-insight-text").textContent = `"${compat.text}"`;
+
+      // Toggle views
+      compatFormContainer.style.display = "none";
+      compatResultsContainer.style.display = "block";
+    });
+  }
+
+  // Reset compatibility checker
+  if (compatResetBtn) {
+    compatResetBtn.addEventListener("click", () => {
+      document.getElementById("c-name1").value = "";
+      document.getElementById("c-name2").value = "";
+      
+      compatFormContainer.style.display = "block";
+      compatResultsContainer.style.display = "none";
+    });
+  }
+
+  // Copy Compatibility Card to clipboard
+  const compatShareBtn = document.getElementById("compat-share-btn");
+  if (compatShareBtn) {
+    compatShareBtn.addEventListener("click", () => {
+      const name1 = document.getElementById("cc-p1-name").textContent;
+      const name2 = document.getElementById("cc-p2-name").textContent;
+      const score = document.getElementById("cc-match-pct").textContent;
+      const insight = document.getElementById("cc-insight-text").textContent;
+
+      const textToCopy = `✨ Cosmic Compatibility Vibe Match ✨\n` +
+        `💖 ${name1} ⟷ ${name2}\n` +
+        `📊 Match Score: ${score}\n` +
+        `Insight: ${insight}\n` +
+        `Find your alignment at: ${window.location.origin}`;
+
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        const originalText = compatShareBtn.textContent;
+        compatShareBtn.textContent = "Copied! 💅";
+        setTimeout(() => {
+          compatShareBtn.textContent = originalText;
+        }, 2000);
+      }).catch(err => {
+        console.error("Copy failed", err);
+      });
+    });
+  }
+
+  // Scroll reveal animation handler
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.animation = 'fadeUp .65s ease forwards';
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.feat, .step, .testi-card, .why-card').forEach(el => {
+    el.classList.add('fade-up');
+    io.observe(el);
+  });
 });

@@ -1,17 +1,18 @@
 'use client'
 
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
-import CompatibilityBoard from '@/components/CompatibilityBoard'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function CompatibilityPage() {
+  const router = useRouter()
+
+  useEffect(() => {
+    router.replace('/#match')
+  }, [router])
+
   return (
-    <main className="min-h-screen flex flex-col justify-between">
-      <div>
-        <Header />
-        <CompatibilityBoard />
-      </div>
-      <Footer />
-    </main>
+    <div className="min-h-screen bg-ivory flex items-center justify-center font-display text-ink text-sm">
+      Connecting to the cosmos...
+    </div>
   )
 }

@@ -140,7 +140,7 @@ export default function PremiumReportCard({ chart }: Props) {
           name: chart.meta.name,
         },
         theme: {
-          color: '#8a5cf5',
+          color: '#FF7A45',
         },
       }
 
@@ -182,23 +182,20 @@ export default function PremiumReportCard({ chart }: Props) {
 
   if (isPaid) {
     return (
-      <div className="pin-card bg-[#0b0c20] text-white border-2 border-espresso rounded-neoLg p-6 shadow-neo break-inside-avoid mb-6 flex flex-col gap-6 relative overflow-hidden">
-        {/* Glow */}
-        <div className="absolute inset-0 bg-radial-gradient from-purple-900/10 to-transparent pointer-events-none" />
-
+      <div className="premium-card bg-gradient-to-tr from-[#FAF6FF] via-[#F4E9FF] to-[#ECE0FF] border border-[#D5C2F5] rounded-[26px] p-7 shadow-sm text-left flex flex-col gap-6 relative overflow-hidden">
         <div className="z-10 flex flex-col gap-4">
-          <div className="flex items-center justify-between border-b border-purple-500/10 pb-4">
+          <div className="flex items-center justify-between border-b border-ink/5 pb-4">
             <div>
-              <span className="text-[10px] font-extrabold px-2.5 py-0.5 bg-pastelGreen text-brightGreen border border-espresso rounded-full shadow-neoSm">
-                PREMIUM UNLOCKED
+              <span className="text-[10px] font-medium px-2.5 py-1 bg-sage/10 text-sage border border-sage/20 rounded-full">
+                ✦ PREMIUM UNLOCKED
               </span>
-              <h3 className="font-display font-black text-lg text-white mt-1.5">
+              <h3 className="font-display font-normal text-xl text-ink mt-2">
                 Your 2025-2026 Yearly Forecast
               </h3>
             </div>
             <button
               onClick={() => window.print()}
-              className="px-3 py-1.5 border border-purple-500/20 rounded-neoSm bg-white/5 hover:bg-white/10 text-xs font-bold transition-all"
+              className="px-3 py-1.5 border border-ink/10 rounded-full bg-white/40 hover:bg-white/70 text-xs font-medium text-ink transition-all cursor-pointer font-body"
             >
               📥 Save PDF
             </button>
@@ -207,14 +204,14 @@ export default function PremiumReportCard({ chart }: Props) {
           {loadingReport && (
             <div className="py-12 flex flex-col items-center gap-3">
               <LoadingOrbit />
-              <span className="text-xs font-bold text-purple-300 animate-pulse">Calculating premium orbits...</span>
+              <span className="text-xs font-medium text-ink-mid animate-pulse">Calculating premium orbits...</span>
             </div>
           )}
 
           {error && !report && (
-            <div className="text-center py-6 text-brightPink font-semibold text-sm">
+            <div className="text-center py-6 text-coral font-semibold text-sm">
               ⚠️ {error}
-              <button onClick={fetchReport} className="block mx-auto mt-2 text-xs text-purple-300 underline font-bold">
+              <button onClick={fetchReport} className="block mx-auto mt-2 text-xs text-ink-mid underline font-bold">
                 Retry Generation
               </button>
             </div>
@@ -223,7 +220,7 @@ export default function PremiumReportCard({ chart }: Props) {
           {report && (
             <div className="flex flex-col gap-4">
               {/* Tabs list */}
-              <div className="flex bg-[#131438] border border-purple-500/10 rounded-full p-1 self-center w-full justify-between flex-wrap gap-1 md:gap-0">
+              <div className="flex bg-ink/[0.04] border border-ink/5 rounded-full p-1 self-center w-full justify-between flex-wrap gap-1 md:gap-0">
                 {[
                   { id: 'dasha', label: '📅 Life Chapter' },
                   { id: 'transits', label: '🪐 Star Shifts' },
@@ -234,10 +231,10 @@ export default function PremiumReportCard({ chart }: Props) {
                   <button
                     key={t.id}
                     onClick={() => setActiveTab(t.id as any)}
-                    className={`px-3 py-1.5 text-xs font-bold rounded-full transition-all duration-200 ${
+                    className={`px-3 py-1.5 text-[11px] font-medium rounded-full transition-all duration-150 font-body ${
                       activeTab === t.id
-                        ? 'bg-brightPurple text-white shadow-lg'
-                        : 'text-purple-300/60 hover:text-white'
+                        ? 'bg-ink text-ivory shadow-sm border-none'
+                        : 'text-ink-mid hover:text-ink border-none bg-transparent'
                     }`}
                   >
                     {t.label}
@@ -246,8 +243,8 @@ export default function PremiumReportCard({ chart }: Props) {
               </div>
 
               {/* Active Section Content */}
-              <div className="bg-purple-950/20 border border-purple-500/10 rounded-neoSm p-4 min-h-[160px] flex items-center justify-center">
-                <p className="font-body text-sm font-semibold text-purple-200 leading-relaxed text-center italic">
+              <div className="bg-white/60 border border-ink/5 rounded-2xl p-4 min-h-[160px] flex items-center justify-center">
+                <p className="font-body text-xs leading-[1.75] font-light text-ink-mid text-center italic">
                   {activeTab === 'dasha' && report.dashaAnalysis}
                   {activeTab === 'transits' && report.transitDates}
                   {activeTab === 'career' && report.careerWindows}
@@ -263,55 +260,53 @@ export default function PremiumReportCard({ chart }: Props) {
   }
 
   return (
-    <div className="pin-card bg-[#110e2d] text-white border-2 border-espresso rounded-neoLg p-6 shadow-neo break-inside-avoid mb-6 flex flex-col gap-6 relative overflow-hidden">
-      <div className="absolute inset-0 bg-radial-gradient from-purple-500/10 to-transparent pointer-events-none" />
-
+    <div className="premium-card bg-gradient-to-tr from-[#FAF6FF] via-[#F4E9FF] to-[#ECE0FF] border border-[#D5C2F5] rounded-[26px] p-7 shadow-sm text-left flex flex-col gap-6 relative overflow-hidden">
       <div className="z-10 flex flex-col gap-4">
         {/* Badge */}
-        <span className="self-start text-[10px] font-extrabold px-2.5 py-0.5 bg-brightGold text-espresso border border-espresso rounded-full shadow-neoSm">
-          UPGRADE SKILLS 💫
+        <span className="self-start text-[10px] font-medium px-2.5 py-1 bg-coral/10 text-coral border border-coral/20 rounded-full">
+          ✦ UPGRADE SKILLS
         </span>
 
         <div>
-          <h3 className="font-display font-black text-xl text-white">
+          <h3 className="font-display font-normal text-xl text-ink">
             Unlock Your 2025-2026 Yearly Report
           </h3>
-          <p className="text-xs text-purple-300/80 mt-1 font-semibold">
+          <p className="text-xs text-ink-mid mt-1 font-light leading-relaxed">
             Get personalized monthly windows, major shifts, and warnings.
           </p>
         </div>
 
         {/* Feature List */}
-        <ul className="flex flex-col gap-2.5 text-xs font-bold text-purple-200 border-y border-purple-500/10 py-4 my-1">
-          <li className="flex items-center gap-2">
-            <span>📅</span> Full Life Chapter breakdown & timeline analysis
+        <ul className="flex flex-col gap-2.5 text-xs text-ink-mid border-y border-ink/10 py-4 my-1 list-none pl-0">
+          <li className="flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-coral before:text-[10px] before:mt-0.5">
+            Full Life Chapter breakdown &amp; timeline analysis
           </li>
-          <li className="flex items-center gap-2">
-            <span>🪐</span> Major Star Shifts & outer planet transitions
+          <li className="flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-coral before:text-[10px] before:mt-0.5">
+            Major Star Shifts &amp; outer planet transitions
           </li>
-          <li className="flex items-center gap-2">
-            <span>💼</span> Career & Cash Windows (when to make big moves)
+          <li className="flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-coral before:text-[10px] before:mt-0.5">
+            Career &amp; Cash Windows (when to make big moves)
           </li>
-          <li className="flex items-center gap-2">
-            <span>💖</span> Rizz, Connection & Relationship Forecasts
+          <li className="flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-coral before:text-[10px] before:mt-0.5">
+            Rizz, Connection &amp; Relationship Forecasts
           </li>
-          <li className="flex items-center gap-2">
-            <span>🔋</span> Daily Energy & Vibe Drain calendars
+          <li className="flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-coral before:text-[10px] before:mt-0.5">
+            Daily Energy &amp; Vibe Drain calendars
           </li>
         </ul>
 
         {/* Pricing & Checkout Buttons */}
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-black text-white">Unlock everything:</span>
+            <span className="text-xs font-medium text-ink">Unlock everything:</span>
             <div className="text-right">
-              <span className="text-lg font-black text-brightGold">₹99</span>
-              <span className="text-xs text-purple-300/60 block -mt-1">or $1.49 international</span>
+              <span className="text-lg font-display font-normal text-coral">₹99</span>
+              <span className="text-[10px] text-ink-faint block -mt-1">or $1.49 international</span>
             </div>
           </div>
 
           {error && (
-            <div className="text-center text-xs font-semibold text-brightPink">
+            <div className="text-center text-xs font-medium text-coral">
               ⚠️ {error}
             </div>
           )}
@@ -320,16 +315,16 @@ export default function PremiumReportCard({ chart }: Props) {
             <button
               onClick={handleRazorpayCheckout}
               disabled={paymentLoading}
-              className="py-3 bg-brightPurple hover:bg-brightPurple/90 text-white font-display text-xs font-extrabold border-2 border-espresso rounded-neoSm shadow-neoSm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer text-center"
+              className="py-3 bg-ink hover:bg-coral text-ivory font-body text-xs font-medium rounded-full active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 border-none cursor-pointer text-center shadow-sm"
             >
-              {paymentLoading ? 'Loading...' : '💳 Pay via UPI/INR (₹99)'}
+              {paymentLoading ? 'Loading...' : '💳 UPI/INR (₹99)'}
             </button>
             <button
               onClick={handleStripeCheckout}
               disabled={paymentLoading}
-              className="py-3 bg-[#131438] hover:bg-[#1b1c4f] text-white font-display text-xs font-extrabold border border-purple-500/30 rounded-neoSm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer text-center"
+              className="py-3 bg-white/70 hover:bg-white text-ink-mid font-body text-xs font-medium border border-ink/10 rounded-full active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer text-center shadow-sm"
             >
-              {paymentLoading ? 'Redirecting...' : '🌐 Pay in USD ($1.49)'}
+              {paymentLoading ? 'Redirecting...' : '🌐 Card/USD ($1.49)'}
             </button>
           </div>
         </div>

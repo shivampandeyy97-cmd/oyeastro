@@ -6,6 +6,7 @@ import type { ChartResult, BirthData, CosmicVibeResult, HorizonVibeData } from '
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import PremiumReportCard from '@/components/PremiumReportCard'
 
 function HomeContent() {
   const searchParams = useSearchParams()
@@ -551,6 +552,12 @@ function HomeContent() {
                   </button>
                 </div>
               </div>
+
+              {chart && (
+                <div className="mt-8">
+                  <PremiumReportCard chart={chart} />
+                </div>
+              )}
             </div>
           </div>
         </div>

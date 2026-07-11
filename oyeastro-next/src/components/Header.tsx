@@ -13,7 +13,7 @@ export default function Header() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between padding-6 px-12 py-5 bg-ivory/90 backdrop-blur-md border-b-[0.5px] border-border">
       <Link href="/" className="font-display text-2xl font-medium text-ink tracking-tight">
-        nakshatra<span className="text-coral">.</span>
+        oyeastro<span className="text-coral">.</span>
       </Link>
       <ul className="hidden md:flex gap-10 list-none">
         <li>

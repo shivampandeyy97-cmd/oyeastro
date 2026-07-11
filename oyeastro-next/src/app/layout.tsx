@@ -19,19 +19,19 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'Nakshatra — Your Cosmic Vibe Check',
+  title: 'OyeAstro — Your Cosmic Vibe Check',
   description: 'Enter your birth details. Get a deeply personal read on today, your week, and what\'s coming — backed by 5000 years of Vedic astrology, written for right now.',
   keywords: ['vedic astrology', 'kundli', 'birth chart', 'dasha', 'nakshatra', 'compatibility', 'gen z astrology'],
   openGraph: {
-    title: 'Nakshatra — Your Cosmic Vibe Check',
+    title: 'OyeAstro — Your Cosmic Vibe Check',
     description: 'Enter your birth details. Get a deeply personal read on today, your week, and what\'s coming — backed by 5000 years of Vedic astrology, written for right now.',
     url: 'https://oyeastro.com',
-    siteName: 'Nakshatra',
+    siteName: 'OyeAstro',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Nakshatra — Your Cosmic Vibe Check',
+    title: 'OyeAstro — Your Cosmic Vibe Check',
     description: 'Your real Vedic birth chart, written for right now.',
   },
   metadataBase: new URL('https://oyeastro.com'),

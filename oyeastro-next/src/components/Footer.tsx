@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="flex flex-col gap-5 md:flex-row md:justify-between md:items-center max-w-5xl mx-auto">
         <div className="flex flex-col gap-1 text-left">
           <div className="font-display text-lg font-medium text-ink">
-            nakshatra<span className="text-coral">.</span>
+            oyeastro<span className="text-coral">.</span>
           </div>
           <p className="text-xs text-ink-faint">
             Vedic astrology for people who don't call it astrology.
@@ -28,7 +28,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="text-center text-[10px] text-ink-faint mt-8 border-t border-border/40 pt-6">
-        © 2026 Nakshatra. All cosmic rights reserved. Vedic Calculations under Lahiri Ayanamsa.
+        © 2026 OyeAstro. All cosmic rights reserved. Vedic Calculations under Lahiri Ayanamsa.
       </div>
     </footer>
   )

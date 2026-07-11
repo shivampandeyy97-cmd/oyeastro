@@ -1,5 +1,5 @@
 /**
- * Nakshatra - Client UI Controller
+ * OyeAstro - Client UI Controller
  * Handles form bindings, Vedic calculations, dynamic tab-switching, and compatibility matching.
  */
 
@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       
       const tabData = getTabVibeData(currentProfile, activeTab);
-      const textToCopy = `✨ My Nakshatra Cosmic Vibe check [${activeTab.toUpperCase()}] ✨\n` +
+      const textToCopy = `✨ My OyeAstro Cosmic Vibe check [${activeTab.toUpperCase()}] ✨\n` +
         `👤 Name: ${currentProfile.meta.name}\n` +
         `🌅 Rising: ${currentProfile.bigThree.rising.sign} Lagna\n` +
         `🌙 Moon Nakshatra: ${currentProfile.dasha.nakshatra}\n` +
@@ -169,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `💸 Money: ${tabData.metrics.money.label}\n` +
         `⚡ Energy: ${tabData.metrics.energy.label}\n` +
         `Insight: "${tabData.insight}"\n` +
-        `Find your alignment at: ${window.location.origin}`;
+        `Find your alignment at: oyeastro.com`;
 
       navigator.clipboard.writeText(textToCopy).then(() => {
         const originalText = cardShareBtn.textContent;

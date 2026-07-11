@@ -165,14 +165,14 @@ function HomeContent() {
   const handleVibeCopy = () => {
     if (!chart) return
     const vData = getTabVibeData(chart, activeTab)
-    const text = `✨ My Nakshatra Cosmic Vibe [${activeTab.toUpperCase()}] ✨\n` +
+    const text = `✨ My OyeAstro Cosmic Vibe [${activeTab.toUpperCase()}] ✨\n` +
       `🌅 Rising: ${chart.bigThree.rising.sign} Lagna\n` +
-      `🌙 Moon Nakshatra: ${chart.dasha.nakshatra}\n` +
+      `🌙 Moon Nakshatra: ${chart.dasha.nakshatra.name}\n` +
       `💌 Love: ${vData.love.status}\n` +
       `💸 Money: ${vData.money.status}\n` +
       `⚡ Energy: ${vData.energy.status}\n` +
       `Insight: "${vData.interpretation}"\n` +
-      `Check yours at: ${window.location.origin}`;
+      `Check yours at: oyeastro.com`;
 
     navigator.clipboard.writeText(text).then(() => {
       setVibeCopied(true)
@@ -786,7 +786,7 @@ export default function Home() {
       <main className="min-h-screen flex flex-col justify-between bg-ivory text-ink">
         <header className="px-6 py-4 border-b border-border bg-white">
           <span className="font-display font-medium text-ink text-xl">
-            nakshatra.
+            oyeastro.
           </span>
         </header>
         <div className="my-16 text-center text-xs font-body text-ink-faint">

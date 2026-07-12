@@ -34,10 +34,7 @@ export default function IntakePanel({ onSubmit, isLoading }: Props) {
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(async () => {
       try {
-        const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(birthPlace)}&limit=5&addressdetails=0`,
-          { headers: { 'User-Agent': 'OyeAstro/2.0 (oyeastro.com)' } }
-        )
+        const res = await fetch(`/api/geocode?q=${encodeURIComponent(birthPlace)}`)
         if (res.ok) {
           const data = await res.json() as CitySuggestion[]
           setSuggestions(data.slice(0, 5))

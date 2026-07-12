@@ -28,7 +28,20 @@ function HomeContent() {
 
   // Compatibility State
   const [cName1, setCName1] = useState('')
+  const [cDate1, setCDate1] = useState('')
+  const [cTime1, setCTime1] = useState('')
+  const [cPlace1, setCPlace1] = useState('')
+  const [cSuggestions1, setCSuggestions1] = useState<any[]>([])
+  const [cShowSuggestions1, setCShowSuggestions1] = useState(false)
+
   const [cName2, setCName2] = useState('')
+  const [cDate2, setCDate2] = useState('')
+  const [cTime2, setCTime2] = useState('')
+  const [cPlace2, setCPlace2] = useState('')
+  const [cSuggestions2, setCSuggestions2] = useState<any[]>([])
+  const [cShowSuggestions2, setCShowSuggestions2] = useState(false)
+
+  const [compatLoading, setCompatLoading] = useState(false)
   const [compatChecked, setCompatChecked] = useState(false)
   const [compatScore, setCompatScore] = useState(0)
   const [compatText, setCompatText] = useState('')
@@ -40,6 +53,36 @@ function HomeContent() {
     destiny: 60,
     trust: 82
   })
+
+  // Autocomplete 1
+  useEffect(() => {
+    if (cPlace1.length < 3) { setCSuggestions1([]); return }
+    const delay = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/geocode?q=${encodeURIComponent(cPlace1)}`)
+        if (res.ok) {
+          const data = await res.json()
+          setCSuggestions1(data)
+        }
+      } catch (err) { console.error(err) }
+    }, 400)
+    return () => clearTimeout(delay)
+  }, [cPlace1])
+
+  // Autocomplete 2
+  useEffect(() => {
+    if (cPlace2.length < 3) { setCSuggestions2([]); return }
+    const delay = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/geocode?q=${encodeURIComponent(cPlace2)}`)
+        if (res.ok) {
+          const data = await res.json()
+          setCSuggestions2(data)
+        }
+      } catch (err) { console.error(err) }
+    }, 400)
+    return () => clearTimeout(delay)
+  }, [cPlace2])
 
   // Share Clipboard Feedbacks
   const [vibeCopied, setVibeCopied] = useState(false)
@@ -192,62 +235,63 @@ function HomeContent() {
   }
 
   // Compatibility score handler
-  const handleCompatCheck = () => {
-    if (!cName1 || !cName2) {
-      alert('Please enter names for both partners!')
+  const handleCompatCheck = async () => {
+    if (!cName1 || !cDate1 || !cTime1 || !cPlace1 || !cName2 || !cDate2 || !cTime2 || !cPlace2) {
+      alert('Please fill out all details for both partners!')
       return
     }
 
-    // Deterministic match percentage 30% - 99%
-    const combined = cName1.toLowerCase().trim() + cName2.toLowerCase().trim()
-    const hash = hashCode(combined)
-    const score = (hash % 70) + 30
+    setCompatLoading(true)
+    try {
+      const res = await fetch('/api/compatibility', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          personA: { name: cName1, birthDate: cDate1, birthTime: cTime1, birthPlace: cPlace1 },
+          personB: { name: cName2, birthDate: cDate2, birthTime: cTime2, birthPlace: cPlace2 }
+        })
+      })
 
-    // Determinstic signs
-    const rashis = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"]
-    const nakshatras = ["Ashwini", "Krittika", "Rohini", "Ardra", "Pushya", "Magha", "Hasta", "Swati", "Anuradha", "Jyeshtha", "Purva Ashadha", "Revati"]
-    
-    const hash1 = hashCode(cName1)
-    const hash2 = hashCode(cName2)
+      if (!res.ok) {
+        const errData = await res.json()
+        throw new Error(errData.error || 'Matching failed')
+      }
 
-    const rashi1 = rashis[hash1 % rashis.length]
-    const rashi2 = rashis[hash2 % rashis.length]
-    const naksh1 = nakshatras[hash1 % nakshatras.length]
-    const naksh2 = nakshatras[hash2 % nakshatras.length]
+      const data = await res.json()
 
-    const scoreTemp = (hash1 % 25) + 75
-    const scoreHeart = (hash2 % 30) + 65
-    const scoreDest = ((hash1 + hash2) % 40) + 55
-    const scoreTrust = ((hash1 * hash2) % 25) + 75
+      const tempKuta = data.kutas.find((k: any) => k.name === 'Gana')
+      const heartKuta = data.kutas.find((k: any) => k.name === 'Bhakoot')
+      const destinyKuta = data.kutas.find((k: any) => k.name === 'Graha Maitri')
+      const trustKuta = data.kutas.find((k: any) => k.name === 'Nadi')
 
-    let txt = ""
-    if (score >= 85) {
-      txt = "Certified Soulmates 🔒 - You guys are sharing headphones and speaking in code. 10/10 vibe match. The stars are literally screaming!"
-    } else if (score >= 65) {
-      txt = "Solid Banter Vibe 💬 - Great energy, hilarious text threads. High key compatible. Go send them a meme right now."
-    } else if (score >= 45) {
-      txt = "Friendzone Hazard ⚠️ - The compatibility is giving 'thanks for the add' vibes. Tread carefully, keep it casual."
-    } else {
-      txt = "Absolute Red Flag 🚩 - Your charts are actively fighting. Delete their number for your own peace of mind. Not it."
+      setCompatScore(data.percentage)
+      setCompatText(data.narrative || data.summary)
+      setCompatDetails({
+        p1Sign: `${data.personA.meta.rashi || ''} · ${data.personA.meta.nakshatra || ''}`,
+        p2Sign: `${data.personB.meta.rashi || ''} · ${data.personB.meta.nakshatra || ''}`,
+        temp: tempKuta ? Math.round((tempKuta.scored / tempKuta.maxPoints) * 100) : 75,
+        heart: heartKuta ? Math.round((heartKuta.scored / heartKuta.maxPoints) * 100) : 70,
+        destiny: destinyKuta ? Math.round((destinyKuta.scored / destinyKuta.maxPoints) * 100) : 60,
+        trust: trustKuta ? Math.round((trustKuta.scored / trustKuta.maxPoints) * 100) : 80,
+      })
+      setCompatChecked(true)
+    } catch (err: any) {
+      alert(`Error checking compatibility: ${err.message}`)
+    } finally {
+      setCompatLoading(false)
     }
-
-    setCompatScore(score)
-    setCompatText(txt)
-    setCompatDetails({
-      p1Sign: `${rashi1} · ${naksh1}`,
-      p2Sign: `${rashi2} · ${naksh2}`,
-      temp: scoreTemp,
-      heart: scoreHeart,
-      destiny: scoreDest,
-      trust: scoreTrust
-    })
-    setCompatChecked(true)
   }
 
   // Reset compat
   const handleCompatReset = () => {
     setCName1('')
+    setCDate1('')
+    setCTime1('')
+    setCPlace1('')
     setCName2('')
+    setCDate2('')
+    setCTime2('')
+    setCPlace2('')
     setCompatChecked(false)
   }
 
@@ -575,35 +619,118 @@ function HomeContent() {
                 
                 {/* State 1: Intake inputs */}
                 {!compatChecked ? (
-                  <div className="cc-form flex flex-col gap-3">
-                    <div className="cc-form-row grid grid-cols-1 gap-2.5">
-                      <div className="flex flex-col">
-                        <label className="text-[10px] font-medium text-ink-mid uppercase tracking-wide mb-1">Your name</label>
+                  <div className="cc-form flex flex-col gap-4">
+                    {/* Partner 1 */}
+                    <div className="flex flex-col gap-2">
+                      <span className="text-[10px] font-semibold text-lavender uppercase tracking-wider">Partner 1 (You)</span>
+                      <div className="grid grid-cols-2 gap-2">
                         <input 
                           type="text" 
                           value={cName1} 
                           onChange={(e) => setCName1(e.target.value)} 
-                          placeholder="Your name..." 
-                          className="w-full bg-white/70 border border-border rounded-xl p-2.5 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                          placeholder="Name..." 
+                          className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                        />
+                        <input 
+                          type="date" 
+                          value={cDate1} 
+                          onChange={(e) => setCDate1(e.target.value)} 
+                          className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
                         />
                       </div>
-                      <div className="flex flex-col">
-                        <label className="text-[10px] font-medium text-ink-mid uppercase tracking-wide mb-1">Their name</label>
+                      <div className="grid grid-cols-2 gap-2 relative">
+                        <input 
+                          type="time" 
+                          value={cTime1} 
+                          onChange={(e) => setCTime1(e.target.value)} 
+                          className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                        />
+                        <div className="relative">
+                          <input 
+                            type="text" 
+                            value={cPlace1} 
+                            onChange={(e) => { setCPlace1(e.target.value); setCShowSuggestions1(true) }}
+                            onBlur={() => setTimeout(() => setCShowSuggestions1(false), 200)}
+                            placeholder="Birth City..." 
+                            className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                            autoComplete="off"
+                          />
+                          {cShowSuggestions1 && cSuggestions1.length > 0 && (
+                            <ul className="absolute left-0 right-0 top-full mt-1 bg-white border border-border rounded-xl shadow-lg z-50 max-h-32 overflow-y-auto pl-0 list-none m-0 p-0">
+                              {cSuggestions1.map((s: any, i: number) => (
+                                <li 
+                                  key={i}
+                                  className="px-3 py-2 text-[10px] text-ink hover:bg-lavender/10 cursor-pointer truncate border-b border-border/40 last:border-0"
+                                  onMouseDown={() => { setCPlace1(s.display_name.split(',').slice(0, 3).join(',')); setCSuggestions1([]) }}
+                                >
+                                  📍 {s.display_name.split(',').slice(0, 3).join(', ')}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Partner 2 */}
+                    <div className="flex flex-col gap-2 pt-2 border-t border-lavender/25">
+                      <span className="text-[10px] font-semibold text-lavender uppercase tracking-wider">Partner 2 (Them)</span>
+                      <div className="grid grid-cols-2 gap-2">
                         <input 
                           type="text" 
                           value={cName2} 
                           onChange={(e) => setCName2(e.target.value)} 
-                          placeholder="Their name..." 
-                          className="w-full bg-white/70 border border-border rounded-xl p-2.5 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                          placeholder="Name..." 
+                          className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                        />
+                        <input 
+                          type="date" 
+                          value={cDate2} 
+                          onChange={(e) => setCDate2(e.target.value)} 
+                          className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
                         />
                       </div>
+                      <div className="grid grid-cols-2 gap-2 relative">
+                        <input 
+                          type="time" 
+                          value={cTime2} 
+                          onChange={(e) => setCTime2(e.target.value)} 
+                          className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                        />
+                        <div className="relative">
+                          <input 
+                            type="text" 
+                            value={cPlace2} 
+                            onChange={(e) => { setCPlace2(e.target.value); setCShowSuggestions2(true) }}
+                            onBlur={() => setTimeout(() => setCShowSuggestions2(false), 200)}
+                            placeholder="Birth City..." 
+                            className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                            autoComplete="off"
+                          />
+                          {cShowSuggestions2 && cSuggestions2.length > 0 && (
+                            <ul className="absolute left-0 right-0 top-full mt-1 bg-white border border-border rounded-xl shadow-lg z-50 max-h-32 overflow-y-auto pl-0 list-none m-0 p-0">
+                              {cSuggestions2.map((s: any, i: number) => (
+                                <li 
+                                  key={i}
+                                  className="px-3 py-2 text-[10px] text-ink hover:bg-lavender/10 cursor-pointer truncate border-b border-border/40 last:border-0"
+                                  onMouseDown={() => { setCPlace2(s.display_name.split(',').slice(0, 3).join(',')); setCSuggestions2([]) }}
+                                >
+                                  📍 {s.display_name.split(',').slice(0, 3).join(', ')}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </div>
                     </div>
+
                     <button 
                       type="button" 
                       onClick={handleCompatCheck}
+                      disabled={compatLoading}
                       className="cc-form-btn bg-ink text-ivory rounded-xl p-3 font-medium text-xs font-body cursor-pointer hover:bg-lavender transition-colors duration-200 border-none mt-2"
                     >
-                      Check Vibe Match ⟷
+                      {compatLoading ? 'Matching Orbits...' : 'Check Vibe Match ⟷'}
                     </button>
                   </div>
                 ) : (

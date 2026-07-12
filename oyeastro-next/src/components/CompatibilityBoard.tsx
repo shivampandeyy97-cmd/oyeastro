@@ -44,10 +44,7 @@ export default function CompatibilityBoard() {
     if (debounceARef.current) clearTimeout(debounceARef.current)
     debounceARef.current = setTimeout(async () => {
       try {
-        const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(placeA)}&limit=5&addressdetails=0`,
-          { headers: { 'User-Agent': 'OyeAstro/2.0 (oyeastro.com)' } }
-        )
+        const res = await fetch(`/api/geocode?q=${encodeURIComponent(placeA)}`)
         if (res.ok) {
           const data = await res.json() as CitySuggestion[]
           setSuggestionsA(data)
@@ -62,10 +59,7 @@ export default function CompatibilityBoard() {
     if (debounceBRef.current) clearTimeout(debounceBRef.current)
     debounceBRef.current = setTimeout(async () => {
       try {
-        const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(placeB)}&limit=5&addressdetails=0`,
-          { headers: { 'User-Agent': 'OyeAstro/2.0 (oyeastro.com)' } }
-        )
+        const res = await fetch(`/api/geocode?q=${encodeURIComponent(placeB)}`)
         if (res.ok) {
           const data = await res.json() as CitySuggestion[]
           setSuggestionsB(data)

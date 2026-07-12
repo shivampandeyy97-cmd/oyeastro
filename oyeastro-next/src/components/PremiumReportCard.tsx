@@ -260,73 +260,87 @@ export default function PremiumReportCard({ chart }: Props) {
   }
 
   return (
-    <div className="premium-card bg-gradient-to-tr from-[#FAF6FF] via-[#F4E9FF] to-[#ECE0FF] border border-[#D5C2F5] rounded-[26px] p-7 shadow-sm text-left flex flex-col gap-6 relative overflow-hidden">
-      <div className="z-10 flex flex-col gap-4">
-        {/* Badge */}
-        <span className="self-start text-[10px] font-medium px-2.5 py-1 bg-coral/10 text-coral border border-coral/20 rounded-full">
-          ✦ UPGRADE SKILLS
-        </span>
-
-        <div>
-          <h3 className="font-display font-normal text-xl text-ink">
-            Unlock Your 2025-2026 Yearly Report
+    <div className="premium-card relative overflow-hidden bg-white/95 border-[1.5px] border-[#FF7A45]/30 rounded-[28px] p-6.5 shadow-[0_15px_35px_rgba(26,18,8,0.06),0_5px_15px_rgba(255,122,69,0.08)] transition-all duration-300 text-left">
+      {/* Top Notification Bar Style Header */}
+      <div className="flex gap-4 items-start pb-4 border-b border-ink/5">
+        <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-coral to-[#FF9E7A] flex items-center justify-center text-xl shrink-0 text-white shadow-sm animate-bounce">
+          🔔
+        </div>
+        <div className="flex-1">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold text-coral uppercase tracking-[2px]">Cosmic Notification</span>
+            <span className="text-[9px] font-medium text-ink-faint">just now</span>
+          </div>
+          <h3 className="font-display font-medium text-[17px] text-ink mt-0.5 leading-tight">
+            Your 2025-2026 Personal Report is Ready
           </h3>
-          <p className="text-xs text-ink-mid mt-1 font-light leading-relaxed">
-            Get personalized monthly windows, major shifts, and warnings.
+          <p className="text-[11px] text-ink-mid mt-1 font-light leading-relaxed">
+            Gemini has calculated your full 2-year planetary mapping based on {chart.meta.name}'s exact birth chart coordinates.
           </p>
         </div>
+      </div>
 
-        {/* Feature List */}
-        <ul className="flex flex-col gap-2.5 text-xs text-ink-mid border-y border-ink/10 py-4 my-1 list-none pl-0">
-          <li className="flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-coral before:text-[10px] before:mt-0.5">
-            Full Life Chapter breakdown &amp; timeline analysis
+      {/* Real Tangible Benefits Checklist */}
+      <div className="py-4.5 my-1">
+        <h4 className="text-[10px] font-bold text-ink uppercase tracking-wider mb-3">What You'll Unlock Instantly:</h4>
+        <ul className="flex flex-col gap-3 text-xs text-ink-mid pl-0 list-none">
+          <li className="flex gap-3 leading-relaxed">
+            <span className="text-coral shrink-0">📅</span>
+            <span><strong className="text-ink font-semibold">24-Month Life Chapters:</strong> Detailed Vimshottari Dasha mapping that forecasts when your primary planetary cycles shift.</span>
           </li>
-          <li className="flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-coral before:text-[10px] before:mt-0.5">
-            Major Star Shifts &amp; outer planet transitions
+          <li className="flex gap-3 leading-relaxed">
+            <span className="text-coral shrink-0">🪐</span>
+            <span><strong className="text-ink font-semibold">Star Shift Transits:</strong> Exact date windows of outer planet movements (Saturn, Jupiter, Rahu/Ketu) vs your natal houses.</span>
           </li>
-          <li className="flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-coral before:text-[10px] before:mt-0.5">
-            Career &amp; Cash Windows (when to make big moves)
+          <li className="flex gap-3 leading-relaxed">
+            <span className="text-coral shrink-0">💼</span>
+            <span><strong className="text-ink font-semibold">Job &amp; Cash Windows:</strong> Astrological greenlight phases for careers, salary negotiations, and investment choices.</span>
           </li>
-          <li className="flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-coral before:text-[10px] before:mt-0.5">
-            Rizz, Connection &amp; Relationship Forecasts
+          <li className="flex gap-3 leading-relaxed">
+            <span className="text-coral shrink-0">💖</span>
+            <span><strong className="text-ink font-semibold">Love Connection:</strong> Relationship compatibility triggers, attraction cycles, and alignment warnings.</span>
           </li>
-          <li className="flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-coral before:text-[10px] before:mt-0.5">
-            Daily Energy &amp; Vibe Drain calendars
+          <li className="flex gap-3 leading-relaxed">
+            <span className="text-coral shrink-0">🔋</span>
+            <span><strong className="text-ink font-semibold">Vibe Drain Alert:</strong> Burnout warning calendars, transit-based energy patterns, and lifestyle remedies.</span>
           </li>
         </ul>
+      </div>
 
-        {/* Pricing & Checkout Buttons */}
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-ink">Unlock everything:</span>
-            <div className="text-right">
-              <span className="text-lg font-display font-normal text-coral">₹99</span>
-              <span className="text-[10px] text-ink-faint block -mt-1">or $1.49 international</span>
-            </div>
+      {/* Pricing and Action Buttons */}
+      <div className="bg-cream/40 border border-ink/5 rounded-2xl p-4.5 flex flex-col gap-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <span className="text-[10px] font-semibold text-ink-faint tracking-wider uppercase block">Total Access Fee</span>
+            <span className="text-2xl font-display font-medium text-coral leading-none mt-1 inline-block">₹99</span>
+            <span className="text-[10px] text-ink-faint inline-block ml-1">($1.49 international)</span>
           </div>
-
-          {error && (
-            <div className="text-center text-xs font-medium text-coral">
-              ⚠️ {error}
-            </div>
-          )}
-
-          <div className="grid grid-cols-2 gap-3 mt-1">
-            <button
-              onClick={handleRazorpayCheckout}
-              disabled={paymentLoading}
-              className="py-3 bg-ink hover:bg-coral text-ivory font-body text-xs font-medium rounded-full active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 border-none cursor-pointer text-center shadow-sm"
-            >
-              {paymentLoading ? 'Loading...' : '💳 UPI/INR (₹99)'}
-            </button>
-            <button
-              onClick={handleStripeCheckout}
-              disabled={paymentLoading}
-              className="py-3 bg-white/70 hover:bg-white text-ink-mid font-body text-xs font-medium border border-ink/10 rounded-full active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer text-center shadow-sm"
-            >
-              {paymentLoading ? 'Redirecting...' : '🌐 Card/USD ($1.49)'}
-            </button>
+          <div className="bg-sage/10 text-sage text-[10px] font-bold px-2.5 py-1 rounded-full uppercase border border-sage/20">
+            One-time payment
           </div>
+        </div>
+
+        {error && (
+          <div className="text-center text-xs font-semibold text-coral animate-shake">
+            ⚠️ {error}
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={handleRazorpayCheckout}
+            disabled={paymentLoading}
+            className="py-3 bg-ink hover:bg-coral text-ivory font-body text-xs font-semibold rounded-full active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 border-none cursor-pointer text-center shadow-sm"
+          >
+            {paymentLoading ? 'Processing...' : '💳 UPI / INR (₹99)'}
+          </button>
+          <button
+            onClick={handleStripeCheckout}
+            disabled={paymentLoading}
+            className="py-3 bg-white hover:bg-[#FEFCF7] text-ink border border-ink/10 font-body text-xs font-semibold rounded-full active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer text-center shadow-sm"
+          >
+            {paymentLoading ? 'Redirecting...' : '🌐 Card / USD ($1.49)'}
+          </button>
         </div>
       </div>
     </div>

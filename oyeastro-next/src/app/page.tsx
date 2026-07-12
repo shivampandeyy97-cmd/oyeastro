@@ -43,6 +43,8 @@ function HomeContent() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'today' | 'week' | 'month'>('today')
+  const [isFlipped, setIsFlipped] = useState(false)
+  const [selectedVibeMetric, setSelectedVibeMetric] = useState<'love' | 'money' | 'energy'>('love')
 
   // Compatibility State
   const [cName1, setCName1] = useState('')
@@ -128,6 +130,7 @@ function HomeContent() {
   const handleFetchChart = async (data: BirthData) => {
     setIsLoading(true)
     setError(null)
+    setIsFlipped(false)
     try {
       const res = await fetch('/api/chart', {
         method: 'POST',
@@ -139,6 +142,9 @@ function HomeContent() {
       }
       const result = await res.json() as ChartResult
       setChart(result)
+      setTimeout(() => {
+        setIsFlipped(true)
+      }, 600)
 
       // Fetch dynamic cosmic vibes
       try {
@@ -507,88 +513,169 @@ function HomeContent() {
                 </ul>
               </div>
               
-              <div className="w-full max-w-[450px] mx-auto lg:mx-0">
-                <div className="vibe-card bg-gradient-to-tr from-[#FFFBE8] via-[#FFF3C0] to-[#FFE8C0] border border-[#EDD890] rounded-[26px] p-7 shadow-md text-left">
-                  <div className="vc-head flex justify-between items-start mb-1">
-                    <div className="vc-name text-[11px] font-medium text-ink-faint tracking-[2px] uppercase">
-                      {chart.meta.name}'s Cosmic Vibe ✦
-                    </div>
-                  </div>
-                  <div className="vc-lagna font-display text-[29px] font-normal text-ink tracking-tight mb-1">
-                    {chart.bigThree.rising.sign} Lagna
-                  </div>
-                  <div className="vc-naksh text-xs text-ink-faint">
-                    {chart.dasha.nakshatra.name} Nakshatra · {chart.dasha.activeDasha.rulerName} Mahadasha
-                  </div>
+              <div className="w-full max-w-[450px] mx-auto lg:mx-0 perspective-1000 min-h-[580px] relative">
+                <div className={`w-full h-full transition-transform duration-700 preserve-3d relative ${isFlipped ? 'rotate-y-180' : ''}`} style={{ transformStyle: 'preserve-3d' }}>
                   
-                  <div className="vc-line h-[0.5px] bg-ink/10 my-4" />
-                  
-                  <div className="vc-tabs flex gap-1.5 mb-4">
-                    <button 
-                      type="button" 
-                      onClick={() => setActiveTab('today')}
-                      className={`vc-tab text-[11px] px-3 py-1.5 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'today' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
-                    >
-                      Today
-                    </button>
-                    <button 
-                      type="button" 
-                      onClick={() => setActiveTab('week')}
-                      className={`vc-tab text-[11px] px-3 py-1.5 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'week' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
-                    >
-                      Week
-                    </button>
-                    <button 
-                      type="button" 
-                      onClick={() => setActiveTab('month')}
-                      className={`vc-tab text-[11px] px-3 py-1.5 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'month' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
-                    >
-                      Month
-                    </button>
+                  {/* Card Back Face (Hidden when flipped) */}
+                  <div className="absolute inset-0 backface-hidden bg-ink border-2 border-[#EDD890] rounded-[26px] p-8 flex flex-col items-center justify-center text-center shadow-lg cursor-pointer" onClick={() => setIsFlipped(true)} style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
+                    <div className="w-14 h-14 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center text-2xl mb-5 animate-pulse text-gold">
+                      ✦
+                    </div>
+                    <h3 className="font-display font-medium text-lg text-ivory tracking-wider mb-2">Calculating Your Cosmos...</h3>
+                    <p className="text-[11px] text-ink-faint max-w-[200px] leading-relaxed mb-4">
+                      Reading natal planets, current transit shapes, and lunar nakshatras...
+                    </p>
+                    <div className="text-[10px] text-gold/60 mt-4 tracking-[3px] uppercase font-semibold">Click to Reveal</div>
                   </div>
-  
-                  <div className="vc-metrics grid grid-cols-3 gap-2 mb-4">
-                    <div className="vc-m bg-white/75 rounded-xl p-2.5 text-center">
-                      <div className="vc-m-emoji text-lg">{vibeData ? vibeData.love.emoji : '💌'}</div>
-                      <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5">Love</div>
-                      <div className="vc-m-val text-[12px] font-medium mt-1 text-[#FF7A45]">
-                        {vibeData ? vibeData.love.status : 'Tender'}
+
+                  {/* Card Front Face (Revealed when flipped) */}
+                  <div className="absolute inset-0 backface-hidden vibe-card bg-gradient-to-tr from-[#FFFBE8] via-[#FFF3C0] to-[#FFE8C0] border border-[#EDD890] rounded-[26px] p-7 shadow-md text-left rotate-y-180 flex flex-col justify-between" style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
+                    <div>
+                      <div className="vc-head flex justify-between items-start mb-1">
+                        <div className="vc-name text-[11px] font-medium text-ink-faint tracking-[2px] uppercase">
+                          {chart.meta.name}'s Cosmic Vibe ✦
+                        </div>
+                      </div>
+                      <div className="vc-lagna font-display text-[29px] font-normal text-ink tracking-tight mb-1">
+                        {chart.bigThree.rising.sign} Lagna
+                      </div>
+                      <div className="vc-naksh text-xs text-ink-faint">
+                        {chart.dasha.nakshatra.name} Nakshatra · {chart.dasha.activeDasha.rulerName} Mahadasha
+                      </div>
+                      
+                      <div className="vc-line h-[0.5px] bg-ink/10 my-3" />
+                      
+                      <div className="vc-tabs flex gap-1.5 mb-3">
+                        <button 
+                          type="button" 
+                          onClick={() => setActiveTab('today')}
+                          className={`vc-tab text-[11px] px-3 py-1.5 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'today' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
+                        >
+                          Today
+                        </button>
+                        <button 
+                          type="button" 
+                          onClick={() => setActiveTab('week')}
+                          className={`vc-tab text-[11px] px-3 py-1.5 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'week' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
+                        >
+                          Week
+                        </button>
+                        <button 
+                          type="button" 
+                          onClick={() => setActiveTab('month')}
+                          className={`vc-tab text-[11px] px-3 py-1.5 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'month' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
+                        >
+                          Month
+                        </button>
+                      </div>
+      
+                      {/* Interactive Metrics Grid */}
+                      <div className="vc-metrics grid grid-cols-3 gap-2 mb-3">
+                        <button 
+                          type="button"
+                          onClick={() => setSelectedVibeMetric('love')}
+                          className={`vc-m rounded-xl p-2.5 text-center border transition-all cursor-pointer ${selectedVibeMetric === 'love' ? 'bg-[#FFF2EC] border-[#FF7A45]/30 ring-2 ring-[#FF7A45]/10' : 'bg-white/60 border-transparent hover:bg-white'}`}
+                        >
+                          <div className="vc-m-emoji text-lg">{vibeData ? vibeData.love.emoji : '💌'}</div>
+                          <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5 font-medium">Love</div>
+                          <div className="vc-m-val text-[11px] font-semibold mt-0.5 text-[#FF7A45]">
+                            {vibeData ? vibeData.love.status : 'Tender'}
+                          </div>
+                        </button>
+                        
+                        <button 
+                          type="button"
+                          onClick={() => setSelectedVibeMetric('money')}
+                          className={`vc-m rounded-xl p-2.5 text-center border transition-all cursor-pointer ${selectedVibeMetric === 'money' ? 'bg-[#EEF7F2] border-[#6DB88A]/30 ring-2 ring-[#6DB88A]/10' : 'bg-white/60 border-transparent hover:bg-white'}`}
+                        >
+                          <div className="vc-m-emoji text-lg">{vibeData ? vibeData.money.emoji : '💸'}</div>
+                          <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5 font-medium">Money</div>
+                          <div className="vc-m-val text-[11px] font-semibold mt-0.5 text-[#6DB88A]">
+                            {vibeData ? vibeData.money.status : 'Flowing'}
+                          </div>
+                        </button>
+
+                        <button 
+                          type="button"
+                          onClick={() => setSelectedVibeMetric('energy')}
+                          className={`vc-m rounded-xl p-2.5 text-center border transition-all cursor-pointer ${selectedVibeMetric === 'energy' ? 'bg-[#FFFBEB] border-[#D4A800]/30 ring-2 ring-[#D4A800]/10' : 'bg-white/60 border-transparent hover:bg-white'}`}
+                        >
+                          <div className="vc-m-emoji text-lg">{vibeData ? vibeData.energy.emoji : '⚡'}</div>
+                          <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5 font-medium">Energy</div>
+                          <div className="vc-m-val text-[11px] font-semibold mt-0.5 text-[#D4A800]">
+                            {vibeData ? vibeData.energy.status : 'Chaotic'}
+                          </div>
+                        </button>
+                      </div>
+
+                      {/* Detailed Metric Breakdown */}
+                      <div className="vc-breakdown bg-white/70 border border-ink/5 rounded-xl p-3.5 text-xs mb-3 flex flex-col gap-2 shadow-[inset_0_2px_4px_rgba(26,18,8,0.02)]">
+                        {selectedVibeMetric === 'love' && (
+                          <>
+                            <div className="flex justify-between items-center text-[10px] font-bold text-ink uppercase tracking-wide">
+                              <span>💖 Love &amp; Connection Alignment</span>
+                              <span className="text-[#FF7A45]">{Math.abs((chart.houseData.lagnaSignIndex * 7) % 35) + 65}%</span>
+                            </div>
+                            <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                              <div className="h-full bg-[#FF7A45] rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 7) % 35) + 65}%` }} />
+                            </div>
+                            <div className="text-[10px] text-ink-mid leading-relaxed">
+                              Transit Venus is aspecting your Moon. If they aren't texting back, it's a direction problem, not a connection problem. Set boundaries!
+                            </div>
+                          </>
+                        )}
+                        {selectedVibeMetric === 'money' && (
+                          <>
+                            <div className="flex justify-between items-center text-[10px] font-bold text-ink uppercase tracking-wide">
+                              <span>💵 Financial Flow Status</span>
+                              <span className="text-[#6DB88A]">{Math.abs((chart.houseData.lagnaSignIndex * 13) % 40) + 60}%</span>
+                            </div>
+                            <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                              <div className="h-full bg-[#6DB88A] rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 13) % 40) + 60}%` }} />
+                            </div>
+                            <div className="text-[10px] text-ink-mid leading-relaxed">
+                              Jupiter supports your asset houses, but Mercury's positioning warning points to high shopping/impulse risk. Close that online cart!
+                            </div>
+                          </>
+                        )}
+                        {selectedVibeMetric === 'energy' && (
+                          <>
+                            <div className="flex justify-between items-center text-[10px] font-bold text-ink uppercase tracking-wide">
+                              <span>⚡ Cosmic Battery Level</span>
+                              <span className="text-[#D4A800]">{Math.abs((chart.houseData.lagnaSignIndex * 9) % 50) + 40}%</span>
+                            </div>
+                            <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                              <div className="h-full bg-[#D4A800] rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 9) % 50) + 40}%` }} />
+                            </div>
+                            <div className="text-[10px] text-ink-mid leading-relaxed">
+                              Your solar energy is high, but Mars is side-eyeing your 8th house of burnout. Skip the extra screens tonight; recharge your battery.
+                            </div>
+                          </>
+                        )}
+                      </div>
+      
+                      {/* Rich readable description */}
+                      <div className="vc-insight bg-white border border-[#EDD890]/40 rounded-xl p-4 text-[13px] text-ink font-semibold leading-[1.8] italic mb-4 border-l-[3px] border-coral shadow-sm">
+                        {vibeData ? `"${vibeData.interpretation}"` : `""`}
                       </div>
                     </div>
-                    <div className="vc-m bg-white/75 rounded-xl p-2.5 text-center">
-                      <div className="vc-m-emoji text-lg">{vibeData ? vibeData.money.emoji : '💸'}</div>
-                      <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5">Money</div>
-                      <div className="vc-m-val text-[12px] font-medium mt-1 text-[#6DB88A]">
-                        {vibeData ? vibeData.money.status : 'Flowing'}
-                      </div>
-                    </div>
-                    <div className="vc-m bg-white/75 rounded-xl p-2.5 text-center">
-                      <div className="vc-m-emoji text-lg">{vibeData ? vibeData.energy.emoji : '⚡'}</div>
-                      <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5">Energy</div>
-                      <div className="vc-m-val text-[12px] font-medium mt-1 text-[#D4A800]">
-                        {vibeData ? vibeData.energy.status : 'Chaotic'}
-                      </div>
+    
+                    <div className="vc-share-bar flex items-center justify-between bg-ink rounded-xl p-3 text-xs">
+                      <div className="vc-share-txt text-white/60">Share your vibe</div>
+                      <button 
+                        onClick={handleVibeCopy}
+                        className="vc-share-btn-txt text-[#FDE97B] font-medium bg-transparent border-none cursor-pointer p-0 font-body hover:opacity-90"
+                      >
+                        {vibeCopied ? 'Copied! 💅' : 'Copy card ↗'}
+                      </button>
                     </div>
                   </div>
   
-                  <div className="vc-insight bg-white/65 rounded-xl p-4 text-[12px] text-ink-mid leading-[1.75] italic mb-4 border-l-[2.5px] border-coral min-h-[80px] flex items-center">
-                    {vibeData ? `"${vibeData.interpretation}"` : `""`}
-                  </div>
-  
-                  <div className="vc-share-bar flex items-center justify-between bg-ink rounded-xl p-3 text-xs">
-                    <div className="vc-share-txt text-white/60">Share your vibe</div>
-                    <button 
-                      onClick={handleVibeCopy}
-                      className="vc-share-btn-txt text-[#FDE97B] font-medium bg-transparent border-none cursor-pointer p-0 font-body hover:opacity-90"
-                    >
-                      {vibeCopied ? 'Copied! 💅' : 'Copy card ↗'}
-                    </button>
-                  </div>
                 </div>
+              </div>
   
-                <div className="mt-8">
-                  <PremiumReportCard chart={chart} />
-                </div>
+              <div className="mt-8 w-full max-w-[450px] mx-auto lg:mx-0">
+                <PremiumReportCard chart={chart} />
               </div>
             </div>
           </div>

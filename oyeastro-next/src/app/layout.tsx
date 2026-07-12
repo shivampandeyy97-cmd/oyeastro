@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Fraunces, DM_Sans } from 'next/font/google'
+import { Fraunces, DM_Sans, Pacifico } from 'next/font/google'
 import Script from 'next/script'
 import './globals.css'
 
@@ -15,6 +15,13 @@ const dmSans = DM_Sans({
   subsets: ['latin'],
   weight: ['300', '400', '500'],
   variable: '--font-dm-sans',
+  display: 'swap',
+})
+
+const pacifico = Pacifico({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-pacifico',
   display: 'swap',
 })
 
@@ -39,7 +46,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${dmSans.variable}`}>
+    <html lang="en" className={`${fraunces.variable} ${dmSans.variable} ${pacifico.variable}`}>
       <head />
       <body className="font-body bg-ivory text-ink min-h-screen overflow-x-hidden relative">
         {children}

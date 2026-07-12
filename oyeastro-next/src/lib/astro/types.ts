@@ -2,6 +2,7 @@
 
 export interface BirthData {
   name: string
+  gender?: string
   birthDate: string   // YYYY-MM-DD
   birthTime: string   // HH:MM (24h)
   birthPlace: string

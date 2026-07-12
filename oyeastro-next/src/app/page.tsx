@@ -14,6 +14,7 @@ function HomeContent() {
 
   // Form State
   const [name, setName] = useState('')
+  const [gender, setGender] = useState('male')
   const [city, setCity] = useState('')
   const [suggestions, setSuggestions] = useState<any[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
@@ -178,7 +179,7 @@ function HomeContent() {
       setError('Please fill in city, date and time details!')
       return
     }
-    handleFetchChart({ name, birthDate: date, birthTime: time, birthPlace: city })
+    handleFetchChart({ name, gender, birthDate: date, birthTime: time, birthPlace: city })
   }
 
   // Fallback Vibe data generator based on Rashi index and Moon sign index
@@ -348,21 +349,19 @@ function HomeContent() {
             Your cosmic clarity — zero woo-woo
           </div>
 
-          <h1 className="hero-title font-display text-[46px] md:text-[88px] font-normal leading-[1.02] tracking-[-2.5px] text-ink mb-6">
-            The universe has<br />
-            <em className="not-italic text-coral font-medium">always</em> been<br />
-            watching <span className="hero-underline relative inline-block after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:h-1 after:bg-gradient-to-r after:from-gold after:to-coral after:rounded">you.</span>
+          <h1 className="hero-title font-display text-[46px] md:text-[76px] font-bold leading-[1.08] tracking-tight text-ink mb-6" style={{ fontFamily: "var(--font-pacifico), cursive" }}>
+            Know what is gonna happen next
           </h1>
 
-          <p className="hero-sub text-[17px] text-ink-mid leading-[1.8] max-w-[500px] mx-auto font-light mb-12">
-            Enter your birth details. Get a deeply personal read on today, your week, and what's coming — backed by 5000 years of Vedic astrology, written for right now.
+          <p className="hero-sub text-[16px] md:text-[18px] text-ink-mid leading-[1.8] max-w-[550px] mx-auto font-light mb-12">
+            Fully backed by mathematical astrology, but let's be real—consider this a highly educated cosmic guess from a supportive well-wisher who knows too much.
           </p>
 
           <form onSubmit={handleSubmit} className="input-card bg-white border border-border rounded-[28px] p-[2.25rem] pb-[1.75rem] max-w-[600px] mx-auto shadow-[0_6px_50px_rgba(26,18,8,0.07),0_2px_6px_rgba(26,18,8,0.04)] text-left">
             <div className="card-label text-[11px] font-medium text-ink-faint tracking-[2px] uppercase mb-6">Tell the cosmos who you are</div>
             
-            <div className="input-row grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-              <div className="field flex flex-col gap-1.5">
+            <div className="input-row grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+              <div className="field flex flex-col gap-1.5 md:col-span-2">
                 <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">Your name</label>
                 <input 
                   type="text" 
@@ -373,6 +372,21 @@ function HomeContent() {
                   className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
                 />
               </div>
+              <div className="field flex flex-col gap-1.5">
+                <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">Gender</label>
+                <select 
+                  value={gender} 
+                  onChange={(e) => setGender(e.target.value)}
+                  className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink cursor-pointer focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                >
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="non-binary">Non-Binary</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="input-row grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
               <div className="field flex flex-col gap-1.5 relative">
                 <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">Birth city</label>
                 <div className="relative">
@@ -401,9 +415,6 @@ function HomeContent() {
                   )}
                 </div>
               </div>
-            </div>
-
-            <div className="input-row grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
               <div className="field flex flex-col gap-1.5">
                 <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">Date of birth</label>
                 <input 
@@ -414,6 +425,9 @@ function HomeContent() {
                   className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
                 />
               </div>
+            </div>
+
+            <div className="input-row grid grid-cols-1 md:grid-cols-2 gap-3 mb-[0.75rem]">
               <div className="field flex flex-col gap-1.5">
                 <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">Time of birth</label>
                 <input 
@@ -424,9 +438,6 @@ function HomeContent() {
                   className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
                 />
               </div>
-            </div>
-
-            <div className="input-row grid grid-cols-1 gap-3 mb-[0.75rem]">
               <div className="field flex flex-col gap-1.5">
                 <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">What do you want clarity on?</label>
                 <select 

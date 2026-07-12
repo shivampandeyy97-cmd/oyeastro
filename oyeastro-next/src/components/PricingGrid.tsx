@@ -84,8 +84,8 @@ export default function PricingGrid() {
           Pricing Plans
         </p>
         <h2 className="font-display text-[36px] md:text-[58px] font-normal leading-[1.08] tracking-[-1.5px] text-ink mb-4">
-          Align your cosmos with <br />
-          <em className="not-italic text-coral font-medium">OyeAstro+</em>
+          Choose your <br />
+          <em className="not-italic text-coral font-medium">Pricing Plan</em>
         </h2>
         <p className="text-base text-ink-mid leading-[1.8] font-light max-w-[480px] mx-auto mb-14">
           Unlock unlimited daily calculations, deep historical reports, and priority planetary alerts.
@@ -125,14 +125,14 @@ export default function PricingGrid() {
             </button>
           </motion.div>
 
-          {/* OyeAstro+ Monthly Card */}
+          {/* Monthly Card */}
           <motion.div 
             whileHover={{ y: -4 }}
             className={`price-card bg-white border-2 ${subscribedPlan === 'monthly' ? 'border-sage' : 'border-border'} rounded-[22px] p-8 flex flex-col justify-between shadow-[0_4px_20px_rgba(26,18,8,0.02)]`}
           >
             <div>
               <div className="flex justify-between items-center mb-6">
-                <span className="text-[10px] font-semibold text-coral tracking-[1.5px] uppercase">OyeAstro+ Monthly</span>
+                <span className="text-[10px] font-semibold text-coral tracking-[1.5px] uppercase">Monthly Plan</span>
                 <span className="text-2xl">⚡</span>
               </div>
               <div className="font-display text-4xl font-normal text-ink mb-6">
@@ -154,21 +154,21 @@ export default function PricingGrid() {
             </button>
           </motion.div>
 
-          {/* OyeAstro+ Annual Card */}
+          {/* Annual Card */}
           <motion.div 
             whileHover={{ y: -4 }}
             className={`price-card featured bg-gradient-to-br from-[#FFFBE8] to-[#FFF3C0] border-2 ${subscribedPlan === 'annual' ? 'border-sage' : 'border-[#EDD97A]'} rounded-[22px] p-8 flex flex-col justify-between shadow-[0_8px_30px_rgba(245,197,24,0.12)]`}
           >
             <div>
               <div className="flex justify-between items-center mb-6">
-                <span className="text-[10px] font-semibold text-[#7A5F00] tracking-[1.5px] uppercase">OyeAstro Annual</span>
+                <span className="text-[10px] font-semibold text-[#7A5F00] tracking-[1.5px] uppercase">Annual Plan</span>
                 <span className="bg-gold text-ink text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Save 33%</span>
               </div>
               <div className="font-display text-4xl font-normal text-ink mb-6">
                 ₹99 <span className="text-xs text-ink-faint font-light font-body block mt-1">/ month (billed ₹1,188 yearly)</span>
               </div>
               <ul className="flex flex-col gap-3.5 text-xs text-ink-mid mb-8 pl-0 list-none">
-                <li className="flex items-center gap-2 before:content-['✦'] before:text-gold before:text-[10px]">Everything in OyeAstro+</li>
+                <li className="flex items-center gap-2 before:content-['✦'] before:text-gold before:text-[10px]">Everything in Monthly Plan</li>
                 <li className="flex items-center gap-2 before:content-['✦'] before:text-gold before:text-[10px]">33% discount vs Monthly</li>
                 <li className="flex items-center gap-2 before:content-['✦'] before:text-gold before:text-[10px]">Exclusive yearly overview</li>
                 <li className="flex items-center gap-2 before:content-['✦'] before:text-gold before:text-[10px]">Priority Gemini AI access</li>

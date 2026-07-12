@@ -349,12 +349,12 @@ function HomeContent() {
             Your cosmic clarity — zero woo-woo
           </div>
 
-          <h1 className="hero-title text-[40px] sm:text-[54px] md:text-[88px] lg:text-[110px] leading-[1.05] text-ink mb-8 md:whitespace-nowrap overflow-visible" style={{
+          <h1 className="hero-title text-[44px] sm:text-[64px] md:text-[84px] lg:text-[104px] leading-[1.05] text-ink mb-8 max-w-4xl mx-auto overflow-visible" style={{
             fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif',
-            letterSpacing: '-0.022em',
+            letterSpacing: '-0.025em',
             fontWeight: 800
           }}>
-            Know what gonna happen next
+            Know what gonna<br className="hidden md:inline" /> happen next
           </h1>
 
           <p className="hero-sub text-[16px] md:text-[18px] text-ink-mid leading-[1.8] max-w-[550px] mx-auto font-light mb-12">
@@ -598,145 +598,179 @@ function HomeContent() {
       {/* ░░ COMPATIBILITY ░░ */}
       <section className="section bg-cream py-32 px-6" id="match">
         <div className="section-inner max-w-[1040px] mx-auto">
-          <div className="split grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-24 items-center">
+          <div className="split grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-24 items-start">
             
+            {/* Left Column: Details Box (Form) */}
             <div className="w-full max-w-[450px] mx-auto lg:mx-0">
               <div className="compat-card bg-gradient-to-tr from-[#F6F0FF] to-[#EDE0FF] border border-[#DCCFFF] rounded-[26px] p-7 shadow-sm text-left">
                 <div className="cc-eyebrow text-[10px] font-medium text-lavender tracking-[2px] uppercase mb-4">Cosmic Compatibility</div>
                 
-                {/* State 1: Intake inputs */}
-                {!compatChecked ? (
-                  <div className="cc-form flex flex-col gap-4">
-                    {/* Partner 1 */}
-                    <div className="flex flex-col gap-2">
-                      <span className="text-[10px] font-semibold text-lavender uppercase tracking-wider">Partner 1 (You)</span>
-                      <div className="grid grid-cols-2 gap-2">
+                <div className="cc-form flex flex-col gap-4">
+                  {/* Partner 1 */}
+                  <div className="flex flex-col gap-2">
+                    <span className="text-[10px] font-semibold text-lavender uppercase tracking-wider">Partner 1 (You)</span>
+                    <div className="grid grid-cols-2 gap-2">
+                      <input 
+                        type="text" 
+                        value={cName1} 
+                        onChange={(e) => setCName1(e.target.value)} 
+                        placeholder="Name..." 
+                        className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                      />
+                      <input 
+                        type="date" 
+                        value={cDate1} 
+                        onChange={(e) => setCDate1(e.target.value)} 
+                        className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 relative">
+                      <input 
+                        type="time" 
+                        value={cTime1} 
+                        onChange={(e) => setCTime1(e.target.value)} 
+                        className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                      />
+                      <div className="relative">
                         <input 
                           type="text" 
-                          value={cName1} 
-                          onChange={(e) => setCName1(e.target.value)} 
-                          placeholder="Name..." 
+                          value={cPlace1} 
+                          onChange={(e) => { setCPlace1(e.target.value); setCShowSuggestions1(true) }}
+                          onBlur={() => setTimeout(() => setCShowSuggestions1(false), 200)}
+                          placeholder="Birth City..." 
                           className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                          autoComplete="off"
                         />
-                        <input 
-                          type="date" 
-                          value={cDate1} 
-                          onChange={(e) => setCDate1(e.target.value)} 
-                          className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-2 relative">
-                        <input 
-                          type="time" 
-                          value={cTime1} 
-                          onChange={(e) => setCTime1(e.target.value)} 
-                          className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
-                        />
-                        <div className="relative">
-                          <input 
-                            type="text" 
-                            value={cPlace1} 
-                            onChange={(e) => { setCPlace1(e.target.value); setCShowSuggestions1(true) }}
-                            onBlur={() => setTimeout(() => setCShowSuggestions1(false), 200)}
-                            placeholder="Birth City..." 
-                            className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
-                            autoComplete="off"
-                          />
-                          {cShowSuggestions1 && cSuggestions1.length > 0 && (
-                            <ul className="absolute left-0 right-0 top-full mt-1 bg-white border border-border rounded-xl shadow-lg z-50 max-h-32 overflow-y-auto pl-0 list-none m-0 p-0">
-                              {cSuggestions1.map((s: any, i: number) => (
-                                <li 
-                                  key={i}
-                                  className="px-3 py-2 text-[10px] text-ink hover:bg-lavender/10 cursor-pointer truncate border-b border-border/40 last:border-0"
-                                  onMouseDown={() => { setCPlace1(s.display_name.split(',').slice(0, 3).join(',')); setCSuggestions1([]) }}
-                                >
-                                  📍 {s.display_name.split(',').slice(0, 3).join(', ')}
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                        </div>
+                        {cShowSuggestions1 && cSuggestions1.length > 0 && (
+                          <ul className="absolute left-0 right-0 top-full mt-1 bg-white border border-border rounded-xl shadow-lg z-50 max-h-32 overflow-y-auto pl-0 list-none m-0 p-0">
+                            {cSuggestions1.map((s: any, i: number) => (
+                              <li 
+                                key={i}
+                                className="px-3 py-2 text-[10px] text-ink hover:bg-lavender/10 cursor-pointer truncate border-b border-border/40 last:border-0"
+                                onMouseDown={() => { setCPlace1(s.display_name.split(',').slice(0, 3).join(',')); setCSuggestions1([]) }}
+                              >
+                                📍 {s.display_name.split(',').slice(0, 3).join(', ')}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
                       </div>
                     </div>
-
-                    {/* Partner 2 */}
-                    <div className="flex flex-col gap-2 pt-2 border-t border-lavender/25">
-                      <span className="text-[10px] font-semibold text-lavender uppercase tracking-wider">Partner 2 (Them)</span>
-                      <div className="grid grid-cols-2 gap-2">
-                        <input 
-                          type="text" 
-                          value={cName2} 
-                          onChange={(e) => setCName2(e.target.value)} 
-                          placeholder="Name..." 
-                          className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
-                        />
-                        <input 
-                          type="date" 
-                          value={cDate2} 
-                          onChange={(e) => setCDate2(e.target.value)} 
-                          className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-2 relative">
-                        <input 
-                          type="time" 
-                          value={cTime2} 
-                          onChange={(e) => setCTime2(e.target.value)} 
-                          className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
-                        />
-                        <div className="relative">
-                          <input 
-                            type="text" 
-                            value={cPlace2} 
-                            onChange={(e) => { setCPlace2(e.target.value); setCShowSuggestions2(true) }}
-                            onBlur={() => setTimeout(() => setCShowSuggestions2(false), 200)}
-                            placeholder="Birth City..." 
-                            className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
-                            autoComplete="off"
-                          />
-                          {cShowSuggestions2 && cSuggestions2.length > 0 && (
-                            <ul className="absolute left-0 right-0 top-full mt-1 bg-white border border-border rounded-xl shadow-lg z-50 max-h-32 overflow-y-auto pl-0 list-none m-0 p-0">
-                              {cSuggestions2.map((s: any, i: number) => (
-                                <li 
-                                  key={i}
-                                  className="px-3 py-2 text-[10px] text-ink hover:bg-lavender/10 cursor-pointer truncate border-b border-border/40 last:border-0"
-                                  onMouseDown={() => { setCPlace2(s.display_name.split(',').slice(0, 3).join(',')); setCSuggestions2([]) }}
-                                >
-                                  📍 {s.display_name.split(',').slice(0, 3).join(', ')}
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    <button 
-                      type="button" 
-                      onClick={handleCompatCheck}
-                      disabled={compatLoading}
-                      className="cc-form-btn bg-ink text-ivory rounded-xl p-3 font-medium text-xs font-body cursor-pointer hover:bg-lavender transition-colors duration-200 border-none mt-2"
-                    >
-                      {compatLoading ? 'Matching Orbits...' : 'Check Vibe Match ⟷'}
-                    </button>
                   </div>
-                ) : (
-                  /* State 2: Results Display */
-                  <div>
+
+                  {/* Partner 2 */}
+                  <div className="flex flex-col gap-2 pt-2 border-t border-lavender/25">
+                    <span className="text-[10px] font-semibold text-lavender uppercase tracking-wider">Partner 2 (Them)</span>
+                    <div className="grid grid-cols-2 gap-2">
+                      <input 
+                        type="text" 
+                        value={cName2} 
+                        onChange={(e) => setCName2(e.target.value)} 
+                        placeholder="Name..." 
+                        className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                      />
+                      <input 
+                        type="date" 
+                        value={cDate2} 
+                        onChange={(e) => setCDate2(e.target.value)} 
+                        className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 relative">
+                      <input 
+                        type="time" 
+                        value={cTime2} 
+                        onChange={(e) => setCTime2(e.target.value)} 
+                        className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                      />
+                      <div className="relative">
+                        <input 
+                          type="text" 
+                          value={cPlace2} 
+                          onChange={(e) => { setCPlace2(e.target.value); setCShowSuggestions2(true) }}
+                          onBlur={() => setTimeout(() => setCShowSuggestions2(false), 200)}
+                          placeholder="Birth City..." 
+                          className="w-full bg-white/70 border border-border rounded-xl p-2 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                          autoComplete="off"
+                        />
+                        {cShowSuggestions2 && cSuggestions2.length > 0 && (
+                          <ul className="absolute left-0 right-0 top-full mt-1 bg-white border border-border rounded-xl shadow-lg z-50 max-h-32 overflow-y-auto pl-0 list-none m-0 p-0">
+                            {cSuggestions2.map((s: any, i: number) => (
+                              <li 
+                                key={i}
+                                className="px-3 py-2 text-[10px] text-ink hover:bg-lavender/10 cursor-pointer truncate border-b border-border/40 last:border-0"
+                                onMouseDown={() => { setCPlace2(s.display_name.split(',').slice(0, 3).join(',')); setCSuggestions2([]) }}
+                              >
+                                📍 {s.display_name.split(',').slice(0, 3).join(', ')}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button 
+                    type="button" 
+                    onClick={handleCompatCheck}
+                    disabled={compatLoading}
+                    className="cc-form-btn bg-ink text-ivory rounded-xl p-3 font-medium text-xs font-body cursor-pointer hover:bg-lavender transition-colors duration-200 border-none mt-2"
+                  >
+                    {compatLoading ? 'Matching Orbits...' : 'Check Vibe Match ⟷'}
+                  </button>
+
+                  {compatChecked && (
+                    <div className="text-center mt-2">
+                      <button 
+                        type="button" 
+                        onClick={handleCompatReset}
+                        className="cc-reset-btn text-[10px] bg-transparent border-none text-ink-faint underline cursor-pointer hover:text-ink"
+                      >
+                        Reset / Clear Details
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Descriptions (Default) OR Partner Results Card (Active) */}
+            <div className="text-left w-full">
+              {!compatChecked ? (
+                <div>
+                  <p className="split-text-label text-[11px] font-medium text-ink-faint tracking-[2px] uppercase mb-5">Feature 02 — Compatibility</p>
+                  <h2 className="split-h font-display text-[28px] md:text-[46px] font-normal leading-[1.15] tracking-tight text-ink mb-4">
+                    Are you two actually <em className="not-italic text-lavender font-light">written</em><br />in the stars?
+                  </h2>
+                  <p className="split-p text-[15px] text-ink-mid leading-[1.8] font-light mb-8">
+                    Enter your details and theirs. Get a real Ashtakoot compatibility score — the 5000-year-old Vedic system that looks at 8 dimensions of connection. Not just a number. A story.
+                  </p>
+                  <ul className="check-list list-none">
+                    <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">36-point Ashtakoot Guna Milan calculation</li>
+                    <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">Mangal Dosha check for both partners</li>
+                    <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">A narrative: what works, what needs work</li>
+                    <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">A shareable duo card for your Instagram</li>
+                  </ul>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-6">
+                  <div className="compat-card bg-white border border-border rounded-[26px] p-7 shadow-sm text-left">
+                    <div className="cc-eyebrow text-[10px] font-medium text-lavender tracking-[2px] uppercase mb-4">Vibe Match Result ✦</div>
+                    
                     <div className="cc-persons-wrap flex gap-2.5 items-center mb-4">
-                      <div className="cc-p flex-1 bg-white/65 rounded-xl p-2.5 text-center">
-                        <div className="cc-p-name text-xs font-medium text-ink">{cName1}</div>
+                      <div className="cc-p flex-1 bg-cream rounded-xl p-2.5 text-center">
+                        <div className="cc-p-name text-xs font-semibold text-ink">{cName1}</div>
                         <div className="cc-p-sign text-[10px] text-ink-faint mt-0.5">{compatDetails.p1Sign}</div>
                       </div>
                       <div className="cc-arr text-ink-faint text-lg font-light shrink-0">⟷</div>
-                      <div className="cc-p flex-1 bg-white/65 rounded-xl p-2.5 text-center">
-                        <div className="cc-p-name text-xs font-medium text-ink">{cName2}</div>
+                      <div className="cc-p flex-1 bg-cream rounded-xl p-2.5 text-center">
+                        <div className="cc-p-name text-xs font-semibold text-ink">{cName2}</div>
                         <div className="cc-p-sign text-[10px] text-ink-faint mt-0.5">{compatDetails.p2Sign}</div>
                       </div>
                     </div>
                     
                     <div className="cc-pct text-center my-4">
-                      <div className="cc-pct-val font-display text-[56px] font-light text-ink tracking-tight leading-none">
+                      <div className="cc-pct-val font-display text-[56px] font-bold text-ink tracking-tight leading-none">
                         {compatScore}%
                       </div>
                       <div className="cc-pct-lbl text-[10px] text-ink-faint uppercase tracking-wider mt-1">Cosmic Match Score</div>
@@ -769,7 +803,7 @@ function HomeContent() {
                       </div>
                     </div>
 
-                    <div className="cc-insight text-[11px] text-ink-faint leading-relaxed italic my-4 min-h-[40px]">
+                    <div className="cc-insight text-[11px] text-ink-mid leading-relaxed italic my-4 min-h-[40px] bg-cream/50 p-3.5 rounded-xl border-l-[2px] border-lavender">
                       "{compatText}"
                     </div>
 
@@ -782,35 +816,18 @@ function HomeContent() {
                         {compatCopied ? 'Copied! 💅' : 'Share match ↗'}
                       </button>
                     </div>
-
-                    <div className="text-center mt-4">
-                      <button 
-                        type="button" 
-                        onClick={handleCompatReset}
-                        className="cc-reset-btn text-[10px] bg-transparent border-none text-ink-faint underline cursor-pointer hover:text-ink"
-                      >
-                        Check another match
-                      </button>
-                    </div>
                   </div>
-                )}
-              </div>
-            </div>
 
-            <div className="text-left">
-              <p className="split-text-label text-[11px] font-medium text-ink-faint tracking-[2px] uppercase mb-5">Feature 02 — Compatibility</p>
-              <h2 className="split-h font-display text-[28px] md:text-[46px] font-normal leading-[1.15] tracking-tight text-ink mb-4">
-                Are you two actually <em className="not-italic text-lavender font-light">written</em><br />in the stars?
-              </h2>
-              <p className="split-p text-[15px] text-ink-mid leading-[1.8] font-light mb-8">
-                Enter your details and theirs. Get a real Ashtakoot compatibility score — the 5000-year-old Vedic system that looks at 8 dimensions of connection. Not just a number. A story.
-              </p>
-              <ul className="check-list list-none">
-                <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">36-point Ashtakoot Guna Milan calculation</li>
-                <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">Mangal Dosha check for both partners</li>
-                <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">A narrative: what works, what needs work</li>
-                <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">A shareable duo card for your Instagram</li>
-              </ul>
+                  {/* Copyright free couple picture */}
+                  <div className="rounded-[22px] overflow-hidden border border-border shadow-sm bg-white p-2">
+                    <img 
+                      src="/happy_couple.png" 
+                      alt="Happy Couple Cosmic Alignment" 
+                      className="w-full h-64 object-cover rounded-xl"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
           </div>
@@ -853,7 +870,7 @@ function HomeContent() {
       <section className="section bg-cream py-32 px-6">
         <div className="section-inner max-w-[1040px] mx-auto text-center">
           <h2 className="why-h font-display text-[28px] md:text-[46px] font-normal leading-[1.2] tracking-tight text-ink mb-16">
-            This isn't your grandfather's<br /><em className="not-italic text-gold font-light">astrology.</em>
+            Ancient wisdom, built for<br /><em className="not-italic text-gold font-light">the next generation.</em>
           </h2>
           <div className="why-grid grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
             <div className="why-card bg-ivory border border-border rounded-[20px] p-6 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm">

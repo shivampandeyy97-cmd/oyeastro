@@ -47,7 +47,7 @@ Use actual astrology terms naturally. No cringe affirmations.`
 
   try {
     const model = ai.getGenerativeModel({
-      model: 'gemini-2.0-flash-exp',
+      model: 'gemini-2.5-flash-lite',
       generationConfig: {
         responseMimeType: 'application/json',
         responseSchema: {
@@ -92,7 +92,7 @@ Ashtakoot score: ${totalScore}/36
 Be witty, use astrology terms, speak like a cool astrologer friend, ≤60 words total. End with an emoji.`
 
   try {
-    const model = ai.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
+    const model = ai.getGenerativeModel({ model: 'gemini-2.5-flash-lite' })
     const result = await model.generateContent(prompt)
     return result.response.text().trim()
   } catch (e) {
@@ -165,7 +165,7 @@ Format the output strictly as a JSON object conforming to this structure (do not
 
   try {
     const model = ai.getGenerativeModel({
-      model: 'gemini-2.0-flash-exp',
+      model: 'gemini-2.5-flash-lite',
       generationConfig: {
         responseMimeType: 'application/json',
         responseSchema: {
@@ -375,7 +375,7 @@ Format the output strictly as a JSON object matching this schema:
 
   try {
     const model = ai.getGenerativeModel({
-      model: 'gemini-2.0-flash-exp',
+      model: 'gemini-2.5-flash-lite',
       generationConfig: {
         responseMimeType: 'application/json',
         responseSchema: {

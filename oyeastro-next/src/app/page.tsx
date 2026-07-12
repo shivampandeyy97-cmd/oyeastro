@@ -7,6 +7,7 @@ import type { ChartResult, BirthData, CosmicVibeResult, HorizonVibeData } from '
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import PremiumReportCard from '@/components/PremiumReportCard'
+import PricingGrid from '@/components/PricingGrid'
 
 function HomeContent() {
   const searchParams = useSearchParams()
@@ -701,6 +702,9 @@ function HomeContent() {
           </div>
         </div>
       </section>
+
+      {/* ░░ PRICING (FOLD 3) ░░ */}
+      <PricingGrid />
 
       {/* ░░ TESTIMONIALS ░░ */}
       <section className="section bg-white py-32 px-6">

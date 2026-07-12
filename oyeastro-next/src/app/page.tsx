@@ -349,8 +349,12 @@ function HomeContent() {
             Your cosmic clarity — zero woo-woo
           </div>
 
-          <h1 className="hero-title font-display text-[46px] md:text-[76px] font-bold leading-[1.08] tracking-tight text-ink mb-6" style={{ fontFamily: "var(--font-pacifico), cursive" }}>
-            Know what is gonna happen next
+          <h1 className="hero-title text-[40px] sm:text-[54px] md:text-[88px] lg:text-[110px] leading-[1.05] text-ink mb-8 md:whitespace-nowrap overflow-visible" style={{
+            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif',
+            letterSpacing: '-0.022em',
+            fontWeight: 800
+          }}>
+            Know what gonna happen next
           </h1>
 
           <p className="hero-sub text-[16px] md:text-[18px] text-ink-mid leading-[1.8] max-w-[550px] mx-auto font-light mb-12">

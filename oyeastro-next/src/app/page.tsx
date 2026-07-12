@@ -482,180 +482,118 @@ function HomeContent() {
         </div>
       </section>
 
-      {/* ░░ WHAT YOU GET ░░ */}
-      <section className="section bg-white py-32 px-6">
-        <div className="section-inner max-w-[1040px] mx-auto">
-          <p className="eyebrow text-[11px] font-medium text-ink-faint tracking-[2px] uppercase mb-5">What you get</p>
-          <h2 className="what-h font-display text-[36px] md:text-[58px] font-normal leading-[1.08] tracking-[-1.5px] text-ink mb-4">Not your mom's<br /><em className="not-italic text-lavender font-light">horoscope column.</em></h2>
-          <p className="what-sub text-base text-ink-mid leading-[1.8] font-light max-w-[480px] mb-14">Personalised to your exact birth data. Written like your most self-aware friend — who happens to know Vedic astrology.</p>
-          
-          <div className="cards grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[18px]">
-            <div className="feat bg-gradient-to-br from-[#FFFBE8] to-[#FFF3C0] border border-border rounded-[22px] p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <div className="feat-ico w-11 h-11 bg-[#FDE97B] rounded-xl flex items-center justify-center text-xl mb-4">✦</div>
-              <div className="feat-name font-display text-xl font-normal text-ink mb-2">Today's Vibe</div>
-              <div className="feat-desc text-xs text-ink-mid leading-[1.72] font-light">Your energy, love, and money read for right now — based on where planets actually are today vs your natal chart. Refreshes every 24 hours.</div>
-            </div>
-            <div className="feat bg-gradient-to-br from-[#FFF2EC] to-[#FFE2D0] border border-border rounded-[22px] p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <div className="feat-ico w-11 h-11 bg-[#FFCFB0] rounded-xl flex items-center justify-center text-xl mb-4">🌊</div>
-              <div className="feat-name font-display text-xl font-normal text-ink mb-2">This Week's Current</div>
-              <div className="feat-desc text-xs text-ink-mid leading-[1.72] font-light">The one thing to lean into and the one thing to watch out for. No 12-paragraph wall of text. Just what actually matters.</div>
-            </div>
-            <div className="feat bg-gradient-to-br from-[#EDFFF5] to-[#D0F5E4] border border-border rounded-[22px] p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <div className="feat-ico w-11 h-11 bg-[#B0F0D0] rounded-xl flex items-center justify-center text-xl mb-4">🔮</div>
-              <div className="feat-name font-display text-xl font-normal text-ink mb-2">Your Big Chapter</div>
-              <div className="feat-desc text-xs text-ink-mid leading-[1.72] font-light">Based on your Dasha cycle — the Vedic system that maps your life in chapters. Know exactly which chapter you're in and when the next one begins.</div>
-            </div>
-            <div className="feat bg-gradient-to-br from-[#EEF3FF] to-[#D8E8FF] border border-border rounded-[22px] p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-              <div className="feat-ico w-11 h-11 bg-[#C0DCFF] rounded-xl flex items-center justify-center text-xl mb-4">💫</div>
-              <div className="feat-name font-display text-xl font-normal text-ink mb-2">Shareable Card</div>
-              <div className="feat-desc text-xs text-ink-mid leading-[1.72] font-light">A beautiful, download-ready vibe card for your story. Made to be shared. Designed to make people ask "where did you get this?"</div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ░░ HOW IT WORKS ░░ */}
-      <section className="section bg-cream py-32 px-6" id="how">
-        <div className="section-narrow max-w-[700px] mx-auto">
-          <h2 className="how-h font-display text-[34px] md:text-[54px] font-normal leading-[1.1] text-ink tracking-tight mb-16">Three steps.<br /><em className="not-italic text-sage font-light">Thirty seconds.</em></h2>
-          <div className="steps grid grid-cols-1 md:grid-cols-3 gap-14 text-left">
-            <div>
-              <div className="step-num font-display text-[72px] font-light text-border leading-none tracking-tighter mb-3">01</div>
-              <h3 className="step-title font-display text-lg font-normal text-ink mb-2">Enter your birth details</h3>
-              <p className="step-desc text-xs text-ink-mid leading-[1.78] font-light">Name, city, date, and time of birth. That's it. No email. No account. No downloading anything.</p>
-            </div>
-            <div>
-              <div className="step-num font-display text-[72px] font-light text-border leading-none tracking-tighter mb-3">02</div>
-              <h3 className="step-title font-display text-lg font-normal text-ink mb-2">We read the cosmos</h3>
-              <p className="step-desc text-xs text-ink-mid leading-[1.78] font-light">Real Vedic calculations — your Lagna, Nakshatra, planetary transits, and Dasha cycle — all computed live, just for you.</p>
-            </div>
-            <div>
-              <div className="step-num font-display text-[72px] font-light text-border leading-none tracking-tighter mb-3">03</div>
-              <h3 className="step-title font-display text-lg font-normal text-ink mb-2">Get your vibe card</h3>
-              <p className="step-desc text-xs text-ink-mid leading-[1.78] font-light">A personal, beautiful, honest read on your life right now. Share it. Screenshot it. Come back tomorrow for a fresh one.</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ░░ RESULT PREVIEW ░░ */}
-      <section className="section bg-white py-32 px-6" id="results">
-        <div className="section-inner max-w-[1040px] mx-auto">
-          <div className="split grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-24 items-center">
-            <div className="text-left">
-              <p className="split-text-label text-[11px] font-medium text-ink-faint tracking-[2px] uppercase mb-5">
-                {chart ? 'Your vibe card' : 'Sample vibe card'}
-              </p>
-              <h2 className="split-h font-display text-[28px] md:text-[46px] font-normal leading-[1.15] tracking-tight text-ink mb-4">
-                {chart ? (
-                  <>Your Cosmos is <em className="not-italic text-coral">aligned.</em><br />Read your vibe check.</>
-                ) : (
-                  <>Surprisingly <em className="not-italic text-coral">accurate.</em><br />Annoyingly so.</>
-                )}
-              </h2>
-              <p className="split-p text-[15px] text-ink-mid leading-[1.8] font-light mb-8">
-                Our readers keep saying the same thing: "This literally described my week." That's because it's not a generic sun-sign column. It's calculated from your exact chart, matched against today's sky.
-              </p>
-              <ul className="check-list list-none">
-                <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">Based on your real Lagna, Moon sign &amp; Nakshatra</li>
-                <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">Today's planetary transits vs your natal chart</li>
-                <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">Written in plain language — no Sanskrit, no jargon</li>
-                <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">A new reading every day, week, and month</li>
-              </ul>
-            </div>
-            
-            <div className="w-full max-w-[450px] mx-auto lg:mx-0">
-              <div className="vibe-card bg-gradient-to-tr from-[#FFFBE8] via-[#FFF3C0] to-[#FFE8C0] border border-[#EDD890] rounded-[26px] p-7 shadow-md text-left">
-                <div className="vc-head flex justify-between items-start mb-1">
-                  <div className="vc-name text-[11px] font-medium text-ink-faint tracking-[2px] uppercase">
-                    {chart ? `${chart.meta.name}'s Cosmic Vibe ✦` : "Riya's Cosmic Vibe ✦"}
-                  </div>
-                </div>
-                <div className="vc-lagna font-display text-[29px] font-normal text-ink tracking-tight mb-1">
-                  {chart ? `${chart.bigThree.rising.sign} Lagna` : "Meena Lagna"}
-                </div>
-                <div className="vc-naksh text-xs text-ink-faint">
-                  {chart ? (
-                    `${chart.dasha.nakshatra.name} Nakshatra · ${chart.dasha.activeDasha.rulerName} Mahadasha`
-                  ) : (
-                    "Jyeshtha Nakshatra · Venus Mahadasha"
-                  )}
-                </div>
-                
-                <div className="vc-line h-[0.5px] bg-ink/10 my-4" />
-                
-                <div className="vc-tabs flex gap-1.5 mb-4">
-                  <button 
-                    type="button" 
-                    onClick={() => setActiveTab('today')}
-                    className={`vc-tab text-[11px] px-3 py-1.5 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'today' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
-                  >
-                    Today
-                  </button>
-                  <button 
-                    type="button" 
-                    onClick={() => setActiveTab('week')}
-                    className={`vc-tab text-[11px] px-3 py-1.5 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'week' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
-                  >
-                    Week
-                  </button>
-                  <button 
-                    type="button" 
-                    onClick={() => setActiveTab('month')}
-                    className={`vc-tab text-[11px] px-3 py-1.5 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'month' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
-                  >
-                    Month
-                  </button>
-                </div>
-
-                <div className="vc-metrics grid grid-cols-3 gap-2 mb-4">
-                  <div className="vc-m bg-white/75 rounded-xl p-2.5 text-center">
-                    <div className="vc-m-emoji text-lg">{vibeData ? vibeData.love.emoji : '💌'}</div>
-                    <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5">Love</div>
-                    <div className="vc-m-val text-[12px] font-medium mt-1 text-[#FF7A45]">
-                      {vibeData ? vibeData.love.status : 'Tender'}
-                    </div>
-                  </div>
-                  <div className="vc-m bg-white/75 rounded-xl p-2.5 text-center">
-                    <div className="vc-m-emoji text-lg">{vibeData ? vibeData.money.emoji : '💸'}</div>
-                    <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5">Money</div>
-                    <div className="vc-m-val text-[12px] font-medium mt-1 text-[#6DB88A]">
-                      {vibeData ? vibeData.money.status : 'Flowing'}
-                    </div>
-                  </div>
-                  <div className="vc-m bg-white/75 rounded-xl p-2.5 text-center">
-                    <div className="vc-m-emoji text-lg">{vibeData ? vibeData.energy.emoji : '⚡'}</div>
-                    <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5">Energy</div>
-                    <div className="vc-m-val text-[12px] font-medium mt-1 text-[#D4A800]">
-                      {vibeData ? vibeData.energy.status : 'Chaotic'}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="vc-insight bg-white/65 rounded-xl p-4 text-[12px] text-ink-mid leading-[1.75] italic mb-4 border-l-[2.5px] border-coral min-h-[80px] flex items-center">
-                  {vibeData ? `"${vibeData.interpretation}"` : `"Jupiter is side-eyeing your comfort zone right now. The next big chapter starts with one uncomfortable conversation you've been avoiding for weeks."`}
-                </div>
-
-                <div className="vc-share-bar flex items-center justify-between bg-ink rounded-xl p-3 text-xs">
-                  <div className="vc-share-txt text-white/60">Share your vibe</div>
-                  <button 
-                    onClick={handleVibeCopy}
-                    className="vc-share-btn-txt text-[#FDE97B] font-medium bg-transparent border-none cursor-pointer p-0 font-body hover:opacity-90"
-                  >
-                    {vibeCopied ? 'Copied! 💅' : 'Copy card ↗'}
-                  </button>
-                </div>
+      {chart && (
+        <section className="section bg-white py-32 px-6" id="results">
+          <div className="section-inner max-w-[1040px] mx-auto">
+            <div className="split grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-24 items-center">
+              <div className="text-left">
+                <p className="split-text-label text-[11px] font-medium text-ink-faint tracking-[2px] uppercase mb-5">
+                  Your vibe card
+                </p>
+                <h2 className="split-h font-display text-[28px] md:text-[46px] font-normal leading-[1.15] tracking-tight text-ink mb-4">
+                  Your Cosmos is <em className="not-italic text-coral">aligned.</em><br />Read your vibe check.
+                </h2>
+                <p className="split-p text-[15px] text-ink-mid leading-[1.8] font-light mb-8">
+                  Our readers keep saying the same thing: "This literally described my week." That's because it's not a generic sun-sign column. It's calculated from your exact chart, matched against today's sky.
+                </p>
+                <ul className="check-list list-none">
+                  <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">Based on your real Lagna, Moon sign &amp; Nakshatra</li>
+                  <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">Today's planetary transits vs your natal chart</li>
+                  <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">Written in plain language — no Sanskrit, no jargon</li>
+                  <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">A new reading every day, week, and month</li>
+                </ul>
               </div>
-
-              {chart && (
+              
+              <div className="w-full max-w-[450px] mx-auto lg:mx-0">
+                <div className="vibe-card bg-gradient-to-tr from-[#FFFBE8] via-[#FFF3C0] to-[#FFE8C0] border border-[#EDD890] rounded-[26px] p-7 shadow-md text-left">
+                  <div className="vc-head flex justify-between items-start mb-1">
+                    <div className="vc-name text-[11px] font-medium text-ink-faint tracking-[2px] uppercase">
+                      {chart.meta.name}'s Cosmic Vibe ✦
+                    </div>
+                  </div>
+                  <div className="vc-lagna font-display text-[29px] font-normal text-ink tracking-tight mb-1">
+                    {chart.bigThree.rising.sign} Lagna
+                  </div>
+                  <div className="vc-naksh text-xs text-ink-faint">
+                    {chart.dasha.nakshatra.name} Nakshatra · {chart.dasha.activeDasha.rulerName} Mahadasha
+                  </div>
+                  
+                  <div className="vc-line h-[0.5px] bg-ink/10 my-4" />
+                  
+                  <div className="vc-tabs flex gap-1.5 mb-4">
+                    <button 
+                      type="button" 
+                      onClick={() => setActiveTab('today')}
+                      className={`vc-tab text-[11px] px-3 py-1.5 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'today' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
+                    >
+                      Today
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => setActiveTab('week')}
+                      className={`vc-tab text-[11px] px-3 py-1.5 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'week' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
+                    >
+                      Week
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => setActiveTab('month')}
+                      className={`vc-tab text-[11px] px-3 py-1.5 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'month' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
+                    >
+                      Month
+                    </button>
+                  </div>
+  
+                  <div className="vc-metrics grid grid-cols-3 gap-2 mb-4">
+                    <div className="vc-m bg-white/75 rounded-xl p-2.5 text-center">
+                      <div className="vc-m-emoji text-lg">{vibeData ? vibeData.love.emoji : '💌'}</div>
+                      <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5">Love</div>
+                      <div className="vc-m-val text-[12px] font-medium mt-1 text-[#FF7A45]">
+                        {vibeData ? vibeData.love.status : 'Tender'}
+                      </div>
+                    </div>
+                    <div className="vc-m bg-white/75 rounded-xl p-2.5 text-center">
+                      <div className="vc-m-emoji text-lg">{vibeData ? vibeData.money.emoji : '💸'}</div>
+                      <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5">Money</div>
+                      <div className="vc-m-val text-[12px] font-medium mt-1 text-[#6DB88A]">
+                        {vibeData ? vibeData.money.status : 'Flowing'}
+                      </div>
+                    </div>
+                    <div className="vc-m bg-white/75 rounded-xl p-2.5 text-center">
+                      <div className="vc-m-emoji text-lg">{vibeData ? vibeData.energy.emoji : '⚡'}</div>
+                      <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5">Energy</div>
+                      <div className="vc-m-val text-[12px] font-medium mt-1 text-[#D4A800]">
+                        {vibeData ? vibeData.energy.status : 'Chaotic'}
+                      </div>
+                    </div>
+                  </div>
+  
+                  <div className="vc-insight bg-white/65 rounded-xl p-4 text-[12px] text-ink-mid leading-[1.75] italic mb-4 border-l-[2.5px] border-coral min-h-[80px] flex items-center">
+                    {vibeData ? `"${vibeData.interpretation}"` : `""`}
+                  </div>
+  
+                  <div className="vc-share-bar flex items-center justify-between bg-ink rounded-xl p-3 text-xs">
+                    <div className="vc-share-txt text-white/60">Share your vibe</div>
+                    <button 
+                      onClick={handleVibeCopy}
+                      className="vc-share-btn-txt text-[#FDE97B] font-medium bg-transparent border-none cursor-pointer p-0 font-body hover:opacity-90"
+                    >
+                      {vibeCopied ? 'Copied! 💅' : 'Copy card ↗'}
+                    </button>
+                  </div>
+                </div>
+  
                 <div className="mt-8">
                   <PremiumReportCard chart={chart} />
                 </div>
-              )}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ░░ COMPATIBILITY ░░ */}
       <section className="section bg-cream py-32 px-6" id="match">

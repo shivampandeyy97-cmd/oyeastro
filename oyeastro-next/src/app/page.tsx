@@ -15,9 +15,26 @@ function HomeContent() {
   // Form State
   const [name, setName] = useState('')
   const [city, setCity] = useState('')
+  const [suggestions, setSuggestions] = useState<any[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
   const [clarity, setClarity] = useState('everything')
+
+  // Autocomplete for Hero Birth City
+  useEffect(() => {
+    if (city.length < 3) { setSuggestions([]); return }
+    const delay = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/geocode?q=${encodeURIComponent(city)}`)
+        if (res.ok) {
+          const data = await res.json()
+          setSuggestions(data)
+        }
+      } catch (err) { console.error(err) }
+    }, 400)
+    return () => clearTimeout(delay)
+  }, [city])
 
   // Application States
   const [chart, setChart] = useState<ChartResult | null>(null)
@@ -356,16 +373,33 @@ function HomeContent() {
                   className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
                 />
               </div>
-              <div className="field flex flex-col gap-1.5">
+              <div className="field flex flex-col gap-1.5 relative">
                 <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">Birth city</label>
-                <input 
-                  type="text" 
-                  value={city} 
-                  onChange={(e) => setCity(e.target.value)} 
-                  required 
-                  placeholder="Mumbai, Delhi, London…" 
-                  className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
-                />
+                <div className="relative">
+                  <input 
+                    type="text" 
+                    value={city} 
+                    onChange={(e) => { setCity(e.target.value); setShowSuggestions(true) }} 
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                    required 
+                    placeholder="Mumbai, Delhi, London…" 
+                    className="w-full bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                    autoComplete="off"
+                  />
+                  {showSuggestions && suggestions.length > 0 && (
+                    <ul className="absolute left-0 right-0 top-full mt-1 bg-white border border-border rounded-xl shadow-lg z-50 max-h-48 overflow-y-auto pl-0 list-none m-0 p-0">
+                      {suggestions.map((s: any, i: number) => (
+                        <li 
+                          key={i}
+                          className="px-3.5 py-2.5 text-xs text-ink hover:bg-coral/10 cursor-pointer truncate border-b border-border/40 last:border-0"
+                          onMouseDown={() => { setCity(s.display_name.split(',').slice(0, 3).join(',')); setSuggestions([]) }}
+                        >
+                          📍 {s.display_name.split(',').slice(0, 3).join(', ')}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
             </div>
 

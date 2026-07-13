@@ -639,10 +639,10 @@ function HomeContent() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
                 
                 {/* Column 1: Intake Form (compact editor) */}
-                <div className="w-full bg-white border border-black/5 rounded-[28px] p-6 shadow-[0_10px_40px_rgba(26,18,8,0.02)] text-left">
+                <div className="w-full bg-white border border-black/5 rounded-[28px] p-6 shadow-[0_10px_40px_rgba(26,18,8,0.02)] text-left flex flex-col justify-between h-full">
                   <div className="text-[10px] font-bold text-ink-faint tracking-wider uppercase mb-5">Edit birth details</div>
                   
                   <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -750,7 +750,7 @@ function HomeContent() {
                 </div>
 
                 {/* Column 2: Apple-style Vibe Card */}
-                <div className="w-full bg-white/95 border border-black/5 rounded-[28px] p-6 shadow-[0_15px_45px_rgba(0,0,0,0.04)] backdrop-blur-xl h-[620px] flex flex-col justify-between text-left transition-all duration-300">
+                <div className="w-full bg-white/95 border border-black/5 rounded-[28px] p-6 shadow-[0_15px_45px_rgba(0,0,0,0.04)] backdrop-blur-xl h-full flex flex-col justify-between text-left transition-all duration-300">
                   <div>
                     <div className="vc-head flex justify-between items-start mb-1">
                       <div className="vc-name text-[10px] font-bold text-ink-faint tracking-[2px] uppercase">
@@ -974,10 +974,6 @@ function HomeContent() {
                       </div>
                     </div>
 
-                    {/* Rich readable description */}
-                    <div className="vc-insight bg-white border border-black/5 rounded-xl p-3 text-[12px] text-ink font-semibold leading-relaxed italic mb-3 border-l-[3px] border-coral shadow-sm">
-                      {vibeData ? `"${vibeData.interpretation.replace(/\s*\(Problem\)|\s*\(Solution\)|\s*\(Impact\)/gi, '')}"` : `""`}
-                    </div>
                   </div>
   
                   <div className="vc-share-bar flex items-center justify-between bg-ink rounded-xl p-3 text-xs">
@@ -992,7 +988,7 @@ function HomeContent() {
                 </div>
 
                 {/* Column 3: Premium Report Card */}
-                <div className="w-full">
+                <div className="w-full h-full">
                   <PremiumReportCard chart={chart} />
                 </div>
 

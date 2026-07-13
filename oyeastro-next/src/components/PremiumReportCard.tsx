@@ -182,7 +182,7 @@ export default function PremiumReportCard({ chart }: Props) {
 
   if (isPaid) {
     return (
-      <div className="premium-card bg-gradient-to-tr from-[#FAF6FF] via-[#F4E9FF] to-[#ECE0FF] border border-[#D5C2F5] rounded-[26px] p-7 shadow-sm text-left flex flex-col gap-6 relative overflow-hidden">
+      <div className="premium-card bg-gradient-to-tr from-[#FAF6FF] via-[#F4E9FF] to-[#ECE0FF] border border-[#D5C2F5] rounded-[26px] p-7 shadow-sm text-left flex flex-col gap-6 relative overflow-hidden h-full">
         <div className="z-10 flex flex-col gap-4">
           <div className="flex items-center justify-between border-b border-ink/5 pb-4">
             <div>
@@ -260,7 +260,7 @@ export default function PremiumReportCard({ chart }: Props) {
   }
 
   return (
-    <div className="premium-card relative overflow-hidden bg-white/95 border-[1.5px] border-[#FF7A45]/30 rounded-[28px] p-6.5 shadow-[0_15px_35px_rgba(26,18,8,0.06),0_5px_15px_rgba(255,122,69,0.08)] transition-all duration-300 text-left">
+    <div className="premium-card relative overflow-hidden bg-white/95 border-[1.5px] border-[#FF7A45]/30 rounded-[28px] p-6.5 shadow-[0_15px_35px_rgba(26,18,8,0.06),0_5px_15px_rgba(255,122,69,0.08)] transition-all duration-300 text-left h-full flex flex-col justify-between">
       {/* Top Notification Bar Style Header */}
       <div className="flex gap-4 items-start pb-4 border-b border-ink/5">
         <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-coral to-[#FF9E7A] flex items-center justify-center text-xl shrink-0 text-white shadow-sm animate-bounce">

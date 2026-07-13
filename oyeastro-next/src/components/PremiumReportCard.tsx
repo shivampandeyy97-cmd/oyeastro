@@ -286,23 +286,23 @@ export default function PremiumReportCard({ chart }: Props) {
         <ul className="flex flex-col gap-3 text-xs text-ink-mid pl-0 list-none">
           <li className="flex gap-3 leading-relaxed">
             <span className="text-coral shrink-0">📅</span>
-            <span><strong className="text-ink font-semibold">24-Month Life Chapters:</strong> Detailed Vimshottari Dasha mapping that forecasts when your primary planetary cycles shift.</span>
+            <span><strong className="text-ink font-semibold">24-Month Life Chapters:</strong> Timeline mapping that forecasts when your primary life seasons and energy cycles shift.</span>
           </li>
           <li className="flex gap-3 leading-relaxed">
             <span className="text-coral shrink-0">🪐</span>
-            <span><strong className="text-ink font-semibold">Star Shift Transits:</strong> Exact date windows of outer planet movements (Saturn, Jupiter, Rahu/Ketu) vs your natal houses.</span>
+            <span><strong className="text-ink font-semibold">Star Shift Cycles:</strong> Exact date windows of major environmental movements vs your personal focus areas.</span>
           </li>
           <li className="flex gap-3 leading-relaxed">
             <span className="text-coral shrink-0">💼</span>
-            <span><strong className="text-ink font-semibold">Job &amp; Cash Windows:</strong> Astrological greenlight phases for careers, salary negotiations, and investment choices.</span>
+            <span><strong className="text-ink font-semibold">Job &amp; Cash Windows:</strong> High-potential phases for career moves, salary negotiations, and financial choices.</span>
           </li>
           <li className="flex gap-3 leading-relaxed">
             <span className="text-coral shrink-0">💖</span>
-            <span><strong className="text-ink font-semibold">Love Connection:</strong> Relationship compatibility triggers, attraction cycles, and alignment warnings.</span>
+            <span><strong className="text-ink font-semibold">Love Connection:</strong> Relationship harmony triggers, attraction windows, and connection warnings.</span>
           </li>
           <li className="flex gap-3 leading-relaxed">
             <span className="text-coral shrink-0">🔋</span>
-            <span><strong className="text-ink font-semibold">Vibe Drain Alert:</strong> Burnout warning calendars, transit-based energy patterns, and lifestyle remedies.</span>
+            <span><strong className="text-ink font-semibold">Vibe Drain Alert:</strong> Personal burnout risk calendars, daily energy cycle details, and lifestyle hacks.</span>
           </li>
         </ul>
       </div>

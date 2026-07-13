@@ -487,398 +487,527 @@ function HomeContent() {
         <div className="absolute rounded-full filter blur-[70px] opacity-[0.4] w-[200px] h-[200px] bg-[#C8EDD9] bottom-[15%] left-[3%] animate-float-orb pointer-events-none [animation-delay:-6s]" />
         <div className="absolute rounded-full filter blur-[70px] opacity-[0.4] w-[160px] h-[160px] bg-[#D4E5FF] bottom-[8%] right-[8%] animate-float-orb pointer-events-none [animation-delay:-2s]" />
 
-        <div className="hero-content relative max-w-[780px] w-full z-10">
-          <div className="hero-badge inline-flex items-center gap-2 bg-white/85 border border-[#EDD97A] px-[18px] py-1.5 rounded-full text-xs font-medium text-[#7A5F00] tracking-wider uppercase mb-9">
-            <div className="badge-dot w-1.5 h-1.5 bg-gold rounded-full animate-pulse" />
-            Your cosmic clarity — zero woo-woo
-          </div>
-
-          <h1 className="hero-title text-[44px] sm:text-[64px] md:text-[84px] lg:text-[104px] leading-[1.05] text-ink mb-8 max-w-4xl mx-auto overflow-visible" style={{
-            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif',
-            letterSpacing: '-0.025em',
-            fontWeight: 800
-          }}>
-            Know what gonna<br className="hidden md:inline" /> happen next
-          </h1>
-
-          <p className="hero-sub text-[16px] md:text-[18px] text-ink-mid leading-[1.8] max-w-[550px] mx-auto font-light mb-12">
-            Fully backed by mathematical astrology, but let's be real—consider this a highly educated cosmic guess from a supportive well-wisher who knows too much.
-          </p>
-
-          <form onSubmit={handleSubmit} className="input-card bg-white border border-border rounded-[28px] p-[2.25rem] pb-[1.75rem] max-w-[600px] mx-auto shadow-[0_6px_50px_rgba(26,18,8,0.07),0_2px_6px_rgba(26,18,8,0.04)] text-left">
-            <div className="card-label text-[11px] font-medium text-ink-faint tracking-[2px] uppercase mb-6">Tell the cosmos who you are</div>
-            
-            <div className="input-row grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-              <div className="field flex flex-col gap-1.5 md:col-span-2">
-                <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">Your name</label>
-                <input 
-                  type="text" 
-                  value={name} 
-                  onChange={(e) => setName(e.target.value)} 
-                  required 
-                  placeholder="Riya, Arjun, Priya…" 
-                  className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
-                />
+        <div className={`hero-content relative z-10 w-full transition-all duration-500 ${chart ? 'max-w-[1240px]' : 'max-w-[780px]'}`}>
+          {!chart ? (
+            <>
+              <div className="hero-badge inline-flex items-center gap-2 bg-white/85 border border-[#EDD97A] px-[18px] py-1.5 rounded-full text-xs font-medium text-[#7A5F00] tracking-wider uppercase mb-9">
+                <div className="badge-dot w-1.5 h-1.5 bg-gold rounded-full animate-pulse" />
+                Your cosmic clarity — zero woo-woo
               </div>
-              <div className="field flex flex-col gap-1.5">
-                <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">Gender</label>
-                <select 
-                  value={gender} 
-                  onChange={(e) => setGender(e.target.value)}
-                  className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink cursor-pointer focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
-                >
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="non-binary">Non-Binary</option>
-                </select>
-              </div>
-            </div>
 
-            <div className="input-row grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-              <div className="field flex flex-col gap-1.5 relative">
-                <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">Birth city</label>
-                <div className="relative">
-                  <input 
-                    type="text" 
-                    value={city} 
-                    onChange={(e) => { setCity(e.target.value); setShowSuggestions(true) }} 
-                    onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                    required 
-                    placeholder="Mumbai, Delhi, London…" 
-                    className="w-full bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
-                    autoComplete="off"
-                  />
-                  {showSuggestions && suggestions.length > 0 && (
-                    <ul className="absolute left-0 right-0 top-full mt-1 bg-white border border-border rounded-xl shadow-lg z-50 max-h-48 overflow-y-auto pl-0 list-none m-0 p-0">
-                      {suggestions.map((s: any, i: number) => (
-                        <li 
-                          key={i}
-                          className="px-3.5 py-2.5 text-xs text-ink hover:bg-coral/10 cursor-pointer truncate border-b border-border/40 last:border-0"
-                          onMouseDown={() => { setCity(s.display_name.split(',').slice(0, 3).join(',')); setSuggestions([]) }}
-                        >
-                          📍 {s.display_name.split(',').slice(0, 3).join(', ')}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+              <h1 className="hero-title text-[44px] sm:text-[64px] md:text-[84px] lg:text-[104px] leading-[1.05] text-ink mb-8 max-w-4xl mx-auto overflow-visible" style={{
+                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif',
+                letterSpacing: '-0.025em',
+                fontWeight: 800
+              }}>
+                Know what gonna<br className="hidden md:inline" /> happen next
+              </h1>
+
+              <p className="hero-sub text-[16px] md:text-[18px] text-ink-mid leading-[1.8] max-w-[550px] mx-auto font-light mb-12">
+                Fully backed by mathematical astrology, but let's be real—consider this a highly educated cosmic guess from a supportive well-wisher who knows too much.
+              </p>
+
+              <form onSubmit={handleSubmit} className="input-card bg-white border border-border rounded-[28px] p-[2.25rem] pb-[1.75rem] max-w-[600px] mx-auto shadow-[0_6px_50px_rgba(26,18,8,0.07),0_2px_6px_rgba(26,18,8,0.04)] text-left">
+                <div className="card-label text-[11px] font-medium text-ink-faint tracking-[2px] uppercase mb-6">Tell the cosmos who you are</div>
+                
+                <div className="input-row grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                  <div className="field flex flex-col gap-1.5 md:col-span-2">
+                    <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">Your name</label>
+                    <input 
+                      type="text" 
+                      value={name} 
+                      onChange={(e) => setName(e.target.value)} 
+                      required 
+                      placeholder="Riya, Arjun, Priya…" 
+                      className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                    />
+                  </div>
+                  <div className="field flex flex-col gap-1.5">
+                    <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">Gender</label>
+                    <select 
+                      value={gender} 
+                      onChange={(e) => setGender(e.target.value)}
+                      className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink cursor-pointer focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                    >
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="non-binary">Non-Binary</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div className="field flex flex-col gap-1.5">
-                <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">Date of birth</label>
-                <input 
-                  type="date" 
-                  value={date} 
-                  onChange={(e) => setDate(e.target.value)} 
-                  required 
-                  className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
-                />
-              </div>
-            </div>
 
-            <div className="input-row grid grid-cols-1 md:grid-cols-2 gap-3 mb-[0.75rem]">
-              <div className="field flex flex-col gap-1.5">
-                <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">Time of birth</label>
-                <input 
-                  type="time" 
-                  value={time} 
-                  onChange={(e) => setTime(e.target.value)} 
-                  required 
-                  className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
-                />
-              </div>
-              <div className="field flex flex-col gap-1.5">
-                <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">What do you want clarity on?</label>
-                <select 
-                  value={clarity} 
-                  onChange={(e) => setClarity(e.target.value)}
-                  className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink cursor-pointer focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                <div className="input-row grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                  <div className="field flex flex-col gap-1.5 relative">
+                    <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">Birth city</label>
+                    <div className="relative">
+                      <input 
+                        type="text" 
+                        value={city} 
+                        onChange={(e) => { setCity(e.target.value); setShowSuggestions(true) }} 
+                        onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                        required 
+                        placeholder="Mumbai, Delhi, London…" 
+                        className="w-full bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                        autoComplete="off"
+                      />
+                      {showSuggestions && suggestions.length > 0 && (
+                        <ul className="absolute left-0 right-0 top-full mt-1 bg-white border border-border rounded-xl shadow-lg z-50 max-h-48 overflow-y-auto pl-0 list-none m-0 p-0">
+                          {suggestions.map((s: any, i: number) => (
+                            <li 
+                              key={i}
+                              className="px-3.5 py-2.5 text-xs text-ink hover:bg-coral/10 cursor-pointer truncate border-b border-border/40 last:border-0"
+                              onMouseDown={() => { setCity(s.display_name.split(',').slice(0, 3).join(',')); setSuggestions([]) }}
+                            >
+                              📍 {s.display_name.split(',').slice(0, 3).join(', ')}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                  <div className="field flex flex-col gap-1.5">
+                    <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">Date of birth</label>
+                    <input 
+                      type="date" 
+                      value={date} 
+                      onChange={(e) => setDate(e.target.value)} 
+                      required 
+                      className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                    />
+                  </div>
+                </div>
+
+                <div className="input-row grid grid-cols-1 md:grid-cols-2 gap-3 mb-[0.75rem]">
+                  <div className="field flex flex-col gap-1.5">
+                    <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">Time of birth</label>
+                    <input 
+                      type="time" 
+                      value={time} 
+                      onChange={(e) => setTime(e.target.value)} 
+                      required 
+                      className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                    />
+                  </div>
+                  <div className="field flex flex-col gap-1.5">
+                    <label className="text-[11px] font-medium text-ink-faint tracking-wider uppercase">What do you want clarity on?</label>
+                    <select 
+                      value={clarity} 
+                      onChange={(e) => setClarity(e.target.value)}
+                      className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink cursor-pointer focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                    >
+                      <option value="everything">Everything — just hit me ✦</option>
+                      <option value="love">Love &amp; relationships</option>
+                      <option value="career">Career &amp; money</option>
+                      <option value="energy">My general energy today</option>
+                      <option value="better">When does it get better?</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button 
+                  type="submit" 
+                  disabled={isLoading}
+                  className="submit-btn w-full bg-ink text-ivory rounded-xl p-4 font-medium text-sm font-body cursor-pointer flex items-center justify-center gap-2 hover:bg-coral hover:scale-[1.01] hover:shadow-[0_10_30_rgba(255,122,69,0.28)] transition-all duration-200 disabled:opacity-50"
                 >
-                  <option value="everything">Everything — just hit me ✦</option>
-                  <option value="love">Love &amp; relationships</option>
-                  <option value="career">Career &amp; money</option>
-                  <option value="energy">My general energy today</option>
-                  <option value="better">When does it get better?</option>
-                </select>
+                  {isLoading ? 'Reading your alignment...' : 'Read my cosmos'}
+                  <span className="inline-block transition-transform duration-200 hover:translate-x-1">→</span>
+                </button>
+                <p className="privacy text-[11px] text-ink-faint text-center mt-4">No signup needed. No ads. No spiritual uncle energy.</p>
+              </form>
+
+              {error && (
+                <div className="max-w-[600px] mx-auto mt-4 px-4 py-3 bg-coral-light/20 text-coral border border-coral/30 rounded-xl text-center text-xs font-medium">
+                  ⚠️ {error}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="w-full text-left max-w-[1240px] mx-auto">
+              <div className="mb-8 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center border-b border-black/5 pb-4">
+                <div>
+                  <h2 className="font-display text-[28px] md:text-[38px] font-normal leading-tight tracking-tight text-ink">
+                    Your Cosmos is <em className="not-italic text-coral font-semibold">aligned.</em>
+                  </h2>
+                  <p className="text-xs text-ink-mid mt-1 font-light">Calculated from your exact birth profile. Here is your daily, weekly, and monthly vibe check.</p>
+                </div>
+                <button 
+                  type="button" 
+                  onClick={() => setChart(null)}
+                  className="bg-black/5 hover:bg-black/10 transition-colors text-ink text-xs font-semibold px-4.5 py-2 rounded-full border-none cursor-pointer font-body shrink-0"
+                >
+                  ← Edit details
+                </button>
               </div>
-            </div>
 
-            <button 
-              type="submit" 
-              disabled={isLoading}
-              className="submit-btn w-full bg-ink text-ivory rounded-xl p-4 font-medium text-sm font-body cursor-pointer flex items-center justify-center gap-2 hover:bg-coral hover:scale-[1.01] hover:shadow-[0_10_30_rgba(255,122,69,0.28)] transition-all duration-200 disabled:opacity-50"
-            >
-              {isLoading ? 'Reading your alignment...' : 'Read my cosmos'}
-              <span className="inline-block transition-transform duration-200 hover:translate-x-1">→</span>
-            </button>
-            <p className="privacy text-[11px] text-ink-faint text-center mt-4">No signup needed. No ads. No spiritual uncle energy.</p>
-          </form>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                
+                {/* Column 1: Intake Form (compact editor) */}
+                <div className="w-full bg-white border border-black/5 rounded-[28px] p-6 shadow-[0_10px_40px_rgba(26,18,8,0.02)] text-left">
+                  <div className="text-[10px] font-bold text-ink-faint tracking-wider uppercase mb-5">Edit birth details</div>
+                  
+                  <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                    <div className="field flex flex-col gap-1.5">
+                      <label className="text-[10px] font-bold text-ink-faint tracking-wider uppercase">Your name</label>
+                      <input 
+                        type="text" 
+                        value={name} 
+                        onChange={(e) => setName(e.target.value)} 
+                        required 
+                        placeholder="Riya, Arjun, Priya…" 
+                        className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-2.5 text-xs font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                      />
+                    </div>
 
-          {error && (
-            <div className="max-w-[600px] mx-auto mt-4 px-4 py-3 bg-coral-light/20 text-coral border border-coral/30 rounded-xl text-center text-xs font-medium">
-              ⚠️ {error}
+                    <div className="field flex flex-col gap-1.5">
+                      <label className="text-[10px] font-bold text-ink-faint tracking-wider uppercase">Gender</label>
+                      <select 
+                        value={gender} 
+                        onChange={(e) => setGender(e.target.value)}
+                        className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-2.5 text-xs font-body text-ink cursor-pointer focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                      >
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="non-binary">Non-Binary</option>
+                      </select>
+                    </div>
+
+                    <div className="field flex flex-col gap-1.5 relative">
+                      <label className="text-[10px] font-bold text-ink-faint tracking-wider uppercase">Birth city</label>
+                      <div className="relative">
+                        <input 
+                          type="text" 
+                          value={city} 
+                          onChange={(e) => { setCity(e.target.value); setShowSuggestions(true) }} 
+                          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                          required 
+                          placeholder="Mumbai, Delhi, London…" 
+                          className="w-full bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-2.5 text-xs font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                          autoComplete="off"
+                        />
+                        {showSuggestions && suggestions.length > 0 && (
+                          <ul className="absolute left-0 right-0 top-full mt-1 bg-white border border-border rounded-xl shadow-lg z-50 max-h-40 overflow-y-auto pl-0 list-none m-0 p-0">
+                            {suggestions.map((s: any, i: number) => (
+                              <li 
+                                key={i}
+                                className="px-3 py-2 text-[10px] text-ink hover:bg-coral/10 cursor-pointer truncate border-b border-border/40 last:border-0"
+                                onMouseDown={() => { setCity(s.display_name.split(',').slice(0, 3).join(',')); setSuggestions([]) }}
+                              >
+                                📍 {s.display_name.split(',').slice(0, 3).join(', ')}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="field flex flex-col gap-1.5">
+                        <label className="text-[10px] font-bold text-ink-faint tracking-wider uppercase">Date of birth</label>
+                        <input 
+                          type="date" 
+                          value={date} 
+                          onChange={(e) => setDate(e.target.value)} 
+                          required 
+                          className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-2.5 text-xs font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                        />
+                      </div>
+                      <div className="field flex flex-col gap-1.5">
+                        <label className="text-[10px] font-bold text-ink-faint tracking-wider uppercase">Time of birth</label>
+                        <input 
+                          type="time" 
+                          value={time} 
+                          onChange={(e) => setTime(e.target.value)} 
+                          required 
+                          className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-2.5 text-xs font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="field flex flex-col gap-1.5">
+                      <label className="text-[10px] font-bold text-ink-faint tracking-wider uppercase">What do you want clarity on?</label>
+                      <select 
+                        value={clarity} 
+                        onChange={(e) => setClarity(e.target.value)}
+                        className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-2.5 text-xs font-body text-ink cursor-pointer focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                      >
+                        <option value="everything">Everything — just hit me ✦</option>
+                        <option value="love">Love &amp; relationships</option>
+                        <option value="career">Career &amp; money</option>
+                        <option value="energy">My general energy today</option>
+                        <option value="better">When does it get better?</option>
+                      </select>
+                    </div>
+
+                    <button 
+                      type="submit" 
+                      disabled={isLoading}
+                      className="submit-btn w-full bg-ink text-ivory rounded-xl p-3 mt-1 font-medium text-xs font-body cursor-pointer flex items-center justify-center gap-2 hover:bg-coral transition-all duration-200 disabled:opacity-50"
+                    >
+                      {isLoading ? 'Re-calculating...' : 'Update Vibe Check'}
+                      <span className="inline-block">→</span>
+                    </button>
+                  </form>
+                </div>
+
+                {/* Column 2: Apple-style Vibe Card */}
+                <div className="w-full bg-white/95 border border-black/5 rounded-[28px] p-6 shadow-[0_15px_45px_rgba(0,0,0,0.04)] backdrop-blur-xl h-[620px] flex flex-col justify-between text-left transition-all duration-300">
+                  <div>
+                    <div className="vc-head flex justify-between items-start mb-1">
+                      <div className="vc-name text-[10px] font-bold text-ink-faint tracking-[2px] uppercase">
+                        {chart.meta.name}'s Vibe Check ✦
+                      </div>
+                    </div>
+                    <div className="vc-lagna font-display text-[26px] font-medium text-ink tracking-tight mb-0.5 leading-tight">
+                      {getArchetype(chart.bigThree.rising.sign)}
+                    </div>
+                    <div className="vc-naksh text-[11px] text-ink-mid font-medium">
+                      {getNakshatraVibe(chart.dasha.nakshatra.name)} · {getDashaChapter(chart.dasha.activeDasha.rulerName)}
+                    </div>
+                    
+                    <div className="vc-line h-[0.5px] bg-ink/10 my-3" />
+                    
+                    {/* iOS style segmented control tabs */}
+                    <div className="bg-black/[0.04] p-0.5 rounded-full flex gap-0.5 mb-4">
+                      {[
+                        { id: 'today', label: 'Today' },
+                        { id: 'week', label: 'Week' },
+                        { id: 'month', label: 'Month' }
+                      ].map((t) => (
+                        <button
+                          key={t.id}
+                          type="button"
+                          onClick={() => setActiveTab(t.id as any)}
+                          className={`flex-1 text-[11px] py-1.5 rounded-full text-center font-medium transition-all border-none cursor-pointer ${
+                            activeTab === t.id
+                              ? 'bg-white text-ink shadow-[0_2px_4px_rgba(0,0,0,0.04)] font-semibold'
+                              : 'text-ink-mid hover:text-ink bg-transparent'
+                          }`}
+                        >
+                          {t.label}
+                        </button>
+                      ))}
+                    </div>
+    
+                    {/* Interactive Metrics Grid */}
+                    <div className="vc-metrics grid grid-cols-3 gap-2 mb-4">
+                      <button 
+                        type="button"
+                        onClick={() => setSelectedVibeMetric('love')}
+                        className={`vc-m rounded-xl p-2 text-center border transition-all cursor-pointer ${selectedVibeMetric === 'love' ? 'bg-[#FFF2EC]/60 border-[#FF7A45]/30 ring-2 ring-[#FF7A45]/10' : 'bg-black/[0.02] border-transparent hover:bg-black/[0.04]'}`}
+                      >
+                        <div className="vc-m-emoji text-lg">{vibeData ? vibeData.love.emoji : '💝'}</div>
+                        <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5 font-medium">Love</div>
+                        <div className="vc-m-val text-[11px] font-semibold mt-0.5 text-[#FF7A45]">
+                          {vibeData ? vibeData.love.status : 'Tender'}
+                        </div>
+                      </button>
+                      
+                      <button 
+                        type="button"
+                        onClick={() => setSelectedVibeMetric('money')}
+                        className={`vc-m rounded-xl p-2 text-center border transition-all cursor-pointer ${selectedVibeMetric === 'money' ? 'bg-[#EEF7F2]/60 border-[#6DB88A]/30 ring-2 ring-[#6DB88A]/10' : 'bg-black/[0.02] border-transparent hover:bg-black/[0.04]'}`}
+                      >
+                        <div className="vc-m-emoji text-lg">{vibeData ? vibeData.money.emoji : '💵'}</div>
+                        <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5 font-medium">Money</div>
+                        <div className="vc-m-val text-[11px] font-semibold mt-0.5 text-[#6DB88A]">
+                          {vibeData ? vibeData.money.status : 'Flowing'}
+                        </div>
+                      </button>
+
+                      <button 
+                        type="button"
+                        onClick={() => setSelectedVibeMetric('energy')}
+                        className={`vc-m rounded-xl p-2 text-center border transition-all cursor-pointer ${selectedVibeMetric === 'energy' ? 'bg-[#FFFBEB]/60 border-[#D4A800]/30 ring-2 ring-[#D4A800]/10' : 'bg-black/[0.02] border-transparent hover:bg-black/[0.04]'}`}
+                      >
+                        <div className="vc-m-emoji text-lg">{vibeData ? vibeData.energy.emoji : '⚡'}</div>
+                        <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5 font-medium">Energy</div>
+                        <div className="vc-m-val text-[11px] font-semibold mt-0.5 text-[#D4A800]">
+                          {vibeData ? vibeData.energy.status : 'Chaotic'}
+                        </div>
+                      </button>
+                    </div>
+
+                    {/* Detailed Metric Breakdown */}
+                    <div className="vc-breakdown bg-black/[0.02] border border-black/5 rounded-2xl p-3.5 text-[10px] mb-4 flex flex-col gap-2 shadow-[inset_0_2px_4px_rgba(0,0,0,0.01)]">
+                      {selectedVibeMetric === 'love' && (
+                        <>
+                          <div className="flex flex-col gap-1 px-1">
+                            <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                              <span>💬 Communication Harmony</span>
+                              <span className="font-bold text-[#FF7A45]">{Math.abs((chart.houseData.lagnaSignIndex * 7) % 25) + 75}%</span>
+                            </div>
+                            <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                              <div className="h-full bg-[#FF7A45] rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 7) % 25) + 75}%` }} />
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-1 px-1">
+                            <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                              <span>⚡ Mutual Spark Status</span>
+                              <span className="font-bold text-[#FF7A45]">{Math.abs((chart.houseData.lagnaSignIndex * 9) % 30) + 65}%</span>
+                            </div>
+                            <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                              <div className="h-full bg-[#FF7A45]/80 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 9) % 30) + 65}%` }} />
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-1 px-1">
+                            <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                              <span>🛡️ Relationship Strength</span>
+                              <span className="font-bold text-[#FF7A45]">{Math.abs((chart.houseData.lagnaSignIndex * 11) % 20) + 80}%</span>
+                            </div>
+                            <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                              <div className="h-full bg-[#FF7A45]/60 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 11) % 20) + 80}%` }} />
+                            </div>
+                          </div>
+                        </>
+                      )}
+                      {selectedVibeMetric === 'money' && (
+                        <>
+                          <div className="flex flex-col gap-1 px-1">
+                            <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                              <span>📈 Wealth Attraction Flow</span>
+                              <span className="font-bold text-[#6DB88A]">{Math.abs((chart.houseData.lagnaSignIndex * 13) % 25) + 75}%</span>
+                            </div>
+                            <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                              <div className="h-full bg-[#6DB88A] rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 13) % 25) + 75}%` }} />
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-1 px-1">
+                            <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                              <span>💸 Spend Control Strength</span>
+                              <span className="font-bold text-[#6DB88A]">{Math.abs((chart.houseData.lagnaSignIndex * 5) % 30) + 60}%</span>
+                            </div>
+                            <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                              <div className="h-full bg-[#6DB88A]/80 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 5) % 30) + 60}%` }} />
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-1 px-1">
+                            <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                              <span>💼 Career Alignment Focus</span>
+                              <span className="font-bold text-[#6DB88A]">{Math.abs((chart.houseData.lagnaSignIndex * 8) % 20) + 80}%</span>
+                            </div>
+                            <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                              <div className="h-full bg-[#6DB88A]/60 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 8) % 20) + 80}%` }} />
+                            </div>
+                          </div>
+                        </>
+                      )}
+                      {selectedVibeMetric === 'energy' && (
+                        <>
+                          <div className="flex flex-col gap-1 px-1">
+                            <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                              <span>🔋 Physical Battery Stamina</span>
+                              <span className="font-bold text-[#D4A800]">{Math.abs((chart.houseData.lagnaSignIndex * 6) % 35) + 60}%</span>
+                            </div>
+                            <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                              <div className="h-full bg-[#D4A800] rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 6) % 35) + 60}%` }} />
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-1 px-1">
+                            <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                              <span>🧠 Focus &amp; Mental Clarity</span>
+                              <span className="font-bold text-[#D4A800]">{Math.abs((chart.houseData.lagnaSignIndex * 14) % 20) + 75}%</span>
+                            </div>
+                            <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                              <div className="h-full bg-[#D4A800]/80 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 14) % 20) + 75}%` }} />
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-1 px-1">
+                            <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                              <span>😴 Recharge &amp; Sleep Quality</span>
+                              <span className="font-bold text-[#D4A800]">{Math.abs((chart.houseData.lagnaSignIndex * 10) % 30) + 65}%</span>
+                            </div>
+                            <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                              <div className="h-full bg-[#D4A800]/60 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 10) % 30) + 65}%` }} />
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                      {/* Clean Problem / Solution / Impact Horizontal Items */}
+                      <div className="flex flex-col gap-2 mt-2 pt-2 border-t border-black/5 text-[9.5px] leading-relaxed">
+                        {(() => {
+                          const text = vibeData?.interpretation || ""
+                          const pIndex = text.indexOf("(Problem)")
+                          const sIndex = text.indexOf("(Solution)")
+                          const iIndex = text.indexOf("(Impact)")
+                          
+                          let parsedObj = {
+                            problem: text,
+                            solution: "Focus on your daily alignment and direct your actions intentionally.",
+                            impact: "This will create a natural balance, raising your connection alignment to peak levels."
+                          }
+
+                          if (pIndex !== -1 && sIndex !== -1 && iIndex !== -1) {
+                            parsedObj = {
+                              problem: text.substring(0, pIndex).trim(),
+                              solution: text.substring(pIndex + 9, sIndex).trim(),
+                              impact: text.substring(sIndex + 10, iIndex).trim()
+                            }
+                          }
+
+                          return (
+                            <>
+                              <div className="flex gap-2 items-start p-2 bg-[#FFF2EC]/45 border border-[#FF7A45]/10 rounded-xl">
+                                <span className="text-xs shrink-0 select-none">⚠️</span>
+                                <div>
+                                  <span className="text-[8.5px] font-bold text-[#FF7A45] uppercase tracking-wider block mb-0.5">The Challenge</span>
+                                  <p className="text-ink-mid font-light leading-normal">{parsedObj.problem}</p>
+                                </div>
+                              </div>
+                              <div className="flex gap-2 items-start p-2 bg-[#EEF7F2]/45 border border-[#6DB88A]/10 rounded-xl">
+                                <span className="text-xs shrink-0 select-none">💡</span>
+                                <div>
+                                  <span className="text-[8.5px] font-bold text-[#6DB88A] uppercase tracking-wider block mb-0.5">The Action</span>
+                                  <p className="text-ink-mid font-light leading-normal">{parsedObj.solution}</p>
+                                </div>
+                              </div>
+                              <div className="flex gap-2 items-start p-2 bg-[#EEF7FF]/55 border border-[#7BA7E0]/15 rounded-xl">
+                                <span className="text-xs shrink-0 select-none">🎯</span>
+                                <div>
+                                  <span className="text-[8.5px] font-bold text-[#7BA7E0] uppercase tracking-wider block mb-0.5">The Outlook</span>
+                                  <p className="text-ink-mid font-light leading-normal">{parsedObj.impact}</p>
+                                </div>
+                              </div>
+                            </>
+                          )
+                        })()}
+                      </div>
+                    </div>
+
+                    {/* Rich readable description */}
+                    <div className="vc-insight bg-white border border-black/5 rounded-xl p-3 text-[12px] text-ink font-semibold leading-relaxed italic mb-3 border-l-[3px] border-coral shadow-sm">
+                      {vibeData ? `"${vibeData.interpretation.replace(/\s*\(Problem\)|\s*\(Solution\)|\s*\(Impact\)/gi, '')}"` : `""`}
+                    </div>
+                  </div>
+  
+                  <div className="vc-share-bar flex items-center justify-between bg-ink rounded-xl p-3 text-xs">
+                    <div className="vc-share-txt text-white/60 font-body">Share your vibe</div>
+                    <button 
+                      onClick={handleVibeCopy}
+                      className="vc-share-btn-txt text-[#FDE97B] font-medium bg-transparent border-none cursor-pointer p-0 font-body hover:opacity-90"
+                    >
+                      {vibeCopied ? 'Copied! 💅' : 'Copy card ↗'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Column 3: Premium Report Card */}
+                <div className="w-full">
+                  <PremiumReportCard chart={chart} />
+                </div>
+
+              </div>
             </div>
           )}
         </div>
 
-        <div className="scroll-hint absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5">
-          <div className="scroll-hint-text text-[10px] text-ink-faint tracking-[2px] uppercase">Scroll</div>
-          <div className="scroll-line w-[1px] h-9 bg-border overflow-hidden relative after:content-[''] after:absolute after:top-[-100%] after:left-0 after:w-full after:h-full after:bg-coral animate-scroll-line" />
-        </div>
-      </section>
-
-
-
-      {/* ░░ RESULT PREVIEW ░░ */}
-      {chart && (
-        <section className="section bg-white py-32 px-6" id="results">
-          <div className="section-inner max-w-[1040px] mx-auto">
-            <div className="split grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-24 items-center">
-              <div className="text-left">
-                <p className="split-text-label text-[11px] font-medium text-ink-faint tracking-[2px] uppercase mb-5">
-                  Your vibe card
-                </p>
-                <h2 className="split-h font-display text-[28px] md:text-[46px] font-normal leading-[1.15] tracking-tight text-ink mb-4">
-                  Your Cosmos is <em className="not-italic text-coral">aligned.</em><br />Read your vibe check.
-                </h2>
-                <p className="split-p text-[15px] text-ink-mid leading-[1.8] font-light mb-8">
-                  Our readers keep saying the same thing: "This literally described my week." That's because it's not a generic sun-sign column. It's calculated from your exact chart, matched against today's sky.
-                </p>
-                <ul className="check-list list-none">
-                  <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">Based on your real Lagna, Moon sign &amp; Nakshatra</li>
-                  <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">Today's planetary transits vs your natal chart</li>
-                  <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">Written in plain language — no Sanskrit, no jargon</li>
-                  <li className="text-xs text-ink-mid py-1.5 flex gap-2.5 leading-[1.6] before:content-['✦'] before:text-gold before:text-[10px] before:mt-0.5">A new reading every day, week, and month</li>
-                </ul>
-              </div>
-              
-              <div className="w-full max-w-[450px] mx-auto lg:mx-0 perspective-1000 h-[620px] relative">
-                <div className={`w-full h-full transition-transform duration-700 preserve-3d relative ${isFlipped ? 'rotate-y-180' : ''}`} style={{ transformStyle: 'preserve-3d' }}>
-                  
-                  {/* Card Back Face (Hidden when flipped) */}
-                  <div className="absolute inset-0 backface-hidden bg-ink border-2 border-[#EDD890] rounded-[26px] p-8 flex flex-col items-center justify-center text-center shadow-lg cursor-pointer" onClick={() => setIsFlipped(true)} style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
-                    <div className="w-14 h-14 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center text-2xl mb-5 animate-pulse text-gold">
-                      ✦
-                    </div>
-                    <h3 className="font-display font-medium text-lg text-ivory tracking-wider mb-2">Calculating Your Cosmos...</h3>
-                    <p className="text-[11px] text-ink-faint max-w-[200px] leading-relaxed mb-4">
-                      Reading natal profiles, current transit shapes, and lunar eras...
-                    </p>
-                    <div className="text-[10px] text-gold/60 mt-4 tracking-[3px] uppercase font-semibold">Click to Reveal</div>
-                  </div>
-
-                  {/* Card Front Face (Revealed when flipped) */}
-                  <div className="absolute inset-0 backface-hidden vibe-card bg-gradient-to-tr from-[#FFFBE8] via-[#FFF3C0] to-[#FFE8C0] border border-[#EDD890] rounded-[26px] p-6.5 shadow-md text-left rotate-y-180 flex flex-col justify-between" style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
-                    <div>
-                      <div className="vc-head flex justify-between items-start mb-1">
-                        <div className="vc-name text-[10px] font-bold text-ink-faint tracking-[2px] uppercase">
-                          {chart.meta.name}'s Vibe Check ✦
-                        </div>
-                      </div>
-                      <div className="vc-lagna font-display text-[26px] font-medium text-ink tracking-tight mb-0.5 leading-tight">
-                        {getArchetype(chart.bigThree.rising.sign)}
-                      </div>
-                      <div className="vc-naksh text-[11px] text-ink-mid font-medium">
-                        {getNakshatraVibe(chart.dasha.nakshatra.name)} · {getDashaChapter(chart.dasha.activeDasha.rulerName)}
-                      </div>
-                      
-                      <div className="vc-line h-[0.5px] bg-ink/10 my-2.5" />
-                      
-                      <div className="vc-tabs flex gap-1.5 mb-2.5">
-                        <button 
-                          type="button" 
-                          onClick={() => setActiveTab('today')}
-                          className={`vc-tab text-[11px] px-3 py-1 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'today' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
-                        >
-                          Today
-                        </button>
-                        <button 
-                          type="button" 
-                          onClick={() => setActiveTab('week')}
-                          className={`vc-tab text-[11px] px-3 py-1 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'week' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
-                        >
-                          Week
-                        </button>
-                        <button 
-                          type="button" 
-                          onClick={() => setActiveTab('month')}
-                          className={`vc-tab text-[11px] px-3 py-1 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'month' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
-                        >
-                          Month
-                        </button>
-                      </div>
-      
-                      {/* Interactive Metrics Grid */}
-                      <div className="vc-metrics grid grid-cols-3 gap-2 mb-2.5">
-                        <button 
-                          type="button"
-                          onClick={() => setSelectedVibeMetric('love')}
-                          className={`vc-m rounded-xl p-2 text-center border transition-all cursor-pointer ${selectedVibeMetric === 'love' ? 'bg-[#FFF2EC] border-[#FF7A45]/30 ring-2 ring-[#FF7A45]/10' : 'bg-white/60 border-transparent hover:bg-white'}`}
-                        >
-                          <div className="vc-m-emoji text-lg">{vibeData ? vibeData.love.emoji : '💌'}</div>
-                          <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5 font-medium">Love</div>
-                          <div className="vc-m-val text-[11px] font-semibold mt-0.5 text-[#FF7A45]">
-                            {vibeData ? vibeData.love.status : 'Tender'}
-                          </div>
-                        </button>
-                        
-                        <button 
-                          type="button"
-                          onClick={() => setSelectedVibeMetric('money')}
-                          className={`vc-m rounded-xl p-2 text-center border transition-all cursor-pointer ${selectedVibeMetric === 'money' ? 'bg-[#EEF7F2] border-[#6DB88A]/30 ring-2 ring-[#6DB88A]/10' : 'bg-white/60 border-transparent hover:bg-white'}`}
-                        >
-                          <div className="vc-m-emoji text-lg">{vibeData ? vibeData.money.emoji : '💸'}</div>
-                          <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5 font-medium">Money</div>
-                          <div className="vc-m-val text-[11px] font-semibold mt-0.5 text-[#6DB88A]">
-                            {vibeData ? vibeData.money.status : 'Flowing'}
-                          </div>
-                        </button>
-
-                        <button 
-                          type="button"
-                          onClick={() => setSelectedVibeMetric('energy')}
-                          className={`vc-m rounded-xl p-2 text-center border transition-all cursor-pointer ${selectedVibeMetric === 'energy' ? 'bg-[#FFFBEB] border-[#D4A800]/30 ring-2 ring-[#D4A800]/10' : 'bg-white/60 border-transparent hover:bg-white'}`}
-                        >
-                          <div className="vc-m-emoji text-lg">{vibeData ? vibeData.energy.emoji : '⚡'}</div>
-                          <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5 font-medium">Energy</div>
-                          <div className="vc-m-val text-[11px] font-semibold mt-0.5 text-[#D4A800]">
-                            {vibeData ? vibeData.energy.status : 'Chaotic'}
-                          </div>
-                        </button>
-                      </div>
-
-                      {/* Detailed Metric Breakdown */}
-                      <div className="vc-breakdown bg-white/70 border border-ink/5 rounded-xl p-3 text-[10px] mb-2.5 flex flex-col gap-2 shadow-[inset_0_2px_4px_rgba(26,18,8,0.02)]">
-                        {selectedVibeMetric === 'love' && (
-                          <>
-                            <div className="flex flex-col gap-1 px-1">
-                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
-                                <span>💬 Communication Harmony</span>
-                                <span className="font-bold text-[#FF7A45]">{Math.abs((chart.houseData.lagnaSignIndex * 7) % 25) + 75}%</span>
-                              </div>
-                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-[#FF7A45] rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 7) % 25) + 75}%` }} />
-                              </div>
-                            </div>
-                            <div className="flex flex-col gap-1 px-1">
-                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
-                                <span>⚡ Mutual Spark Status</span>
-                                <span className="font-bold text-[#FF7A45]">{Math.abs((chart.houseData.lagnaSignIndex * 9) % 30) + 65}%</span>
-                              </div>
-                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-[#FF7A45]/80 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 9) % 30) + 65}%` }} />
-                              </div>
-                            </div>
-                            <div className="flex flex-col gap-1 px-1">
-                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
-                                <span>🛡️ Relationship Strength</span>
-                                <span className="font-bold text-[#FF7A45]">{Math.abs((chart.houseData.lagnaSignIndex * 11) % 20) + 80}%</span>
-                              </div>
-                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-[#FF7A45]/60 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 11) % 20) + 80}%` }} />
-                              </div>
-                            </div>
-                            <div className="text-[9.5px] text-ink-mid leading-relaxed bg-[#FFF2EC]/30 p-2 rounded-lg border border-[#FF7A45]/10 mt-0.5">
-                              <strong>Future Prediction:</strong> You will feel a brief push to rush an emotional topic today (Problem). Take a breath and focus on listening fully first (Solution). This will raise your connection alignment, building deep mutual support by tonight (Impact).
-                            </div>
-                          </>
-                        )}
-                        {selectedVibeMetric === 'money' && (
-                          <>
-                            <div className="flex flex-col gap-1 px-1">
-                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
-                                <span>📈 Wealth Attraction Flow</span>
-                                <span className="font-bold text-[#6DB88A]">{Math.abs((chart.houseData.lagnaSignIndex * 13) % 25) + 75}%</span>
-                              </div>
-                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-[#6DB88A] rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 13) % 25) + 75}%` }} />
-                              </div>
-                            </div>
-                            <div className="flex flex-col gap-1 px-1">
-                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
-                                <span>💸 Spend Control Strength</span>
-                                <span className="font-bold text-[#6DB88A]">{Math.abs((chart.houseData.lagnaSignIndex * 5) % 30) + 60}%</span>
-                              </div>
-                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-[#6DB88A]/80 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 5) % 30) + 60}%` }} />
-                              </div>
-                            </div>
-                            <div className="flex flex-col gap-1 px-1">
-                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
-                                <span>💼 Career Alignment Focus</span>
-                                <span className="font-bold text-[#6DB88A]">{Math.abs((chart.houseData.lagnaSignIndex * 8) % 20) + 80}%</span>
-                              </div>
-                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-[#6DB88A]/60 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 8) % 20) + 80}%` }} />
-                              </div>
-                            </div>
-                            <div className="text-[9.5px] text-ink-mid leading-relaxed bg-[#EEF7F2]/30 p-2 rounded-lg border border-[#6DB88A]/10 mt-0.5">
-                              <strong>Future Prediction:</strong> A temptation to invest in a fast, non-essential reward might distract your savings plan (Problem). Wait 24 hours before checking out any digital carts (Solution). This will preserve your capital for high-value skills and growing assets (Impact).
-                            </div>
-                          </>
-                        )}
-                        {selectedVibeMetric === 'energy' && (
-                          <>
-                            <div className="flex flex-col gap-1 px-1">
-                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
-                                <span>🔋 Physical Battery Stamina</span>
-                                <span className="font-bold text-[#D4A800]">{Math.abs((chart.houseData.lagnaSignIndex * 6) % 35) + 60}%</span>
-                              </div>
-                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-[#D4A800] rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 6) % 35) + 60}%` }} />
-                              </div>
-                            </div>
-                            <div className="flex flex-col gap-1 px-1">
-                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
-                                <span>🧠 Focus &amp; Mental Clarity</span>
-                                <span className="font-bold text-[#D4A800]">{Math.abs((chart.houseData.lagnaSignIndex * 14) % 20) + 75}%</span>
-                              </div>
-                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-[#D4A800]/80 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 14) % 20) + 75}%` }} />
-                              </div>
-                            </div>
-                            <div className="flex flex-col gap-1 px-1">
-                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
-                                <span>😴 Recharge &amp; Sleep Quality</span>
-                                <span className="font-bold text-[#D4A800]">{Math.abs((chart.houseData.lagnaSignIndex * 10) % 30) + 65}%</span>
-                              </div>
-                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-[#D4A800]/60 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 10) % 30) + 65}%` }} />
-                              </div>
-                            </div>
-                            <div className="text-[9.5px] text-ink-mid leading-relaxed bg-[#FFFBEB]/30 p-2 rounded-lg border border-[#D4A800]/10 mt-0.5">
-                              <strong>Future Prediction:</strong> A busy schedule will push you to stay connected to screens late into the night (Problem). Set devices aside 30 minutes before rest and hydrate well (Solution). This will restore your stamina for double focus tomorrow (Impact).
-                            </div>
-                          </>
-                        )}
-                      </div>
-      
-                      {/* Rich readable description */}
-                      <div className="vc-insight bg-white border border-[#EDD890]/40 rounded-xl p-3 text-[12.5px] text-ink font-semibold leading-relaxed italic mb-3 border-l-[3px] border-coral shadow-sm">
-                        {vibeData ? `"${vibeData.interpretation}"` : `""`}
-                      </div>
-                    </div>
-    
-                    <div className="vc-share-bar flex items-center justify-between bg-ink rounded-xl p-3 text-xs">
-                      <div className="vc-share-txt text-white/60">Share your vibe</div>
-                      <button 
-                        onClick={handleVibeCopy}
-                        className="vc-share-btn-txt text-[#FDE97B] font-medium bg-transparent border-none cursor-pointer p-0 font-body hover:opacity-90"
-                      >
-                        {vibeCopied ? 'Copied! 💅' : 'Copy card ↗'}
-                      </button>
-                    </div>
-                  </div>
-  
-                </div>
-              </div>
-  
-              <div className="mt-8 w-full max-w-[450px] mx-auto lg:mx-0">
-                <PremiumReportCard chart={chart} />
-              </div>
-            </div>
+        {!chart && (
+          <div className="scroll-hint absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5">
+            <div className="scroll-hint-text text-[10px] text-ink-faint tracking-[2px] uppercase">Scroll</div>
+            <div className="scroll-line w-[1px] h-9 bg-border overflow-hidden relative after:content-[''] after:absolute after:top-[-100%] after:left-0 after:w-full after:h-full after:bg-coral animate-scroll-line" />
           </div>
-        </section>
-      )}
+        )}
+      </section>
 
       {/* ░░ COMPATIBILITY ░░ */}
       <section className="section bg-cream py-32 px-6" id="match">
@@ -1103,19 +1232,22 @@ function HomeContent() {
                     </div>
                   </div>
 
-                  {/* Copyright free couple picture */}
-                  <div className="rounded-[22px] overflow-hidden border border-border shadow-sm bg-white p-2">
-                    <img 
-                      src="/happy_couple.png" 
-                      alt="Happy Couple Cosmic Alignment" 
-                      className="w-full h-64 object-cover rounded-xl"
-                    />
-                  </div>
                 </div>
               )}
             </div>
 
           </div>
+
+          {/* Dynamic compatibility couple image based on score */}
+          {compatChecked && (
+            <div className="mt-12 w-full max-w-[840px] mx-auto rounded-[24px] overflow-hidden border border-border shadow-md bg-white p-2.5">
+              <img 
+                src={compatScore < 30 ? '/unhappy_couple.png' : compatScore <= 60 ? '/neutral_couple.png' : '/happy_couple.png'} 
+                alt="Couple Alignment State" 
+                className="w-full h-80 object-cover rounded-2xl transition-all duration-300"
+              />
+            </div>
+          )}
         </div>
       </section>
 

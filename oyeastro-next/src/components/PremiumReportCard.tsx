@@ -98,7 +98,7 @@ export default function PremiumReportCard({ chart }: Props) {
       const res = await fetch('/api/payment/razorpay', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: 9900, receipt: `rcpt_${chartId}` }),
+        body: JSON.stringify({ amount: 10100, receipt: `rcpt_${chartId}` }),
       })
       if (!res.ok) throw new Error('Razorpay order creation failed')
       const order = await res.json()
@@ -312,7 +312,7 @@ export default function PremiumReportCard({ chart }: Props) {
         <div className="flex justify-between items-center">
           <div>
             <span className="text-[10px] font-semibold text-ink-faint tracking-wider uppercase block">Total Access Fee</span>
-            <span className="text-2xl font-display font-medium text-coral leading-none mt-1 inline-block">₹99</span>
+            <span className="text-2xl font-display font-medium text-coral leading-none mt-1 inline-block">₹101</span>
             <span className="text-[10px] text-ink-faint inline-block ml-1">($1.49 international)</span>
           </div>
           <div className="bg-sage/10 text-sage text-[10px] font-bold px-2.5 py-1 rounded-full uppercase border border-sage/20">
@@ -332,7 +332,7 @@ export default function PremiumReportCard({ chart }: Props) {
             disabled={paymentLoading}
             className="py-3 bg-ink hover:bg-coral text-ivory font-body text-xs font-semibold rounded-full active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 border-none cursor-pointer text-center shadow-sm"
           >
-            {paymentLoading ? 'Processing...' : '💳 UPI / INR (₹99)'}
+            {paymentLoading ? 'Processing...' : '💳 UPI / INR (₹101)'}
           </button>
           <button
             onClick={handleStripeCheckout}

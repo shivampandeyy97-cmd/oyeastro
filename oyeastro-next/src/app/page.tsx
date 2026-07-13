@@ -7,7 +7,6 @@ import type { ChartResult, BirthData, CosmicVibeResult, HorizonVibeData } from '
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import PremiumReportCard from '@/components/PremiumReportCard'
-import PricingGrid from '@/components/PricingGrid'
 
 const getArchetype = (signName: string) => {
   const map: Record<string, string> = {
@@ -368,6 +367,43 @@ function HomeContent() {
     }
   }
 
+  // Multi-tier clipboard copy and sharing helper
+  const shareText = async (text: string, title: string) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: title,
+          text: text,
+        })
+        return true
+      } catch (err) {
+        console.log('Web share canceled or failed:', err)
+      }
+    }
+    // Clipboard fallback
+    try {
+      await navigator.clipboard.writeText(text)
+      return true
+    } catch (err) {
+      console.error('Clipboard API failed, using legacy fallback:', err)
+      const textArea = document.createElement("textarea")
+      textArea.value = text
+      textArea.style.top = "0"
+      textArea.style.left = "0"
+      textArea.style.position = "fixed"
+      document.body.appendChild(textArea)
+      textArea.focus()
+      textArea.select()
+      try {
+        document.execCommand('copy')
+      } catch (copyErr) {
+        console.error('Legacy fallback copy failed:', copyErr)
+      }
+      document.body.removeChild(textArea)
+      return true
+    }
+  }
+
   // Interactive Clipboard Copy for Vibe Card
   const handleVibeCopy = () => {
     if (!chart) return
@@ -378,10 +414,10 @@ function HomeContent() {
       `💌 Love: ${vData.love.status}\n` +
       `💸 Money: ${vData.money.status}\n` +
       `⚡ Energy: ${vData.energy.status}\n` +
-      `Insight: "${vData.interpretation}"\n` +
+      `Insight: "${vData.interpretation.replace(/\s*\(Problem\)|\s*\(Solution\)|\s*\(Impact\)/gi, '')}"\n` +
       `Check yours at: oyeastro.com`;
 
-    navigator.clipboard.writeText(text).then(() => {
+    shareText(text, 'OyeAstro Vibe Check').then(() => {
       setVibeCopied(true)
       setTimeout(() => setVibeCopied(false), 2000)
     })
@@ -457,18 +493,109 @@ function HomeContent() {
     setCompatChecked(false)
   }
 
-  // Copy compat
+  // Compatibility States & Payment Triggers
+  const [cEmail, setCEmail] = useState('shivampandeyy97@gmail.com')
+  const [isCompatPaid, setIsCompatPaid] = useState(false)
+  const [compatPaymentLoading, setCompatPaymentLoading] = useState(false)
+  const [compatError, setCompatError] = useState('')
+
+  // Check compatibility payment on name/checked change
+  useEffect(() => {
+    if (compatChecked && cName1 && cName2) {
+      const key = `compat_paid_${cName1.toLowerCase().trim()}_${cName2.toLowerCase().trim()}`
+      const isPaid = localStorage.getItem(key) === 'true'
+      setIsCompatPaid(isPaid)
+    }
+  }, [compatChecked, cName1, cName2])
+
+  // Copy compat using robust multi-tier shareText
   const handleCompatCopy = () => {
     const text = `✨ Cosmic Compatibility Vibe Match ✨\n` +
       `💖 ${cName1} ⟷ ${cName2}\n` +
       `📊 Match Score: ${compatScore}%\n` +
       `Insight: "${compatText}"\n` +
-      `Check yours at: ${window.location.origin}`;
+      `Check yours at: oyeastro.com`;
     
-    navigator.clipboard.writeText(text).then(() => {
+    shareText(text, 'OyeAstro Compatibility Match').then(() => {
       setCompatCopied(true)
       setTimeout(() => setCompatCopied(false), 2000)
     })
+  }
+
+  // Handle compatibility Razorpay checkout (₹101)
+  const handleCompatRazorpayCheckout = async () => {
+    setCompatPaymentLoading(true)
+    setCompatError('')
+    try {
+      const res = await fetch('/api/payment/razorpay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: 10100, receipt: `compat_${cName1}_${cName2}`.substring(0, 39) }),
+      })
+      if (!res.ok) throw new Error('Razorpay order creation failed')
+      const order = await res.json()
+
+      const options = {
+        key: order.keyId,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'OyeAstro',
+        description: `Compatibility Report: ${cName1} & ${cName2}`,
+        order_id: order.orderId,
+        handler: async function (response: any) {
+          setCompatPaymentLoading(true)
+          try {
+            const verifyRes = await fetch('/api/payment/verify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                provider: 'razorpay',
+                chartId: `compat_${cName1}_${cName2}`,
+                isCompat: true,
+                email: cEmail,
+                cName1,
+                cName2,
+                score: compatScore,
+                details: compatDetails,
+                narrative: compatText,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            })
+            if (verifyRes.ok) {
+              setIsCompatPaid(true)
+              const key = `compat_paid_${cName1.toLowerCase().trim()}_${cName2.toLowerCase().trim()}`
+              localStorage.setItem(key, 'true')
+            } else {
+              setCompatError('Payment verification failed.')
+            }
+          } catch {
+            setCompatError('Payment verification error.')
+          } finally {
+            setCompatPaymentLoading(false)
+          }
+        },
+        prefill: {
+          name: cName1,
+          email: cEmail,
+        },
+        theme: {
+          color: '#8A5CF5',
+        },
+      }
+
+      const rzp = new (window as any).Razorpay(options)
+      rzp.on('payment.failed', function (resp: any) {
+        setCompatError(`Payment failed: ${resp.error.description}`)
+      })
+      rzp.open()
+    } catch (err) {
+      console.error(err)
+      setCompatError('Could not initialize Razorpay checkout.')
+    } finally {
+      setCompatPaymentLoading(false)
+    }
   }
 
   // Active Vibe data rendering variables
@@ -639,10 +766,10 @@ function HomeContent() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                 
                 {/* Column 1: Intake Form (compact editor) */}
-                <div className="w-full bg-white border border-black/5 rounded-[28px] p-6 shadow-[0_10px_40px_rgba(26,18,8,0.02)] text-left flex flex-col justify-between h-full">
+                <div className="w-full bg-white border border-black/5 rounded-[28px] p-6 shadow-[0_10px_40px_rgba(26,18,8,0.02)] text-left">
                   <div className="text-[10px] font-bold text-ink-faint tracking-wider uppercase mb-5">Edit birth details</div>
                   
                   <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -750,7 +877,7 @@ function HomeContent() {
                 </div>
 
                 {/* Column 2: Apple-style Vibe Card */}
-                <div className="w-full bg-white/95 border border-black/5 rounded-[28px] p-6 shadow-[0_15px_45px_rgba(0,0,0,0.04)] backdrop-blur-xl h-full flex flex-col justify-between text-left transition-all duration-300">
+                <div className="w-full bg-white/95 border border-black/5 rounded-[28px] p-6 shadow-[0_15px_45px_rgba(0,0,0,0.04)] backdrop-blur-xl flex flex-col justify-between text-left transition-all duration-300">
                   <div>
                     <div className="vc-head flex justify-between items-start mb-1">
                       <div className="vc-name text-[10px] font-bold text-ink-faint tracking-[2px] uppercase">
@@ -988,7 +1115,7 @@ function HomeContent() {
                 </div>
 
                 {/* Column 3: Premium Report Card */}
-                <div className="w-full h-full">
+                <div className="w-full">
                   <PremiumReportCard chart={chart} />
                 </div>
 
@@ -1116,8 +1243,21 @@ function HomeContent() {
                             ))}
                           </ul>
                         )}
-                      </div>
-                    </div>
+                  </div>
+                </div>
+              </div>
+
+                {/* Email address for detailed report */}
+                  <div className="flex flex-col gap-1.5 pt-2 border-t border-lavender/25 mb-2">
+                    <span className="text-[10px] font-semibold text-lavender uppercase tracking-wider">Email for detailed report</span>
+                    <input 
+                      type="email" 
+                      value={cEmail} 
+                      onChange={(e) => setCEmail(e.target.value)} 
+                      required 
+                      placeholder="email@example.com" 
+                      className="w-full bg-white/70 border border-border rounded-xl p-2.5 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                    />
                   </div>
 
                   <button 
@@ -1186,46 +1326,82 @@ function HomeContent() {
                       <div className="cc-pct-lbl text-[10px] text-ink-faint uppercase tracking-wider mt-1">Cosmic Match Score</div>
                     </div>
 
-                    <div className="cc-bars flex flex-col gap-2.5 my-4">
-                      <div className="cc-br flex items-center gap-2.5">
-                        <div className="cc-br-lbl text-[10px] text-ink-faint w-[72px] shrink-0 text-right">Temperament</div>
-                        <div className="cc-br-track flex-1 h-1 bg-ink/10 rounded-sm overflow-hidden">
-                          <div className="cc-br-fill h-full rounded-sm bg-[#6DB88A] transition-all duration-500" style={{ width: `${compatDetails.temp}%` }} />
+                    {!isCompatPaid ? (
+                      <div className="bg-gradient-to-tr from-[#FAF6FF] to-[#ECE0FF] border border-[#D5C2F5] rounded-2xl p-5 text-left mt-4">
+                        <div className="flex gap-3 items-start mb-3">
+                          <span className="text-xl">🔒</span>
+                          <div>
+                            <h4 className="font-display font-medium text-sm text-ink">Unlock Detailed Compatibility Breakdown</h4>
+                            <p className="text-[10px] text-ink-mid mt-0.5 leading-relaxed">
+                              Get the 8-dimensional Ashtakoot Guna points, Mangal Dosha checks, and full text analysis sent instantly to your email: <strong>{cEmail}</strong>.
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                      <div className="cc-br flex items-center gap-2.5">
-                        <div className="cc-br-lbl text-[10px] text-ink-faint w-[72px] shrink-0 text-right">Heart connect</div>
-                        <div className="cc-br-track flex-1 h-1 bg-ink/10 rounded-sm overflow-hidden">
-                          <div className="cc-br-fill h-full rounded-sm bg-[#FF7A45] transition-all duration-500" style={{ width: `${compatDetails.heart}%` }} />
-                        </div>
-                      </div>
-                      <div className="cc-br flex items-center gap-2.5">
-                        <div className="cc-br-lbl text-[10px] text-ink-faint w-[72px] shrink-0 text-right">Destiny</div>
-                        <div className="cc-br-track flex-1 h-1 bg-ink/10 rounded-sm overflow-hidden">
-                          <div className="cc-br-fill h-full rounded-sm bg-[#7BA7E0] transition-all duration-500" style={{ width: `${compatDetails.destiny}%` }} />
-                        </div>
-                      </div>
-                      <div className="cc-br flex items-center gap-2.5">
-                        <div className="cc-br-lbl text-[10px] text-ink-faint w-[72px] shrink-0 text-right">Trust bond</div>
-                        <div className="cc-br-track flex-1 h-1 bg-ink/10 rounded-sm overflow-hidden">
-                          <div className="cc-br-fill h-full rounded-sm bg-[#9B7FD4] transition-all duration-500" style={{ width: `${compatDetails.trust}%` }} />
-                        </div>
-                      </div>
-                    </div>
 
-                    <div className="cc-insight text-[11px] text-ink-mid leading-relaxed italic my-4 min-h-[40px] bg-cream/50 p-3.5 rounded-xl border-l-[2px] border-lavender">
-                      "{compatText}"
-                    </div>
+                        <div className="flex items-center justify-between mt-4 pt-3 border-t border-ink/5">
+                          <div>
+                            <span className="text-[9px] text-ink-faint uppercase block">Detailed Report Fee</span>
+                            <span className="text-xl font-display font-bold text-coral">₹101</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={handleCompatRazorpayCheckout}
+                            disabled={compatPaymentLoading}
+                            className="bg-ink hover:bg-coral text-ivory px-4 py-2.5 rounded-full text-xs font-semibold border-none cursor-pointer active:scale-95 disabled:opacity-50 transition-all font-body"
+                          >
+                            {compatPaymentLoading ? 'Processing...' : '💳 Unlock Report (₹101)'}
+                          </button>
+                        </div>
+                        {compatError && (
+                          <div className="text-coral text-[10px] font-semibold mt-2 text-center">
+                            ⚠️ {compatError}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <>
+                        <div className="cc-bars flex flex-col gap-2.5 my-4">
+                          <div className="cc-br flex items-center gap-2.5">
+                            <div className="cc-br-lbl text-[10px] text-ink-faint w-[72px] shrink-0 text-right">Temperament</div>
+                            <div className="cc-br-track flex-1 h-1 bg-ink/10 rounded-sm overflow-hidden">
+                              <div className="cc-br-fill h-full rounded-sm bg-[#6DB88A] transition-all duration-500" style={{ width: `${compatDetails.temp}%` }} />
+                            </div>
+                          </div>
+                          <div className="cc-br flex items-center gap-2.5">
+                            <div className="cc-br-lbl text-[10px] text-ink-faint w-[72px] shrink-0 text-right">Heart connect</div>
+                            <div className="cc-br-track flex-1 h-1 bg-ink/10 rounded-sm overflow-hidden">
+                              <div className="cc-br-fill h-full rounded-sm bg-[#FF7A45] transition-all duration-500" style={{ width: `${compatDetails.heart}%` }} />
+                            </div>
+                          </div>
+                          <div className="cc-br flex items-center gap-2.5">
+                            <div className="cc-br-lbl text-[10px] text-ink-faint w-[72px] shrink-0 text-right">Destiny</div>
+                            <div className="cc-br-track flex-1 h-1 bg-ink/10 rounded-sm overflow-hidden">
+                              <div className="cc-br-fill h-full rounded-sm bg-[#7BA7E0] transition-all duration-500" style={{ width: `${compatDetails.destiny}%` }} />
+                            </div>
+                          </div>
+                          <div className="cc-br flex items-center gap-2.5">
+                            <div className="cc-br-lbl text-[10px] text-ink-faint w-[72px] shrink-0 text-right">Trust bond</div>
+                            <div className="cc-br-track flex-1 h-1 bg-ink/10 rounded-sm overflow-hidden">
+                              <div className="cc-br-fill h-full rounded-sm bg-[#9B7FD4] transition-all duration-500" style={{ width: `${compatDetails.trust}%` }} />
+                            </div>
+                          </div>
+                        </div>
 
-                    <div className="cc-share-bar flex items-center justify-between bg-ink rounded-xl p-3 text-xs mt-2">
-                      <div className="cc-share-txt text-white/55">Send this to your person</div>
-                      <button 
-                        onClick={handleCompatCopy}
-                        className="cc-share-btn-txt text-[#CCAAFF] font-medium bg-transparent border-none cursor-pointer p-0 font-body hover:opacity-90"
-                      >
-                        {compatCopied ? 'Copied! 💅' : 'Share match ↗'}
-                      </button>
-                    </div>
+                        <div className="cc-insight text-[11px] text-ink-mid leading-relaxed italic my-4 min-h-[40px] bg-cream/50 p-3.5 rounded-xl border-l-[2px] border-lavender">
+                          "{compatText}"
+                        </div>
+
+                        <div className="cc-share-bar flex items-center justify-between bg-ink rounded-xl p-3 text-xs mt-2">
+                          <div className="cc-share-txt text-white/55">Send this to your person</div>
+                          <button 
+                            onClick={handleCompatCopy}
+                            className="cc-share-btn-txt text-[#CCAAFF] font-medium bg-transparent border-none cursor-pointer p-0 font-body hover:opacity-90"
+                          >
+                            {compatCopied ? 'Copied! 💅' : 'Share match ↗'}
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
 
                 </div>
@@ -1247,8 +1423,7 @@ function HomeContent() {
         </div>
       </section>
 
-      {/* ░░ PRICING (FOLD 3) ░░ */}
-      <PricingGrid />
+
 
       {/* ░░ TESTIMONIALS ░░ */}
       <section className="section bg-white py-32 px-6">

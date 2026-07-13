@@ -9,6 +9,72 @@ import Footer from '@/components/Footer'
 import PremiumReportCard from '@/components/PremiumReportCard'
 import PricingGrid from '@/components/PricingGrid'
 
+const getArchetype = (signName: string) => {
+  const map: Record<string, string> = {
+    Aries: "The Trailblazer Vibe",
+    Taurus: "The Grounded Anchor Vibe",
+    Gemini: "The Spark Catalyst Vibe",
+    Cancer: "The Intuitive Nurturer Vibe",
+    Leo: "The Radiant Leader Vibe",
+    Virgo: "The Detail Architect Vibe",
+    Libra: "The Balanced Harmonizer Vibe",
+    Scorpio: "The Powerful Mystic Vibe",
+    Sagittarius: "The Visionary Explorer Vibe",
+    Capricorn: "The Empire Builder Vibe",
+    Aquarius: "The Maverick Innovator Vibe",
+    Pisces: "The Creative Dreamweaver Vibe"
+  }
+  return map[signName] || "The Unique Vibe"
+}
+
+const getDashaChapter = (ruler: string) => {
+  const map: Record<string, string> = {
+    Sun: "Leadership & Purpose Era",
+    Moon: "Intuitive Flow & Connection Era",
+    Mars: "Hustle, Drive & Action Era",
+    Rahu: "Ambition, Tech & Innovation Era",
+    Jupiter: "Wisdom, Learning & Expansion Era",
+    Saturn: "Structure, Discipline & Mastery Era",
+    Mercury: "Communication, Wit & Strategy Era",
+    Ketu: "Detachment, Insight & Freedom Era",
+    Venus: "Creativity, Art, Love & Harmony Era"
+  }
+  return map[ruler] || "Growth & Alignment Era"
+}
+
+const getNakshatraVibe = (nakshatra: string) => {
+  const map: Record<string, string> = {
+    Ashwini: "Speed & Vitality",
+    Bharani: "Creative Transformation",
+    Krittika: "Focused Clarity",
+    Rohini: "Abundant Attraction",
+    Mrigashira: "Curious Exploration",
+    Ardra: "Storm Clearance",
+    Punarvasu: "Return of Renewal",
+    Pushya: "Divine Nourishment",
+    Ashlesha: "Intense Insight",
+    Magha: "Noble Heritage",
+    "Purva Phalguni": "Joy & Pleasure",
+    "Uttara Phalguni": "Dedicated Alliance",
+    Hasta: "Craftsmanship & Action",
+    Chitra: "Brilliant Creation",
+    Svati: "Adaptability & Independence",
+    Vishakha: "Dual Focus",
+    Anuradha: "Devoted Friendship",
+    Jyeshtha: "Masterful Leadership",
+    Mula: "Root Investigation",
+    "Purva Ashadha": "Invincible Force",
+    "Uttara Ashadha": "Enduring Victory",
+    Shravana: "Deep Listening",
+    Dhanishta: "Symphonic Abundance",
+    Shatabhisha: "Infinite Healing",
+    "Purva Bhadrapada": "Inspired Vision",
+    "Uttara Bhadrapada": "Deep Stability",
+    Revati: "Graceful Journey"
+  }
+  return map[nakshatra] || "Cosmic Alignment"
+}
+
 function HomeContent() {
   const searchParams = useSearchParams()
 
@@ -197,29 +263,101 @@ function HomeContent() {
     const rIndex = activeChart.houseData.lagnaSignIndex
     const mIndex = activeChart.positions.Mo ? Math.floor(activeChart.positions.Mo / 30) : 0
 
-    // Deterministic metrics based on signs & tabs
+    // Deterministic metrics based on signs & tabs (always positive & encouraging)
     const metricsMap = {
       today: {
-        love: { label: ["Chill", "Sweet", "Tender", "Intense", "Quiet"][mIndex % 5], emoji: "💌" },
-        money: { label: ["Flowing", "Saving", "Tending", "Prudent", "Steady"][rIndex % 5], emoji: "💸" },
-        energy: { label: ["Chaotic", "Focused", "Resting", "Electric", "Dreamy"][(mIndex + rIndex) % 5], emoji: "⚡" }
+        love: { label: ["Radiant", "Magnetic", "Deepening", "Harmonious", "Sparking"][mIndex % 5], emoji: "💝" },
+        money: { label: ["Attracting", "Growing", "Stabilizing", "Securing", "Abundant"][rIndex % 5], emoji: "💵" },
+        energy: { label: ["Electric", "Charging", "Revitalized", "Balanced", "Inspired"][(mIndex + rIndex) % 5], emoji: "⚡" }
       },
       week: {
-        love: { label: ["Electric", "Steady", "Quiet", "Sparky", "Drama-free"][rIndex % 5], emoji: "💌" },
-        money: { label: ["Growing", "Stable", "Spend-y", "Flowing", "Balanced"][mIndex % 5], emoji: "💸" },
-        energy: { label: ["High-Key", "Solitary", "Balanced", "Hyperactive", "Recharged"][(rIndex + 2) % 5], emoji: "⚡" }
+        love: { label: ["Magnetic", "Harmonious", "Sparking", "Radiant", "Deepening"][rIndex % 5], emoji: "💝" },
+        money: { label: ["Abundant", "Attracting", "Securing", "Growing", "Stabilizing"][mIndex % 5], emoji: "💵" },
+        energy: { label: ["Inspired", "Balanced", "Electric", "Revitalized", "Charging"][(rIndex + 2) % 5], emoji: "⚡" }
       },
       month: {
-        love: { label: ["Lover Era", "Solo Era", "Healing Era", "Intimate Era", "Banter Era"][(mIndex + 1) % 5], emoji: "💌" },
-        money: { label: ["Abundant", "Building", "Learning", "Frugal", "Expanding"][(rIndex + 1) % 5], emoji: "💸" },
-        energy: { label: ["Transformative", "Disciplined", "Expressive", "Calm", "Driven"][(mIndex + rIndex + 1) % 5], emoji: "⚡" }
+        love: { label: ["Deepening", "Radiant", "Magnetic", "Sparking", "Harmonious"][(mIndex + 1) % 5], emoji: "💝" },
+        money: { label: ["Securing", "Growing", "Abundant", "Stabilizing", "Attracting"][(rIndex + 1) % 5], emoji: "💵" },
+        energy: { label: ["Charging", "Revitalized", "Inspired", "Electric", "Balanced"][(mIndex + rIndex + 1) % 5], emoji: "⚡" }
       }
     }
 
+    const todayProblem = [
+      "You will feel a brief push to overextend your social battery today",
+      "You might encounter minor communication friction in your morning interactions",
+      "A sudden rush of pending small tasks will threaten to overwhelm your focus today",
+      "You will feel a minor creative block or hesitation when starting your key task today",
+      "A quick impulse to change your plans or route might create unnecessary hurry today"
+    ][mIndex % 5]
+
+    const todaySolution = [
+      "Take a 15-minute breather to reset and say a polite 'no' to non-essentials",
+      "Pause for a breath and listen fully before responding or asserting your view",
+      "Write down the top three items and tackle them one by one with single-task focus",
+      "Set a timer for 10 minutes and just begin without seeking immediate perfection",
+      "Stick to your scheduled routine and allow an extra 5 minutes of quiet transition time"
+    ][rIndex % 5]
+
+    const todayImpact = [
+      "This will lock in your mental clarity, bringing a major wave of focus by evening",
+      "This will create instant alignment and double the trust in your primary circle",
+      "This will clear your path, leaving you completely stress-free before sunset",
+      "This will dissolve the hesitation, leading to a breakthrough output by late afternoon",
+      "This will protect your stamina, keeping your motivation high and radiant all day"
+    ][(mIndex + rIndex) % 5]
+
+    const weekProblem = [
+      "A temporary delay in receiving feedback might test your patience early this week",
+      "You will face the temptation to take on other people's responsibilities this week",
+      "An unexpected change in resource requirements might challenge your budget plan this week",
+      "A slight drop in physical stamina could tempt you to skip your workout/rest routine this week",
+      "A conflict of interest in a group project or family decision could create hesitation this week"
+    ][rIndex % 5]
+
+    const weekSolution = [
+      "Use this gap to audit and optimize your own active project details",
+      "Delegate tasks early and focus exclusively on your own core responsibilities",
+      "Pause any non-essential checkouts and look for creative, low-cost alternatives",
+      "Schedule a dedicated 8-hour sleep window and focus on basic physical hydration",
+      "Propose a balanced compromise that respects everyone's individual priorities"
+    ][mIndex % 5]
+
+    const weekImpact = [
+      "This will keep your progress ahead of schedule, setting you up for a major win by Friday",
+      "This will empower your team/partner and free up 5 hours of your own time",
+      "This will secure your financial reserves, opening up a highly profitable idea by next Monday",
+      "This will double your energy reserves, allowing you to breeze through late-week goals",
+      "This will establish you as a natural leader, resolving the tension smoothly and positively"
+    ][(mIndex + rIndex + 1) % 5]
+
+    const monthProblem = [
+      "You are entering a phase where long-term career focus needs a strategic upgrade",
+      "You will face choices that require balancing your personal ambitions with relationship needs",
+      "A rise in lifestyle overheads or subscription creep could test your financial margins",
+      "Your mental stamina will face competition from distracting short-term goals",
+      "An urge to pivot your primary project or direction will create temporary self-doubt"
+    ][(rIndex + 1) % 5]
+
+    const monthSolution = [
+      "Audit your daily habits and dedicate 30 minutes a day to learning a high-value skill",
+      "Schedule a dedicated date night or open conversation to align your future visions",
+      "Cut out redundant expenses and redirect the capital to index funds or skill-building",
+      "Set strict limits on social media and focus on one major project milestone at a time",
+      "Write down the core reasons why you started and stick to the foundation for 3 weeks"
+    ][(mIndex + 1) % 5]
+
+    const monthImpact = [
+      "This will build massive momentum, paving the way for a highly positive promotion or opportunity",
+      "This will strengthen your connection foundation, unlocking a happy shared success by month-end",
+      "This will accelerate your savings rate, creating a powerful sense of financial freedom",
+      "This will skyrocket your output, placing you in a highly motivated state for the next quarter",
+      "This will build deep resilience, proving that your original vision is incredibly solid"
+    ][(mIndex + rIndex + 2) % 5]
+
     const copyMap = {
-      today: activeChart.horoscope,
-      week: activeChart.bigThree.rising.copy + " Leverage this energy to align your outer objectives with your inner focus.",
-      month: activeChart.dasha.eraCopy
+      today: `${todayProblem} (Problem). ${todaySolution} (Solution) to ${todayImpact} (Impact).`,
+      week: `${weekProblem} (Problem). ${weekSolution} (Solution) to ${weekImpact} (Impact).`,
+      month: `${monthProblem} (Problem). ${monthSolution} (Solution) to ${monthImpact} (Impact).`
     }
 
     return {
@@ -513,7 +651,7 @@ function HomeContent() {
                 </ul>
               </div>
               
-              <div className="w-full max-w-[450px] mx-auto lg:mx-0 perspective-1000 min-h-[580px] relative">
+              <div className="w-full max-w-[450px] mx-auto lg:mx-0 perspective-1000 h-[620px] relative">
                 <div className={`w-full h-full transition-transform duration-700 preserve-3d relative ${isFlipped ? 'rotate-y-180' : ''}`} style={{ transformStyle: 'preserve-3d' }}>
                   
                   {/* Card Back Face (Hidden when flipped) */}
@@ -523,58 +661,58 @@ function HomeContent() {
                     </div>
                     <h3 className="font-display font-medium text-lg text-ivory tracking-wider mb-2">Calculating Your Cosmos...</h3>
                     <p className="text-[11px] text-ink-faint max-w-[200px] leading-relaxed mb-4">
-                      Reading natal planets, current transit shapes, and lunar nakshatras...
+                      Reading natal profiles, current transit shapes, and lunar eras...
                     </p>
                     <div className="text-[10px] text-gold/60 mt-4 tracking-[3px] uppercase font-semibold">Click to Reveal</div>
                   </div>
 
                   {/* Card Front Face (Revealed when flipped) */}
-                  <div className="absolute inset-0 backface-hidden vibe-card bg-gradient-to-tr from-[#FFFBE8] via-[#FFF3C0] to-[#FFE8C0] border border-[#EDD890] rounded-[26px] p-7 shadow-md text-left rotate-y-180 flex flex-col justify-between" style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
+                  <div className="absolute inset-0 backface-hidden vibe-card bg-gradient-to-tr from-[#FFFBE8] via-[#FFF3C0] to-[#FFE8C0] border border-[#EDD890] rounded-[26px] p-6.5 shadow-md text-left rotate-y-180 flex flex-col justify-between" style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
                     <div>
                       <div className="vc-head flex justify-between items-start mb-1">
-                        <div className="vc-name text-[11px] font-medium text-ink-faint tracking-[2px] uppercase">
-                          {chart.meta.name}'s Cosmic Vibe ✦
+                        <div className="vc-name text-[10px] font-bold text-ink-faint tracking-[2px] uppercase">
+                          {chart.meta.name}'s Vibe Check ✦
                         </div>
                       </div>
-                      <div className="vc-lagna font-display text-[29px] font-normal text-ink tracking-tight mb-1">
-                        {chart.bigThree.rising.sign} Lagna
+                      <div className="vc-lagna font-display text-[26px] font-medium text-ink tracking-tight mb-0.5 leading-tight">
+                        {getArchetype(chart.bigThree.rising.sign)}
                       </div>
-                      <div className="vc-naksh text-xs text-ink-faint">
-                        {chart.dasha.nakshatra.name} Nakshatra · {chart.dasha.activeDasha.rulerName} Mahadasha
+                      <div className="vc-naksh text-[11px] text-ink-mid font-medium">
+                        {getNakshatraVibe(chart.dasha.nakshatra.name)} · {getDashaChapter(chart.dasha.activeDasha.rulerName)}
                       </div>
                       
-                      <div className="vc-line h-[0.5px] bg-ink/10 my-3" />
+                      <div className="vc-line h-[0.5px] bg-ink/10 my-2.5" />
                       
-                      <div className="vc-tabs flex gap-1.5 mb-3">
+                      <div className="vc-tabs flex gap-1.5 mb-2.5">
                         <button 
                           type="button" 
                           onClick={() => setActiveTab('today')}
-                          className={`vc-tab text-[11px] px-3 py-1.5 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'today' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
+                          className={`vc-tab text-[11px] px-3 py-1 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'today' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
                         >
                           Today
                         </button>
                         <button 
                           type="button" 
                           onClick={() => setActiveTab('week')}
-                          className={`vc-tab text-[11px] px-3 py-1.5 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'week' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
+                          className={`vc-tab text-[11px] px-3 py-1 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'week' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
                         >
                           Week
                         </button>
                         <button 
                           type="button" 
                           onClick={() => setActiveTab('month')}
-                          className={`vc-tab text-[11px] px-3 py-1.5 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'month' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
+                          className={`vc-tab text-[11px] px-3 py-1 rounded-full font-medium transition-all duration-150 font-body ${activeTab === 'month' ? 'bg-ink text-ivory border-none' : 'bg-ink/[0.06] text-ink-mid border-none hover:bg-ink/10'}`}
                         >
                           Month
                         </button>
                       </div>
       
                       {/* Interactive Metrics Grid */}
-                      <div className="vc-metrics grid grid-cols-3 gap-2 mb-3">
+                      <div className="vc-metrics grid grid-cols-3 gap-2 mb-2.5">
                         <button 
                           type="button"
                           onClick={() => setSelectedVibeMetric('love')}
-                          className={`vc-m rounded-xl p-2.5 text-center border transition-all cursor-pointer ${selectedVibeMetric === 'love' ? 'bg-[#FFF2EC] border-[#FF7A45]/30 ring-2 ring-[#FF7A45]/10' : 'bg-white/60 border-transparent hover:bg-white'}`}
+                          className={`vc-m rounded-xl p-2 text-center border transition-all cursor-pointer ${selectedVibeMetric === 'love' ? 'bg-[#FFF2EC] border-[#FF7A45]/30 ring-2 ring-[#FF7A45]/10' : 'bg-white/60 border-transparent hover:bg-white'}`}
                         >
                           <div className="vc-m-emoji text-lg">{vibeData ? vibeData.love.emoji : '💌'}</div>
                           <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5 font-medium">Love</div>
@@ -586,7 +724,7 @@ function HomeContent() {
                         <button 
                           type="button"
                           onClick={() => setSelectedVibeMetric('money')}
-                          className={`vc-m rounded-xl p-2.5 text-center border transition-all cursor-pointer ${selectedVibeMetric === 'money' ? 'bg-[#EEF7F2] border-[#6DB88A]/30 ring-2 ring-[#6DB88A]/10' : 'bg-white/60 border-transparent hover:bg-white'}`}
+                          className={`vc-m rounded-xl p-2 text-center border transition-all cursor-pointer ${selectedVibeMetric === 'money' ? 'bg-[#EEF7F2] border-[#6DB88A]/30 ring-2 ring-[#6DB88A]/10' : 'bg-white/60 border-transparent hover:bg-white'}`}
                         >
                           <div className="vc-m-emoji text-lg">{vibeData ? vibeData.money.emoji : '💸'}</div>
                           <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5 font-medium">Money</div>
@@ -598,7 +736,7 @@ function HomeContent() {
                         <button 
                           type="button"
                           onClick={() => setSelectedVibeMetric('energy')}
-                          className={`vc-m rounded-xl p-2.5 text-center border transition-all cursor-pointer ${selectedVibeMetric === 'energy' ? 'bg-[#FFFBEB] border-[#D4A800]/30 ring-2 ring-[#D4A800]/10' : 'bg-white/60 border-transparent hover:bg-white'}`}
+                          className={`vc-m rounded-xl p-2 text-center border transition-all cursor-pointer ${selectedVibeMetric === 'energy' ? 'bg-[#FFFBEB] border-[#D4A800]/30 ring-2 ring-[#D4A800]/10' : 'bg-white/60 border-transparent hover:bg-white'}`}
                         >
                           <div className="vc-m-emoji text-lg">{vibeData ? vibeData.energy.emoji : '⚡'}</div>
                           <div className="vc-m-lbl text-[9px] text-ink-faint tracking-wider uppercase mt-0.5 font-medium">Energy</div>
@@ -609,53 +747,113 @@ function HomeContent() {
                       </div>
 
                       {/* Detailed Metric Breakdown */}
-                      <div className="vc-breakdown bg-white/70 border border-ink/5 rounded-xl p-3.5 text-xs mb-3 flex flex-col gap-2 shadow-[inset_0_2px_4px_rgba(26,18,8,0.02)]">
+                      <div className="vc-breakdown bg-white/70 border border-ink/5 rounded-xl p-3 text-[10px] mb-2.5 flex flex-col gap-2 shadow-[inset_0_2px_4px_rgba(26,18,8,0.02)]">
                         {selectedVibeMetric === 'love' && (
                           <>
-                            <div className="flex justify-between items-center text-[10px] font-bold text-ink uppercase tracking-wide">
-                              <span>💖 Love &amp; Connection Alignment</span>
-                              <span className="text-[#FF7A45]">{Math.abs((chart.houseData.lagnaSignIndex * 7) % 35) + 65}%</span>
+                            <div className="flex flex-col gap-1 px-1">
+                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                                <span>💬 Communication Harmony</span>
+                                <span className="font-bold text-[#FF7A45]">{Math.abs((chart.houseData.lagnaSignIndex * 7) % 25) + 75}%</span>
+                              </div>
+                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                                <div className="h-full bg-[#FF7A45] rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 7) % 25) + 75}%` }} />
+                              </div>
                             </div>
-                            <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                              <div className="h-full bg-[#FF7A45] rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 7) % 35) + 65}%` }} />
+                            <div className="flex flex-col gap-1 px-1">
+                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                                <span>⚡ Mutual Spark Status</span>
+                                <span className="font-bold text-[#FF7A45]">{Math.abs((chart.houseData.lagnaSignIndex * 9) % 30) + 65}%</span>
+                              </div>
+                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                                <div className="h-full bg-[#FF7A45]/80 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 9) % 30) + 65}%` }} />
+                              </div>
                             </div>
-                            <div className="text-[10px] text-ink-mid leading-relaxed">
-                              Transit Venus is aspecting your Moon. If they aren't texting back, it's a direction problem, not a connection problem. Set boundaries!
+                            <div className="flex flex-col gap-1 px-1">
+                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                                <span>🛡️ Relationship Strength</span>
+                                <span className="font-bold text-[#FF7A45]">{Math.abs((chart.houseData.lagnaSignIndex * 11) % 20) + 80}%</span>
+                              </div>
+                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                                <div className="h-full bg-[#FF7A45]/60 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 11) % 20) + 80}%` }} />
+                              </div>
+                            </div>
+                            <div className="text-[9.5px] text-ink-mid leading-relaxed bg-[#FFF2EC]/30 p-2 rounded-lg border border-[#FF7A45]/10 mt-0.5">
+                              <strong>Future Prediction:</strong> You will feel a brief push to rush an emotional topic today (Problem). Take a breath and focus on listening fully first (Solution). This will raise your connection alignment, building deep mutual support by tonight (Impact).
                             </div>
                           </>
                         )}
                         {selectedVibeMetric === 'money' && (
                           <>
-                            <div className="flex justify-between items-center text-[10px] font-bold text-ink uppercase tracking-wide">
-                              <span>💵 Financial Flow Status</span>
-                              <span className="text-[#6DB88A]">{Math.abs((chart.houseData.lagnaSignIndex * 13) % 40) + 60}%</span>
+                            <div className="flex flex-col gap-1 px-1">
+                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                                <span>📈 Wealth Attraction Flow</span>
+                                <span className="font-bold text-[#6DB88A]">{Math.abs((chart.houseData.lagnaSignIndex * 13) % 25) + 75}%</span>
+                              </div>
+                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                                <div className="h-full bg-[#6DB88A] rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 13) % 25) + 75}%` }} />
+                              </div>
                             </div>
-                            <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                              <div className="h-full bg-[#6DB88A] rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 13) % 40) + 60}%` }} />
+                            <div className="flex flex-col gap-1 px-1">
+                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                                <span>💸 Spend Control Strength</span>
+                                <span className="font-bold text-[#6DB88A]">{Math.abs((chart.houseData.lagnaSignIndex * 5) % 30) + 60}%</span>
+                              </div>
+                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                                <div className="h-full bg-[#6DB88A]/80 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 5) % 30) + 60}%` }} />
+                              </div>
                             </div>
-                            <div className="text-[10px] text-ink-mid leading-relaxed">
-                              Jupiter supports your asset houses, but Mercury's positioning warning points to high shopping/impulse risk. Close that online cart!
+                            <div className="flex flex-col gap-1 px-1">
+                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                                <span>💼 Career Alignment Focus</span>
+                                <span className="font-bold text-[#6DB88A]">{Math.abs((chart.houseData.lagnaSignIndex * 8) % 20) + 80}%</span>
+                              </div>
+                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                                <div className="h-full bg-[#6DB88A]/60 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 8) % 20) + 80}%` }} />
+                              </div>
+                            </div>
+                            <div className="text-[9.5px] text-ink-mid leading-relaxed bg-[#EEF7F2]/30 p-2 rounded-lg border border-[#6DB88A]/10 mt-0.5">
+                              <strong>Future Prediction:</strong> A temptation to invest in a fast, non-essential reward might distract your savings plan (Problem). Wait 24 hours before checking out any digital carts (Solution). This will preserve your capital for high-value skills and growing assets (Impact).
                             </div>
                           </>
                         )}
                         {selectedVibeMetric === 'energy' && (
                           <>
-                            <div className="flex justify-between items-center text-[10px] font-bold text-ink uppercase tracking-wide">
-                              <span>⚡ Cosmic Battery Level</span>
-                              <span className="text-[#D4A800]">{Math.abs((chart.houseData.lagnaSignIndex * 9) % 50) + 40}%</span>
+                            <div className="flex flex-col gap-1 px-1">
+                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                                <span>🔋 Physical Battery Stamina</span>
+                                <span className="font-bold text-[#D4A800]">{Math.abs((chart.houseData.lagnaSignIndex * 6) % 35) + 60}%</span>
+                              </div>
+                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                                <div className="h-full bg-[#D4A800] rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 6) % 35) + 60}%` }} />
+                              </div>
                             </div>
-                            <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
-                              <div className="h-full bg-[#D4A800] rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 9) % 50) + 40}%` }} />
+                            <div className="flex flex-col gap-1 px-1">
+                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                                <span>🧠 Focus &amp; Mental Clarity</span>
+                                <span className="font-bold text-[#D4A800]">{Math.abs((chart.houseData.lagnaSignIndex * 14) % 20) + 75}%</span>
+                              </div>
+                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                                <div className="h-full bg-[#D4A800]/80 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 14) % 20) + 75}%` }} />
+                              </div>
                             </div>
-                            <div className="text-[10px] text-ink-mid leading-relaxed">
-                              Your solar energy is high, but Mars is side-eyeing your 8th house of burnout. Skip the extra screens tonight; recharge your battery.
+                            <div className="flex flex-col gap-1 px-1">
+                              <div className="flex justify-between items-center text-[9px] font-semibold text-ink-mid">
+                                <span>😴 Recharge &amp; Sleep Quality</span>
+                                <span className="font-bold text-[#D4A800]">{Math.abs((chart.houseData.lagnaSignIndex * 10) % 30) + 65}%</span>
+                              </div>
+                              <div className="w-full h-1 bg-ink/5 rounded-full overflow-hidden">
+                                <div className="h-full bg-[#D4A800]/60 rounded-full" style={{ width: `${Math.abs((chart.houseData.lagnaSignIndex * 10) % 30) + 65}%` }} />
+                              </div>
+                            </div>
+                            <div className="text-[9.5px] text-ink-mid leading-relaxed bg-[#FFFBEB]/30 p-2 rounded-lg border border-[#D4A800]/10 mt-0.5">
+                              <strong>Future Prediction:</strong> A busy schedule will push you to stay connected to screens late into the night (Problem). Set devices aside 30 minutes before rest and hydrate well (Solution). This will restore your stamina for double focus tomorrow (Impact).
                             </div>
                           </>
                         )}
                       </div>
       
                       {/* Rich readable description */}
-                      <div className="vc-insight bg-white border border-[#EDD890]/40 rounded-xl p-4 text-[13px] text-ink font-semibold leading-[1.8] italic mb-4 border-l-[3px] border-coral shadow-sm">
+                      <div className="vc-insight bg-white border border-[#EDD890]/40 rounded-xl p-3 text-[12.5px] text-ink font-semibold leading-relaxed italic mb-3 border-l-[3px] border-coral shadow-sm">
                         {vibeData ? `"${vibeData.interpretation}"` : `""`}
                       </div>
                     </div>

@@ -103,29 +103,27 @@ Be witty, use astrology terms, speak like a cool astrologer friend, ≤60 words 
 
 // Static fallback for Cosmic Vibe Card
 function getStaticCosmicVibe(chart: ChartResult): CosmicVibeResult {
-  const { rising, moon } = chart.bigThree
-  const dashaRuler = chart.dasha.activeDasha.rulerName
   return {
     today: {
-      money: { status: 'Flowing', emoji: '🟢', colorClass: 'green' },
-      love: { status: 'Complicated', emoji: '💔', colorClass: 'red' },
-      energy: { status: 'Chaotic', emoji: '⚡', colorClass: 'amber' },
+      money: { status: 'Attracting', emoji: '💵', colorClass: 'green' },
+      love: { status: 'Deepening', emoji: '💝', colorClass: 'red' },
+      energy: { status: 'Inspired', emoji: '⚡', colorClass: 'amber' },
       score: 8,
-      interpretation: `${rising.sign} rising is keeping you busy today. Jupiter is side-eying your comfort zone right now—your next big glow-up starts with one uncomfortable conversation you've been avoiding.`
+      interpretation: "You will feel multiple demands testing your time and focus today (Problem). Take a step back and prioritize your most important personal goals first (Solution) to reclaim your schedule and unlock a fresh wave of creative drive by tonight (Impact)."
     },
     week: {
-      money: { status: 'Secured', emoji: '💵', colorClass: 'green' },
-      love: { status: 'Ghost Mode', emoji: '👻', colorClass: 'purple' },
-      energy: { status: 'Recharging', emoji: '🔋', colorClass: 'cyan' },
-      score: 6,
-      interpretation: `With your Moon in ${moon.sign}, this week calls for a major emotional battery recharge. Stand your ground and don't ghost your responsibilities.`
+      money: { status: 'Growing', emoji: '📈', colorClass: 'green' },
+      love: { status: 'Harmonious', emoji: '💖', colorClass: 'red' },
+      energy: { status: 'Balanced', emoji: '🔋', colorClass: 'cyan' },
+      score: 7,
+      interpretation: "A minor communication delay or misunderstanding might disrupt your plans early this week (Problem). Take it as a great opportunity to focus on independent progress (Solution) which will lead to a highly satisfying breakthrough by Friday (Impact)."
     },
     month: {
-      money: { status: 'Hustling', emoji: '🔥', colorClass: 'amber' },
-      love: { status: 'Deep Connection', emoji: '💖', colorClass: 'red' },
-      energy: { status: 'High Focus', emoji: '🎯', colorClass: 'cyan' },
+      money: { status: 'Abundant', emoji: '💰', colorClass: 'green' },
+      love: { status: 'Magnetic', emoji: '❤️', colorClass: 'red' },
+      energy: { status: 'Radiant', emoji: '🌟', colorClass: 'amber' },
       score: 9,
-      interpretation: `Your current ${dashaRuler} era is hitting its peak. The universe built you to stand out this month. Act like it and make the big moves.`
+      interpretation: "You are entering a high-potential phase where financial and career choices need tight alignment (Problem). Review your resource allocations and invest in learning a new skill (Solution) to create a major upward trend in your overall assets by month-end (Impact)."
     }
   }
 }
@@ -134,30 +132,32 @@ export async function generateCosmicVibeResult(chart: ChartResult): Promise<Cosm
   const ai = getGenAI()
   if (!ai) return getStaticCosmicVibe(chart)
 
-  const prompt = `You are OyeAstro, a Gen-Z Vedic astrology AI. Generate a personalized Cosmic Vibe Check for this chart across three time horizons (today, week, month):
+  const prompt = `You are OyeAstro, a Gen-Z personal vibe check assistant. Generate a personalized Vibe Check for this person's energetic profile across three time horizons (today, week, month).
 
-Rising/Lagna: ${chart.bigThree.rising.sign} (${chart.bigThree.rising.tag})
-Sun Sign: ${chart.bigThree.sun.sign}
-Moon Sign: ${chart.bigThree.moon.sign}
-Current Dasha: ${chart.dasha.activeDasha.rulerName} (${chart.dasha.eraTitle})
-Active Yogas: ${chart.yogas.filter(y => y.detected).map(y => y.name).join(', ') || 'None detected'}
+The astrological properties of their profile are:
+Sign Type: ${chart.bigThree.rising.sign}
+Sun Profile: ${chart.bigThree.sun.sign}
+Moon Profile: ${chart.bigThree.moon.sign}
+Active Cycle: ${chart.dasha.activeDasha.rulerName} (${chart.dasha.eraTitle})
+Unique Alignments: ${chart.yogas.filter(y => y.detected).map(y => y.name).join(', ') || 'None'}
 
-For each time horizon (today, week, month), you must return:
-1. Money, Love, and Energy metrics:
-   - status: a short, witty status (1-3 words, e.g. "Flowing", "Complicated", "Chaotic", "Ghost Mode", "Hustling", "Recharging", "Broke", "Secured", "Spicy", "Stagnant", "High Hustle", "Deep Connection").
-   - emoji: 1 relevant emoji.
-   - colorClass: a color name (must be one of: "green", "red", "amber", "purple", "cyan") representing the vibe category.
-2. Vibe Score (1 to 10).
-3. Interpretation: A short, punchy, relatable sentence (15-25 words) explaining the overall vibe. Be witty, casual, slightly sarcastic, and use cosmic/zodiac metaphors.
+CRITICAL GUIDELINES:
+1. DO NOT use any astrological words or jargon (e.g., do not say "Jupiter", "Saturn", "Mercury", "Aquarius", "Leo", "rising", "lagna", "dasha", "nakshatra", "houses", "planets"). Talk about their energy, focus, mindset, and day-to-day vibes instead.
+2. Structure the "interpretation" text to describe:
+   - A problem statement (a challenge they might face in the future)
+   - A practical solution (a clear action they should take)
+   - The positive impact of that solution (what will happen)
+3. Keep the tone highly positive, motivating, and encouraging. Users look for high-energy advice even when facing obstacles. Frame everything with a growth mindset.
+4. For status values, use active, positive, or empowering Gen-Z/millennial terms (e.g., "Magnetic", "Deepening", "Sparking", "Attracting", "Growing", "Securing", "Electric", "Charging", "Inspired", "Focused"). Avoid negative labels like "Chaotic" or "Broke".
 
 Format the output strictly as a JSON object conforming to this structure (do not include markdown wrapping or notes, return raw JSON):
 {
   "today": {
-    "money": { "status": "Flowing", "emoji": "🟢", "colorClass": "green" },
-    "love": { "status": "Complicated", "emoji": "💔", "colorClass": "red" },
-    "energy": { "status": "Chaotic", "emoji": "⚡", "colorClass": "amber" },
+    "money": { "status": "Attracting", "emoji": "💵", "colorClass": "green" },
+    "love": { "status": "Deepening", "emoji": "💝", "colorClass": "red" },
+    "energy": { "status": "Electric", "emoji": "⚡", "colorClass": "amber" },
     "score": 8,
-    "interpretation": "Jupiter is side-eying your comfort zone right now. Glow up begins today."
+    "interpretation": "You will feel an urge to rush an important conversation today (Problem). Take a deep breath and listen carefully first (Solution) to build a powerful level of trust and alignment by tonight (Impact)."
   },
   "week": { ... },
   "month": { ... }

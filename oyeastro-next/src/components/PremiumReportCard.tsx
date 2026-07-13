@@ -157,28 +157,7 @@ export default function PremiumReportCard({ chart }: Props) {
     }
   }
 
-  const handleStripeCheckout = async () => {
-    setPaymentLoading(true)
-    setError(null)
-    try {
-      const res = await fetch('/api/payment/stripe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chartId, name: chart.meta.name }),
-      })
-      if (!res.ok) throw new Error('Stripe session creation failed')
-      const data = await res.json()
-      if (data.url) {
-        window.location.href = data.url
-      } else {
-        throw new Error('Stripe URL missing')
-      }
-    } catch (err) {
-      console.error(err)
-      setError('Could not initialize Stripe checkout.')
-      setPaymentLoading(false)
-    }
-  }
+  // Stripe checkout removed — INR only via Razorpay
 
   if (isPaid) {
     return (
@@ -219,19 +198,19 @@ export default function PremiumReportCard({ chart }: Props) {
 
           {report && (
             <div className="flex flex-col gap-4">
-              {/* Tabs list */}
-              <div className="flex bg-ink/[0.04] border border-ink/5 rounded-full p-1 self-center w-full justify-between flex-wrap gap-1 md:gap-0">
+              {/* Tabs list — scrollable on small screens */}
+              <div className="flex bg-ink/[0.04] border border-ink/5 rounded-2xl p-1 w-full overflow-x-auto gap-0.5 scrollbar-hide">
                 {[
-                  { id: 'dasha', label: '📅 Life Chapter' },
-                  { id: 'transits', label: '🪐 Star Shifts' },
-                  { id: 'career', label: '💼 Job/Cash' },
-                  { id: 'love', label: '💖 Love/Rizz' },
-                  { id: 'health', label: '🔋 Vibe Energy' },
+                  { id: 'dasha', label: '📅 Life' },
+                  { id: 'transits', label: '🪐 Stars' },
+                  { id: 'career', label: '💼 Career' },
+                  { id: 'love', label: '💖 Love' },
+                  { id: 'health', label: '🔋 Vibe' },
                 ].map((t) => (
                   <button
                     key={t.id}
                     onClick={() => setActiveTab(t.id as any)}
-                    className={`px-3 py-1.5 text-[11px] font-medium rounded-full transition-all duration-150 font-body ${
+                    className={`px-2.5 py-1.5 text-[11px] font-medium rounded-xl transition-all duration-150 font-body whitespace-nowrap flex-shrink-0 ${
                       activeTab === t.id
                         ? 'bg-ink text-ivory shadow-sm border-none'
                         : 'text-ink-mid hover:text-ink border-none bg-transparent'
@@ -308,40 +287,34 @@ export default function PremiumReportCard({ chart }: Props) {
       </div>
 
       {/* Pricing and Action Buttons */}
-      <div className="bg-cream/40 border border-ink/5 rounded-2xl p-4.5 flex flex-col gap-4">
+      <div className="bg-cream/40 border border-ink/5 rounded-2xl p-4 flex flex-col gap-3">
         <div className="flex justify-between items-center">
           <div>
             <span className="text-[10px] font-semibold text-ink-faint tracking-wider uppercase block">Total Access Fee</span>
-            <span className="text-2xl font-display font-medium text-coral leading-none mt-1 inline-block">₹101</span>
-            <span className="text-[10px] text-ink-faint inline-block ml-1">($1.49 international)</span>
+            <div className="flex items-baseline gap-1.5 mt-1">
+              <span className="text-2xl font-display font-medium text-coral leading-none">₹101</span>
+              <span className="text-[10px] text-ink-faint">one-time · INR</span>
+            </div>
           </div>
           <div className="bg-sage/10 text-sage text-[10px] font-bold px-2.5 py-1 rounded-full uppercase border border-sage/20">
-            One-time payment
+            UPI &amp; Cards
           </div>
         </div>
 
         {error && (
-          <div className="text-center text-xs font-semibold text-coral animate-shake">
+          <div className="text-center text-xs font-semibold text-coral">
             ⚠️ {error}
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={handleRazorpayCheckout}
-            disabled={paymentLoading}
-            className="py-3 bg-ink hover:bg-coral text-ivory font-body text-xs font-semibold rounded-full active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 border-none cursor-pointer text-center shadow-sm"
-          >
-            {paymentLoading ? 'Processing...' : '💳 UPI / INR (₹101)'}
-          </button>
-          <button
-            onClick={handleStripeCheckout}
-            disabled={paymentLoading}
-            className="py-3 bg-white hover:bg-[#FEFCF7] text-ink border border-ink/10 font-body text-xs font-semibold rounded-full active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer text-center shadow-sm"
-          >
-            {paymentLoading ? 'Redirecting...' : '🌐 Card / USD ($1.49)'}
-          </button>
-        </div>
+        <button
+          onClick={handleRazorpayCheckout}
+          disabled={paymentLoading}
+          className="w-full py-3.5 bg-ink hover:bg-coral text-ivory font-body text-sm font-semibold rounded-full active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 border-none cursor-pointer text-center shadow-sm"
+        >
+          {paymentLoading ? 'Processing...' : '💳 Pay ₹101 · UPI / Card / Net Banking'}
+        </button>
+        <p className="text-center text-[10px] text-ink-faint">🔒 Secure via Razorpay · NRIs &amp; international users can pay in INR</p>
       </div>
     </div>
   )

@@ -494,7 +494,7 @@ function HomeContent() {
   }
 
   // Compatibility States & Payment Triggers
-  const [cEmail, setCEmail] = useState('shivampandeyy97@gmail.com')
+  const [cEmail, setCEmail] = useState('')
   const [isCompatPaid, setIsCompatPaid] = useState(false)
   const [compatPaymentLoading, setCompatPaymentLoading] = useState(false)
   const [compatError, setCompatError] = useState('')
@@ -1247,15 +1247,13 @@ function HomeContent() {
                 </div>
               </div>
 
-                {/* Email address for detailed report */}
                   <div className="flex flex-col gap-1.5 pt-2 border-t border-lavender/25 mb-2">
-                    <span className="text-[10px] font-semibold text-lavender uppercase tracking-wider">Email for detailed report</span>
+                    <span className="text-[10px] font-semibold text-lavender uppercase tracking-wider">Your Email (get detailed report)</span>
                     <input 
                       type="email" 
                       value={cEmail} 
                       onChange={(e) => setCEmail(e.target.value)} 
-                      required 
-                      placeholder="email@example.com" 
+                      placeholder="your@email.com" 
                       className="w-full bg-white/70 border border-border rounded-xl p-2.5 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
                     />
                   </div>
@@ -1326,14 +1324,62 @@ function HomeContent() {
                       <div className="cc-pct-lbl text-[10px] text-ink-faint uppercase tracking-wider mt-1">Cosmic Match Score</div>
                     </div>
 
+                    {/* FREE: Relationship & Wellbeing Snapshot */}
+                    <div className="grid grid-cols-2 gap-2 my-3">
+                      {[
+                        {
+                          icon: '💬',
+                          label: 'Communication',
+                          desc: compatScore >= 70 ? 'You two speak the same language — deep, natural understanding flows between you.' : compatScore >= 45 ? 'Some friction in expression — learning each other\'s communication style unlocks deeper bonds.' : 'Different wavelengths right now — patience and active listening is the key to harmony.',
+                          color: 'text-[#4A9EDB]'
+                        },
+                        {
+                          icon: '❤️',
+                          label: 'Emotional Bond',
+                          desc: compatScore >= 70 ? 'A rare, nurturing connection — emotional safety and warmth are very strong here.' : compatScore >= 45 ? 'Genuine warmth exists, but emotional openness needs to be consciously cultivated.' : 'You\'re in emotionally different places — understanding each other\'s attachment style helps.',
+                          color: 'text-[#FF7A45]'
+                        },
+                        {
+                          icon: '🌱',
+                          label: 'Growth Together',
+                          desc: compatScore >= 70 ? 'You challenge and elevate each other — this partnership creates exponential growth.' : compatScore >= 45 ? 'You inspire growth in each other, though some life goals need alignment conversations.' : 'Independent paths right now — shared vision conversations are essential before big decisions.',
+                          color: 'text-[#6DB88A]'
+                        },
+                        {
+                          icon: '🏠',
+                          label: 'Lifestyle Fit',
+                          desc: compatScore >= 70 ? 'Your daily rhythms naturally complement each other — effortless coexistence.' : compatScore >= 45 ? 'Lifestyle differences exist but are bridgeable — mutual respect of routines is the key.' : 'Your daily energies differ — conscious effort to align habits will be necessary.',
+                          color: 'text-[#9B7FD4]'
+                        },
+                      ].map((item) => (
+                        <div key={item.label} className="bg-cream/70 rounded-2xl p-3 border border-ink/5">
+                          <div className="text-xl mb-1">{item.icon}</div>
+                          <div className={`text-[10px] font-bold ${item.color} uppercase tracking-wide mb-1`}>{item.label}</div>
+                          <p className="text-[10px] text-ink-mid leading-relaxed">{item.desc}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="bg-cream/50 rounded-xl p-3 border border-ink/5 mb-3">
+                      <div className="text-[10px] font-bold text-ink uppercase tracking-wider mb-1.5">Relationship Wellbeing</div>
+                      <p className="text-[11px] text-ink-mid leading-relaxed">
+                        {compatScore >= 70
+                          ? `${cName1} and ${cName2} share a deeply compatible foundation. Your natural wavelengths align beautifully — this connection has the strength to weather challenges and grow over time.`
+                          : compatScore >= 45
+                          ? `${cName1} and ${cName2} have real potential with conscious effort. Some natural tensions exist, but these build character and depth in a meaningful relationship.`
+                          : `${cName1} and ${cName2} bring very different energies together. This can be transformative if both commit to understanding each other — contrast isn't incompatibility, it's a growth invitation.`
+                        }
+                      </p>
+                    </div>
+
                     {!isCompatPaid ? (
-                      <div className="bg-gradient-to-tr from-[#FAF6FF] to-[#ECE0FF] border border-[#D5C2F5] rounded-2xl p-5 text-left mt-4">
+                      <div className="bg-gradient-to-tr from-[#FAF6FF] to-[#ECE0FF] border border-[#D5C2F5] rounded-2xl p-5 text-left">
                         <div className="flex gap-3 items-start mb-3">
                           <span className="text-xl">🔒</span>
                           <div>
                             <h4 className="font-display font-medium text-sm text-ink">Unlock Detailed Compatibility Breakdown</h4>
                             <p className="text-[10px] text-ink-mid mt-0.5 leading-relaxed">
-                              Get the 8-dimensional Ashtakoot Guna points, Mangal Dosha checks, and full text analysis sent instantly to your email: <strong>{cEmail}</strong>.
+                              Get the 8-dimensional Ashtakoot Guna points, Mangal Dosha analysis, and the full compatibility narrative{cEmail ? ` sent to ${cEmail}` : ' — enter your email above to receive it'}.
                             </p>
                           </div>
                         </div>

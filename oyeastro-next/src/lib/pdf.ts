@@ -83,6 +83,9 @@ const RASHI_SHORT = [
 // ─── Document Formatting Helpers ─────────────────────────────────────────────
 
 function drawCoverBackground(doc: PDFKit.PDFDocument) {
+  const oldBottom = doc.page.margins.bottom
+  doc.page.margins.bottom = 0 // Disable auto break
+
   // Fill deep midnight background
   doc.rect(0, 0, doc.page.width, doc.page.height).fill(C.purpleDark)
 
@@ -105,9 +108,14 @@ function drawCoverBackground(doc: PDFKit.PDFDocument) {
     .text('✦', size - m - 14, m + 14)
     .text('✦', m + 5, h - m - 18)
     .text('✦', size - m - 14, h - m - 18)
+
+  doc.page.margins.bottom = oldBottom
 }
 
 function drawContentPageDecorations(doc: PDFKit.PDFDocument, pageNum: number) {
+  const oldBottom = doc.page.margins.bottom
+  doc.page.margins.bottom = 0 // Disable auto page break inside decorations
+
   // Fill soft bg
   doc.rect(0, 0, doc.page.width, doc.page.height).fill(C.bgLight)
 
@@ -138,6 +146,8 @@ function drawContentPageDecorations(doc: PDFKit.PDFDocument, pageNum: number) {
   doc.font('Roboto').fontSize(7).fillColor(C.muted)
     .text('Confidential Astrology Report · oyeastro.com', 40, h - 23, { width: w - 80, align: 'left' })
     .text(`Page ${pageNum}`, 40, h - 23, { width: w - 80, align: 'right' })
+
+  doc.page.margins.bottom = oldBottom
 }
 
 function drawNorthIndianChart(
@@ -236,12 +246,73 @@ function drawNorthIndianChart(
   })
 }
 
+// ─── Section Header ───────────────────────────────────────────────────────────
 function drawSectionHeader(doc: PDFKit.PDFDocument, text: string, color: string) {
   const y = doc.y
   doc.rect(40, y, doc.page.width - 80, 22).fill(color)
   doc.font('Roboto-Bold').fontSize(10.5).fillColor(C.white)
     .text(text, 50, y + 5.5, { width: doc.page.width - 100 })
   doc.y = y + 27
+}
+
+// ─── Info Row ────────────────────────────────────────────────────────────────
+function infoRow(doc: PDFKit.PDFDocument, label: string, value: string, labelColor = C.muted, valueColor = C.ink) {
+  const y = doc.y
+  doc.font('Roboto-Bold').fontSize(9).fillColor(labelColor).text(label, 60, y, { width: 160, continued: false })
+  doc.font('Roboto').fontSize(9).fillColor(valueColor).text(value, 230, y, { width: 330 })
+  doc.moveDown(0.35)
+}
+
+// ─── Colored Text Block ───────────────────────────────────────────────────────
+function textBlock(doc: PDFKit.PDFDocument, content: string, color = C.ink) {
+  doc.font('Roboto').fontSize(10).fillColor(color)
+    .text(content, 60, doc.y, { align: 'justify', lineGap: 3, width: 492 })
+  doc.moveDown(0.8)
+}
+
+// ─── Score Bar ───────────────────────────────────────────────────────────────
+function scoreBar(doc: PDFKit.PDFDocument, label: string, pct: number, color: string) {
+  const y = doc.y
+  const barW = 330
+  const barH = 10
+  const barX = 230
+
+  doc.font('Roboto').fontSize(9).fillColor(C.ink).text(label, 60, y + 1, { width: 160 })
+  doc.font('Roboto-Bold').fontSize(9).fillColor(color).text(`${pct}%`, 570, y + 1, { align: 'right', width: 40 })
+
+  // Background bar
+  doc.rect(barX, y, barW, barH).fill('#EDE0FF')
+  // Filled bar
+  doc.rect(barX, y, (barW * pct) / 100, barH).fill(color)
+  doc.moveDown(0.9)
+}
+
+// ─── Page Footer ─────────────────────────────────────────────────────────────
+function addFooter(doc: PDFKit.PDFDocument, pageNum: number) {
+  const oldBottom = doc.page.margins.bottom
+  doc.page.margins.bottom = 0
+
+  doc.font('Roboto').fontSize(8).fillColor(C.muted)
+    .text('Powered by OyeAstro · oyeastro.com · Vedic Astrology Engine', 50, 800, { width: 495, align: 'center' })
+  doc.font('Roboto').fontSize(8).fillColor(C.muted)
+    .text(`Page ${pageNum}`, 545, 800, { align: 'right', width: 60 })
+
+  doc.page.margins.bottom = oldBottom
+}
+
+// ─── Gradient-style header banner ────────────────────────────────────────────
+function bannerHeader(doc: PDFKit.PDFDocument, title: string, subtitle: string, color1: string) {
+  doc.rect(0, 0, 612, 100).fill(color1)
+  // decorative arc
+  doc.circle(560, -20, 80).fill('#ffffff10')
+  doc.circle(50, 110, 60).fill('#ffffff10')
+
+  doc.font('Roboto-Bold').fontSize(22).fillColor(C.white)
+    .text(title, 50, 28, { width: 512, align: 'center' })
+  doc.font('Roboto').fontSize(11).fillColor('#ffffffCC')
+    .text(subtitle, 50, 58, { width: 512, align: 'center' })
+
+  doc.y = 115
 }
 
 function drawVibeBadge(doc: PDFKit.PDFDocument, x: number, y: number, w: number, h: number, icon: string, label: string, desc: string, badgeColor: string) {
@@ -511,7 +582,7 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
       doc.font('Roboto').fontSize(8.5).fillColor(C.ink).text(rem.color, 195, remY + 28)
 
       doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.gold).text('VEDIC MANTRA:       ', 60, remY + 44)
-      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.lavender).text(rem.mantra, 195, remY + 44)
+      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.lavender).text(rem.regularFontPath || rem.mantra, 195, remY + 44)
 
       doc.y = remY + 80
       doc.font('Roboto').fontSize(8.5).fillColor(C.ink)

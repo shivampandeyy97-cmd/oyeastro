@@ -4,6 +4,30 @@
  */
 
 document.addEventListener("DOMContentLoaded", () => {
+  // GA Event Tracking Helpers
+  const GA_ID = 'G-4V01ML9C58';
+  const trackEvent = (eventName, params) => {
+    if (typeof gtag === 'function') {
+      gtag('event', eventName, { send_to: GA_ID, ...params });
+    }
+  };
+
+  const trackCosmicUsed = () => {
+    sessionStorage.setItem('oya_cosmic_used', '1');
+    trackEvent('cosmic_match_used');
+    if (sessionStorage.getItem('oya_compat_used') === '1') {
+      trackEvent('cosmic_couple_used');
+    }
+  };
+
+  const trackCompatibilityUsed = () => {
+    sessionStorage.setItem('oya_compat_used', '1');
+    trackEvent('compatibility_match_used');
+    if (sessionStorage.getItem('oya_cosmic_used') === '1') {
+      trackEvent('cosmic_couple_used');
+    }
+  };
+
   const intakeForm = document.getElementById("intake-form");
   const resultsVibeCard = document.getElementById("results-vibe-card");
   
@@ -141,6 +165,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // Render active tab contents
         updateVibeCardTab("today");
 
+        // Track Cosmic Vibe usage
+        trackCosmicUsed();
+
         // Scroll to results section
         document.getElementById("results").scrollIntoView({ behavior: "smooth" });
 
@@ -247,6 +274,9 @@ document.addEventListener("DOMContentLoaded", () => {
       // Toggle views
       compatFormContainer.style.display = "none";
       compatResultsContainer.style.display = "block";
+
+      // Track Compatibility usage
+      trackCompatibilityUsed();
     });
   }
 

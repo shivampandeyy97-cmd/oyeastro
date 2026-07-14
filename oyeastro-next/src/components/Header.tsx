@@ -45,17 +45,21 @@ export default function Header() {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between padding-6 px-12 py-5 bg-ivory/90 backdrop-blur-md border-b-[0.5px] border-border">
-        <Link href="/" className="font-display text-2xl font-medium text-ink tracking-tight">
-          oyeastro<span className="text-coral">.</span>
-        </Link>
-        <ul className="hidden md:flex gap-10 list-none">
+        <div className="flex-1 flex justify-start">
+          <Link href="/" className="font-display text-2xl font-medium text-ink tracking-tight">
+            oyeastro<span className="text-coral">.</span>
+          </Link>
+        </div>
+
+        <ul className="hidden md:flex list-none justify-center items-center flex-1">
           <li>
-            <Link href="/#match" className="text-xs text-ink-mid hover:text-ink transition-colors">
-              Compatibility
+            <Link href="/#match" className="text-sm font-semibold text-ink-mid hover:text-ink transition-colors text-center">
+              Partner Match
             </Link>
           </li>
         </ul>
-        <div className="flex gap-3 items-center">
+
+        <div className="flex-1 flex gap-3 items-center justify-end">
           <button 
             type="button"
             onClick={() => setIsOpen(true)}

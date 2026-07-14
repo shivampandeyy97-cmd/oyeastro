@@ -17,12 +17,20 @@ export default function PremiumReportCard({ chart }: Props) {
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'dasha' | 'transits' | 'career' | 'love' | 'health'>('dasha')
 
+  const [email, setEmail] = useState('')
+  const [emailSaved, setEmailSaved] = useState(false)
+  const [emailLoading, setEmailLoading] = useState(false)
+
   // Check localStorage on mount
   useEffect(() => {
     if (chartId) {
       const localPaid = localStorage.getItem(`paid_${chartId}`)
       if (localPaid === 'true') {
         setIsPaid(true)
+      }
+      const submitted = localStorage.getItem(`email_submitted_${chartId}`)
+      if (submitted === 'true') {
+        setEmailSaved(true)
       }
     }
   }, [chartId])
@@ -39,12 +47,12 @@ export default function PremiumReportCard({ chart }: Props) {
     }
   }, [chartId])
 
-  // Fetch report when paid
+  // Fetch report when paid and email is saved
   useEffect(() => {
-    if (isPaid && chartId && !report && !loadingReport) {
+    if (isPaid && emailSaved && chartId && !report && !loadingReport) {
       fetchReport()
     }
-  }, [isPaid, chartId])
+  }, [isPaid, emailSaved, chartId])
 
   const fetchReport = async () => {
     setLoadingReport(true)
@@ -157,11 +165,78 @@ export default function PremiumReportCard({ chart }: Props) {
     }
   }
 
-  // Stripe checkout removed — INR only via Razorpay
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setEmailLoading(true)
+    setError(null)
+    try {
+      const res = await fetch('/api/chart/report/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chartId, email }),
+      })
+      if (!res.ok) {
+        throw new Error('Failed to send email report')
+      }
+      setEmailSaved(true)
+      localStorage.setItem(`email_submitted_${chartId}`, 'true')
+    } catch (err: any) {
+      console.error(err)
+      setError(err.message || 'Could not send the email report. Please try again.')
+    } finally {
+      setEmailLoading(false)
+    }
+  }
 
   if (isPaid) {
+    if (!emailSaved) {
+      return (
+        <div className="premium-card bg-gradient-to-tr from-[#FAF6FF] via-[#F4E9FF] to-[#ECE0FF] border border-[#D5C2F5] rounded-[28px] p-6 shadow-sm text-left flex flex-col justify-between h-full min-h-[350px]">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-3 pb-3 border-b border-ink/5">
+              <span className="text-2xl">🎉</span>
+              <div>
+                <h3 className="font-display font-medium text-lg text-ink">Payment Successful!</h3>
+                <p className="text-xs text-ink-mid mt-0.5">Let's get your cosmic forecast report delivered.</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-ink-mid leading-relaxed">
+              Please enter the email address where you would like to receive your detailed PDF report (**"Your Chart Breakdown by Oyeastro"**) and unlock full access.
+            </p>
+
+            <form onSubmit={handleEmailSubmit} className="flex flex-col gap-3 mt-2">
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-ink-faint uppercase tracking-wider">Email Address</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  required
+                  className="w-full bg-white/70 border border-border rounded-xl p-3 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                />
+              </div>
+
+              {error && (
+                <p className="text-coral text-xs font-medium">⚠️ {error}</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={emailLoading}
+                className="w-full py-3 bg-ink hover:bg-coral text-ivory font-body text-xs font-semibold rounded-full cursor-pointer disabled:opacity-50 transition-all border-none"
+              >
+                {emailLoading ? 'Sending Report...' : '📧 Send PDF Report & Unlock'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )
+    }
+
     return (
-      <div className="premium-card bg-gradient-to-tr from-[#FAF6FF] via-[#F4E9FF] to-[#ECE0FF] border border-[#D5C2F5] rounded-[26px] p-7 shadow-sm text-left flex flex-col gap-6 relative overflow-hidden h-full">
+      <div className="premium-card bg-gradient-to-tr from-[#FAF6FF] via-[#F4E9FF] to-[#ECE0FF] border border-[#D5C2F5] rounded-[28px] p-6 shadow-sm text-left flex flex-col gap-6 relative overflow-hidden h-full">
         <div className="z-10 flex flex-col gap-4">
           <div className="flex items-center justify-between border-b border-ink/5 pb-4">
             <div>
@@ -173,7 +248,7 @@ export default function PremiumReportCard({ chart }: Props) {
               </h3>
             </div>
             <button
-              onClick={() => window.print()}
+              onClick={() => window.open(`/api/chart/pdf?chartId=${chartId}`, '_blank')}
               className="px-3 py-1.5 border border-ink/10 rounded-full bg-white/40 hover:bg-white/70 text-xs font-medium text-ink transition-all cursor-pointer font-body"
             >
               📥 Save PDF
@@ -239,7 +314,7 @@ export default function PremiumReportCard({ chart }: Props) {
   }
 
   return (
-    <div className="premium-card relative overflow-hidden bg-white/95 border-[1.5px] border-[#FF7A45]/30 rounded-[28px] p-6.5 shadow-[0_15px_35px_rgba(26,18,8,0.06),0_5px_15px_rgba(255,122,69,0.08)] transition-all duration-300 text-left h-full flex flex-col justify-between">
+    <div className="premium-card relative overflow-hidden bg-white/95 border-[1.5px] border-[#FF7A45]/30 rounded-[28px] p-6 shadow-[0_15px_35px_rgba(26,18,8,0.06),0_5px_15px_rgba(255,122,69,0.08)] transition-all duration-300 text-left h-full flex flex-col justify-between">
       {/* Top Notification Bar Style Header */}
       <div className="flex gap-4 items-start pb-4 border-b border-ink/5">
         <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-coral to-[#FF9E7A] flex items-center justify-center text-xl shrink-0 text-white shadow-sm animate-bounce">
@@ -259,29 +334,29 @@ export default function PremiumReportCard({ chart }: Props) {
         </div>
       </div>
 
-      {/* Real Tangible Benefits Checklist */}
-      <div className="py-4.5 my-1">
+      {/* Real Tangible Checklist */}
+      <div className="py-4 my-1">
         <h4 className="text-[10px] font-bold text-ink uppercase tracking-wider mb-3">What You'll Unlock Instantly:</h4>
         <ul className="flex flex-col gap-3 text-xs text-ink-mid pl-0 list-none">
           <li className="flex gap-3 leading-relaxed">
             <span className="text-coral shrink-0">📅</span>
-            <span><strong className="text-ink font-semibold">24-Month Life Chapters:</strong> Timeline mapping that forecasts when your primary life seasons and energy cycles shift.</span>
+            <span><strong className="text-ink font-semibold">24-Month Life Chapters:</strong> Timeline mapping that forecasts when your primary life seasons shift.</span>
           </li>
           <li className="flex gap-3 leading-relaxed">
             <span className="text-coral shrink-0">🪐</span>
-            <span><strong className="text-ink font-semibold">Star Shift Cycles:</strong> Exact date windows of major environmental movements vs your personal focus areas.</span>
+            <span><strong className="text-ink font-semibold">Star Shift Cycles:</strong> Exact date windows of major environmental movements vs your focus.</span>
           </li>
           <li className="flex gap-3 leading-relaxed">
             <span className="text-coral shrink-0">💼</span>
-            <span><strong className="text-ink font-semibold">Job &amp; Cash Windows:</strong> High-potential phases for career moves, salary negotiations, and financial choices.</span>
+            <span><strong className="text-ink font-semibold">Job &amp; Cash Windows:</strong> High-potential phases for career moves and salary decisions.</span>
           </li>
           <li className="flex gap-3 leading-relaxed">
             <span className="text-coral shrink-0">💖</span>
-            <span><strong className="text-ink font-semibold">Love Connection:</strong> Relationship harmony triggers, attraction windows, and connection warnings.</span>
+            <span><strong className="text-ink font-semibold">Love Connection:</strong> Relationship harmony triggers and attraction cycles.</span>
           </li>
           <li className="flex gap-3 leading-relaxed">
             <span className="text-coral shrink-0">🔋</span>
-            <span><strong className="text-ink font-semibold">Vibe Drain Alert:</strong> Personal burnout risk calendars, daily energy cycle details, and lifestyle hacks.</span>
+            <span><strong className="text-ink font-semibold">Vibe Drain Alert:</strong> Burnout risk calendars and daily energy cycle details.</span>
           </li>
         </ul>
       </div>

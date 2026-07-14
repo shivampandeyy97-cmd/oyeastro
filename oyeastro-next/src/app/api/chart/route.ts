@@ -2,7 +2,8 @@ export const runtime = 'nodejs'
 
 import { NextRequest, NextResponse } from 'next/server'
 import { buildChart } from '@/lib/astro/engine'
-import { supabase } from '@/lib/supabase'
+import { db } from '@/lib/firebase'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
 import type { BirthData, ChartResult } from '@/lib/astro/types'
 import crypto from 'crypto'
 
@@ -24,26 +25,24 @@ export async function POST(req: NextRequest) {
 
     const chartId = hashBirthData(body)
 
-    // Check Supabase cache first
-    if (supabase) {
-      try {
-        const { data: cachedRow, error: getError } = await supabase
-          .from('charts')
-          .select('chart_result, is_paid')
-          .eq('id', chartId)
-          .maybeSingle()
+    // Check Firestore cache first
+    try {
+      const docRef = doc(db, 'charts', chartId)
+      const docSnap = await getDoc(docRef)
 
-        if (!getError && cachedRow) {
-          const chartResult = cachedRow.chart_result as ChartResult
-          return NextResponse.json({
-            ...chartResult,
-            meta: { ...chartResult.meta, id: chartId, name: body.name || 'Bestie' },
-            isPaid: !!cachedRow.is_paid
-          })
-        }
-      } catch (dbErr) {
-        console.warn('[Supabase Cache] Read error:', dbErr)
+      if (docSnap.exists()) {
+        const cachedRow = docSnap.data()
+        const chartResult = typeof cachedRow.chart_result === 'string'
+          ? JSON.parse(cachedRow.chart_result)
+          : (cachedRow.chart_result as ChartResult)
+        return NextResponse.json({
+          ...chartResult,
+          meta: { ...chartResult.meta, id: chartId, name: body.name || 'Bestie' },
+          isPaid: !!cachedRow.is_paid
+        })
       }
+    } catch (dbErr) {
+      console.warn('[Firestore Cache] Read error:', dbErr)
     }
 
     // Get today's transits for vibe score calculation
@@ -55,18 +54,17 @@ export async function POST(req: NextRequest) {
     chart.meta.id = chartId
     chart.isPaid = false
 
-    // Cache in Supabase
-    if (supabase) {
-      try {
-        await supabase.from('charts').upsert({
-          id: chartId,
-          birth_data: body,
-          chart_result: chart,
-          is_paid: false
-        })
-      } catch (dbErr) {
-        console.warn('[Supabase Cache] Write error:', dbErr)
-      }
+    // Cache in Firestore
+    try {
+      await setDoc(doc(db, 'charts', chartId), {
+        id: chartId,
+        birth_data: body,
+        chart_result: JSON.stringify(chart),
+        is_paid: false,
+        created_at: new Date().toISOString()
+      }, { merge: true })
+    } catch (dbErr) {
+      console.warn('[Firestore Cache] Write error:', dbErr)
     }
 
     return NextResponse.json(chart)

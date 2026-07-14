@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email'
-import { supabase } from '@/lib/supabase'
+import { db } from '@/lib/firebase'
+import { collection, addDoc } from 'firebase/firestore'
 
 export const runtime = 'nodejs'
 
@@ -12,19 +13,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing name, email, or whatsapp number' }, { status: 400 })
     }
 
-    // Try saving to Supabase if connected
-    if (supabase) {
-      try {
-        const { error: dbError } = await supabase
-          .from('astrologer_connections')
-          .insert({ name, email, whatsapp, created_at: new Date().toISOString() })
-        
-        if (dbError) {
-          console.warn('[Connect Astrologer DB Insert] Warn:', dbError.message)
-        }
-      } catch (e) {
-        console.error('[Connect Astrologer DB Insert] Error:', e)
-      }
+    // Save connection request to Firestore
+    try {
+      await addDoc(collection(db, 'astrologer_connections'), {
+        name,
+        email,
+        whatsapp,
+        created_at: new Date().toISOString()
+      })
+    } catch (e) {
+      console.error('[Connect Astrologer DB Insert] Error:', e)
     }
 
     // Send email alert to shivampandeyy97@gmail.com

@@ -1137,8 +1137,17 @@ function HomeContent() {
 
       {/* ░░ COMPATIBILITY ░░ */}
       <section className="section bg-cream py-32 px-6" id="match">
-        <div className="section-inner max-w-[1040px] mx-auto">
-          <div className="split grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-24 items-start">
+        <div className="section-inner max-w-[1040px] mx-auto text-center">
+          
+          <h2 className="text-[36px] sm:text-[52px] md:text-[68px] lg:text-[84px] leading-[1.05] text-ink mb-16 max-w-4xl mx-auto" style={{
+            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif',
+            letterSpacing: '-0.025em',
+            fontWeight: 800
+          }}>
+            Know your partner's<br className="hidden md:inline" /> vibe score
+          </h2>
+
+          <div className="split grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-24 items-start text-left">
             
             {/* Left Column: Details Box (Form) */}
             <div className="w-full max-w-[450px] mx-auto lg:mx-0">
@@ -1387,7 +1396,7 @@ function HomeContent() {
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between mt-4 pt-3 border-t border-ink/5">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4 pt-3 border-t border-ink/5">
                           <div>
                             <span className="text-[9px] text-ink-faint uppercase block">Detailed Report Fee</span>
                             <span className="text-xl font-display font-bold text-coral">₹101</span>
@@ -1396,9 +1405,9 @@ function HomeContent() {
                             type="button"
                             onClick={handleCompatRazorpayCheckout}
                             disabled={compatPaymentLoading}
-                            className="bg-ink hover:bg-coral text-ivory px-4 py-2.5 rounded-full text-xs font-semibold border-none cursor-pointer active:scale-95 disabled:opacity-50 transition-all font-body"
+                            className="w-full sm:w-auto bg-ink hover:bg-coral text-ivory px-5 py-2.5 rounded-full text-xs font-semibold border-none cursor-pointer active:scale-95 disabled:opacity-50 transition-all font-body text-center"
                           >
-                            {compatPaymentLoading ? 'Processing...' : '💳 Unlock Report (₹101)'}
+                            {compatPaymentLoading ? 'Processing...' : '💳 Unlock Report'}
                           </button>
                         </div>
                         {compatError && (
@@ -1438,6 +1447,69 @@ function HomeContent() {
 
                         <div className="cc-insight text-[11px] text-ink-mid leading-relaxed italic my-4 min-h-[40px] bg-cream/50 p-3.5 rounded-xl border-l-[2px] border-lavender">
                           "{compatText}"
+                        </div>
+
+                        {/* Email input for compatibility report PDF */}
+                        <div className="bg-gradient-to-tr from-[#FAF6FF] to-[#ECE0FF] border border-[#D5C2F5] rounded-2xl p-5 text-left my-4">
+                          <h4 className="font-display font-medium text-xs text-ink mb-1">
+                            📧 Email Your Compatibility PDF Report
+                          </h4>
+                          <p className="text-[10px] text-ink-mid mb-3 leading-relaxed">
+                            Send the detailed compatibility breakdown PDF (**"Your Chart Breakdown by Oyeastro"**) to your inbox.
+                          </p>
+                          <div className="flex gap-2">
+                            <input 
+                              type="email" 
+                              value={cEmail} 
+                              onChange={(e) => setCEmail(e.target.value)} 
+                              placeholder="your@email.com" 
+                              className="flex-1 bg-white/70 border border-border rounded-xl p-2.5 text-xs font-body text-ink outline-none focus:bg-white focus:border-lavender transition-all duration-200"
+                            />
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                if (!cEmail) {
+                                  alert('Please enter a valid email address!')
+                                  return
+                                }
+                                try {
+                                  const verifyRes = await fetch('/api/chart/report/email', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                      chartId: `compat_${cName1}_${cName2}`,
+                                      email: cEmail,
+                                      isCompat: true,
+                                      cName1,
+                                      cName2,
+                                      score: compatScore,
+                                      details: compatDetails,
+                                      narrative: compatText,
+                                    }),
+                                  })
+                                  if (verifyRes.ok) {
+                                    alert('Report PDF sent to your email successfully!')
+                                  } else {
+                                    alert('Failed to send report email.')
+                                  }
+                                } catch {
+                                  alert('Error sending report email.')
+                                }
+                              }}
+                              className="bg-ink hover:bg-lavender text-ivory px-4 py-2 rounded-xl text-xs font-semibold border-none cursor-pointer active:scale-95 transition-all font-body"
+                            >
+                              Send PDF
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-2.5 mt-2">
+                          <button
+                            onClick={() => window.open(`/api/chart/pdf?isCompat=true&cName1=${cName1}&cName2=${cName2}&score=${compatScore}&temp=${compatDetails.temp}&heart=${compatDetails.heart}&destiny=${compatDetails.destiny}&trust=${compatDetails.trust}&narrative=${encodeURIComponent(compatText)}`, '_blank')}
+                            className="flex-1 py-2.5 border border-ink/10 rounded-xl bg-white hover:bg-cream text-xs font-semibold text-ink transition-all cursor-pointer font-body text-center"
+                          >
+                            📥 Save PDF Report
+                          </button>
                         </div>
 
                         <div className="cc-share-bar flex items-center justify-between bg-ink rounded-xl p-3 text-xs mt-2">

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { db } from '@/lib/firebase'
+import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { generatePremiumReport } from '@/lib/gemini'
 import type { ChartResult } from '@/lib/astro/types'
 
@@ -12,19 +13,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing chartId' }, { status: 400 })
     }
 
-    if (!supabase) {
-      return NextResponse.json({ error: 'Database not configured' }, { status: 500 })
-    }
+    const docRef = doc(db, 'charts', chartId)
+    const docSnap = await getDoc(docRef)
 
-    const { data: chartRow, error: getError } = await supabase
-      .from('charts')
-      .select('chart_result, is_paid, premium_report')
-      .eq('id', chartId)
-      .maybeSingle()
-
-    if (getError || !chartRow) {
+    if (!docSnap.exists()) {
       return NextResponse.json({ error: 'Chart not found' }, { status: 404 })
     }
+
+    const chartRow = docSnap.data()
 
     if (!chartRow.is_paid) {
       return NextResponse.json({ error: 'Premium report is locked. Payment required.' }, { status: 402 })
@@ -36,14 +32,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Generate it
-    const chartResult = chartRow.chart_result as ChartResult
+    const chartResult = typeof chartRow.chart_result === 'string'
+      ? JSON.parse(chartRow.chart_result)
+      : (chartRow.chart_result as ChartResult)
     const report = await generatePremiumReport(chartResult)
 
-    // Save to Supabase
-    await supabase
-      .from('charts')
-      .update({ premium_report: report })
-      .eq('id', chartId)
+    // Save to Firestore
+    await updateDoc(docRef, { premium_report: report })
 
     return NextResponse.json(report)
 

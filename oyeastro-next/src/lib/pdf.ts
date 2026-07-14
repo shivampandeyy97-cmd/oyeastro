@@ -64,16 +64,16 @@ interface PersonalPdfData {
 
 // ─── Color Palette ───────────────────────────────────────────────────────────
 const C = {
-  purpleDark: '#0B0214', // Celestial deep space
+  purpleDark: '#1C0F38', // Deep brand purple
   purpleMid:  '#1C0F38', // Deep brand purple
   lavender:   '#8A5CF5', // Vibrant brand purple
   coral:      '#FF7A45', // Warm sunset coral
   rose:       '#FF5C8A', // Romantic rose
   gold:       '#F5B800', // Premium Vedic Gold/Yellow
   goldBg:     '#FFFDF0', // Soft yellow card bg
-  bgLight:    '#F5F4F8', // Modern light grey page bg
+  bgLight:    '#FFFFFF', // Modern clean white page bg
   white:      '#FFFFFF',
-  border:     '#E2DBEB', // Subtle card border
+  border:     '#E5E0EE', // Subtle card border
   ink:        '#1A1208', // Dark text
   muted:      '#776E85', // Muted text
   blue:       '#4E9CD4',
@@ -115,50 +115,23 @@ function getNakshatraLord(lon: number): string {
   return NAKSHATRA_LORDS[nakIdx % 9]
 }
 
-function drawCoverBackground(doc: PDFKit.PDFDocument, isCompatibility = false) {
+// ─── Document Layout Helpers ─────────────────────────────────────────────────
+
+function drawCoverBackground(doc: PDFKit.PDFDocument) {
   const oldBottom = doc.page.margins.bottom
   doc.page.margins.bottom = 0 
 
-  // Fill deep space background
-  doc.rect(0, 0, doc.page.width, doc.page.height).fill(C.purpleDark)
-
-  // Starry sky decorations
-  doc.circle(doc.page.width - 60, 60, 150).lineWidth(1).strokeColor('#8A5CF515').stroke()
-  doc.circle(60, doc.page.height - 100, 100).lineWidth(1).strokeColor('#FF5C8A10').stroke()
-
-  // Elegant gold & rose border lines
-  doc.rect(25, 25, doc.page.width - 50, doc.page.height - 50)
-     .lineWidth(1)
-     .strokeColor(isCompatibility ? C.rose : C.gold)
-     .stroke()
-
-  doc.rect(28, 28, doc.page.width - 56, doc.page.height - 56)
-     .lineWidth(0.5)
-     .strokeColor(C.lavender + '30')
-     .stroke()
-
-  // Small corner stars
-  const m = 25
-  const size = doc.page.width
-  const h = doc.page.height
-  const starCol = isCompatibility ? C.rose : C.gold
-  
-  doc.font('Roboto-Bold').fontSize(10).fillColor(starCol)
-    .text('✦', m + 5, m + 14)
-    .text('✦', size - m - 14, m + 14)
-    .text('✦', m + 5, h - m - 18)
-    .text('✦', size - m - 14, h - m - 18)
+  // Clean ivory cover background matching the mockup
+  doc.rect(0, 0, doc.page.width, doc.page.height).fill('#FBF9F4')
 
   doc.page.margins.bottom = oldBottom
 }
-
-// ─── Document Layout Helpers ─────────────────────────────────────────────────
 
 function drawPastelBanner(doc: PDFKit.PDFDocument, pageNum: number, reportTitle: string, subtitle: string) {
   const oldBottom = doc.page.margins.bottom
   doc.page.margins.bottom = 0
 
-  // 1. Draw page background color (light grey-blue)
+  // 1. Draw page background color (clean white)
   doc.rect(0, 0, doc.page.width, doc.page.height).fill(C.bgLight)
 
   // 2. Draw Pastel Gradient Header Banner
@@ -201,8 +174,35 @@ function drawCard(doc: PDFKit.PDFDocument, x: number, y: number, w: number, h: n
 }
 
 function drawSectionHeader(doc: PDFKit.PDFDocument, text: string, color = C.purpleMid) {
-  doc.font('Roboto-Bold').fontSize(10.5).fillColor(color).text(text, doc.x, doc.y)
+  doc.x = 40 // ALWAYS reset X to avoid coordinate leaks
+  doc.font('Roboto-Bold').fontSize(10.5).fillColor(color).text(text, 40, doc.y)
   doc.moveDown(0.4)
+}
+
+function drawVibeBadge(
+  doc: PDFKit.PDFDocument,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  icon: string,
+  title: string,
+  desc: string,
+  color: string
+) {
+  drawCard(doc, x, y, w, h, C.white)
+  
+  // Icon badge background circle
+  const cx = x + 24
+  const cy = y + 24
+  doc.circle(cx, cy, 13).fill(color + '15')
+  doc.font('Roboto').fontSize(11).text(icon, cx - 6, cy - 7)
+
+  // Title
+  doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.purpleMid).text(title, x + 46, y + 14)
+  
+  // Description
+  doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(desc, x + 46, y + 26, { width: w - 58, lineGap: 1.5 })
 }
 
 function drawNorthIndianChart(
@@ -328,45 +328,44 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
       const outline = doc.outline
       outline.addItem('Title Cover')
 
-      // ── Page 1: Branded Celebratory Cover Page ────────────────────────────
-      drawCoverBackground(doc, true)
+      // ── Page 1: Elegant cover page matching the watercolor mockup ───────────
+      drawCoverBackground(doc)
 
-      // Hearts & Love graphic accent with beautiful gold/rose circles
-      doc.circle(doc.page.width / 2, 210, 50).lineWidth(1.2).strokeColor(C.rose).stroke()
-      doc.circle(doc.page.width / 2, 210, 44).lineWidth(0.5).strokeColor(C.gold).stroke()
-      doc.font('Roboto-Bold').fontSize(40).fillColor(C.rose).text('♥', doc.page.width / 2 - 14, 192, { align: 'center' })
+      // Center Nebula Art
+      const nebulaImgPath = path.join(process.cwd(), 'src/assets/images/cover_nebula.png')
+      const imgSize = 250
+      const imgX = (doc.page.width - imgSize) / 2
+      const imgY = 120
+      doc.image(nebulaImgPath, imgX, imgY, { width: imgSize, height: imgSize })
 
-      // Logo centered
-      const centeredLogoX = doc.page.width / 2 - 45
-      doc.font('Roboto-Bold').fontSize(20).fillColor(C.white)
-         .text('oyeastro', centeredLogoX, 290, { continued: true })
+      // Title & Subtitle in navy serif (all-caps)
+      doc.font('Roboto-Bold').fontSize(26).fillColor('#1C0F38')
+        .text('THE STARS BETWEEN US', 40, 420, { width: doc.page.width - 80, align: 'center', characterSpacing: 1.5 })
+
+      doc.font('Roboto').fontSize(10).fillColor('#1C0F38')
+        .text(`A Couple's Compatibility Report by Oyeastro`, 40, 460, { width: doc.page.width - 80, align: 'center' })
+
+      // Partner Names
       doc.font('Roboto-Bold').fontSize(14).fillColor(C.rose)
-         .text('✦')
+        .text(`${data.cName1}   ♥   ${data.cName2}`, 40, 520, { width: doc.page.width - 80, align: 'center' })
 
-      doc.font('Roboto-Bold').fontSize(15).fillColor(C.rose)
-        .text('COSMIC COMPATIBILITY REPORT', 40, 335, { width: doc.page.width - 80, align: 'center', characterSpacing: 1 })
-
-      doc.moveTo(doc.page.width / 2 - 60, 362).lineTo(doc.page.width / 2 + 60, 362).lineWidth(1.5).strokeColor(C.rose).stroke()
-
-      // Duo Names
-      const scoreY = 410
-      doc.font('Roboto-Bold').fontSize(17).fillColor(C.white)
-        .text(`${data.cName1}   ♥   ${data.cName2}`, 40, scoreY, { width: doc.page.width - 80, align: 'center' })
-
-      // Match score badge with gold accent outline
-      doc.rect(doc.page.width / 2 - 70, scoreY + 32, 140, 95).fill(C.purpleMid)
-      doc.rect(doc.page.width / 2 - 70, scoreY + 32, 140, 95).lineWidth(1).strokeColor(C.gold).stroke()
+      // Match score badge
+      doc.rect(doc.page.width / 2 - 60, 560, 120, 80).fill('#FFFFFF')
+      doc.rect(doc.page.width / 2 - 60, 560, 120, 80).lineWidth(1).strokeColor(C.gold).stroke()
 
       const sColor = data.score >= 70 ? C.green : data.score >= 45 ? C.gold : C.red
-      doc.font('Roboto-Bold').fontSize(38).fillColor(sColor)
-        .text(`${data.score}%`, doc.page.width / 2 - 70, scoreY + 48, { width: 140, align: 'center' })
+      doc.font('Roboto-Bold').fontSize(28).fillColor(sColor)
+        .text(`${data.score}%`, doc.page.width / 2 - 60, 576, { width: 120, align: 'center' })
       
-      doc.font('Roboto-Bold').fontSize(8).fillColor(C.white)
-        .text('COSMIC LOVE MATCH', doc.page.width / 2 - 70, scoreY + 98, { width: 140, align: 'center', characterSpacing: 0.5 })
+      doc.font('Roboto-Bold').fontSize(7.5).fillColor('#1C0F38')
+        .text('COSMIC LOVE MATCH', doc.page.width / 2 - 60, 616, { width: 120, align: 'center', characterSpacing: 0.5 })
 
-      // Romantic quote
-      doc.font('Roboto').fontSize(9.5).fillColor('#EDE8F5')
-        .text('"Two souls, one stellar blueprint. A map of your stars aligned to guide your hearts."', 40, scoreY + 160, { width: doc.page.width - 80, align: 'center', oblique: true })
+      // Bottom Logo
+      const bottomLogoX = doc.page.width / 2 - 40
+      doc.font('Roboto-Bold').fontSize(15).fillColor('#1C0F38')
+         .text('oyeastro', bottomLogoX, 730, { continued: true })
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.rose)
+         .text('✦')
 
       // Content Page setup
       doc.on('pageAdded', () => {
@@ -384,7 +383,6 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
       drawSectionHeader(doc, '🪐  Vedic Birth Charts (Janma Kundli) — Astrologer Referral Profile', C.purpleMid)
       doc.moveDown(0.3)
 
-      // Dual charts (astrologer-ready)
       const chartSize = 185
       const cy1 = doc.y + chartSize / 2 + 10
 
@@ -416,12 +414,11 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
 
       doc.y = cy1 + chartSize / 2 + 25
 
-      // Detailed Astrologer table (degrees, signs, nakshatras, nakshatra lords) with Gold Header Accent
+      // Detailed Astrologer table with Gold Header Accent
       drawSectionHeader(doc, '🌍  Comprehensive Astro-Reference Grid', C.gold)
       
       const planetsList = ['Su', 'Mo', 'Ma', 'Me', 'Ju', 'Ve', 'Sa', 'Ra', 'Ke']
       
-      // Header row
       drawGridRow(doc, C.purpleMid, [
         { text: 'PLANET', width: 60, bold: true, color: C.white },
         { text: `${data.cName1} (Rashi / Degree)`, width: 110, bold: true, color: C.white },
@@ -462,17 +459,20 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
         ])
       })
 
-      // ── Page 3: Problem, Solution, Impact Section (mockup layout) ────────
+      // ── Page 3: Problem, Solution, Impact (Balanced 3-Column Card Layout) ──
       doc.addPage()
       outline.addItem('Problem & Solution')
       doc.y = 100
 
-      const colW = 168
+      // Re-calculated column sizing for perfect margins (40 on left, 40 on right)
+      const colW = 165
+      const colGap = 10
       const topY = doc.y
-
-      // 1. The Journey (Column 1)
-      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('1. The Journey', 40, topY)
       const tY = topY + 18
+
+      // Column 1 (x = 40)
+      doc.x = 40
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('1. The Journey', 40, topY)
       drawCard(doc, 40, tY, colW, 205, C.white)
 
       const nodes = [
@@ -491,30 +491,32 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
         }
       })
 
-      // 2. Harmonious Partnership (Column 1 Bottom)
+      // Column 1 Bottom (Harmonious Partnership)
       const hY = tY + 215
-      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('2. Harmonious Partnership', 40, hY)
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('2. Cosmic Energies', 40, hY)
       drawCard(doc, 40, hY + 18, colW, 95, C.white)
       doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.gold).text('☁  Current Hurdles', 50, hY + 28)
       doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text('We recognize current tensions in empathetic communication and balancing individual growth with togetherness, leading to moments of misunderstanding.', 50, hY + 42, { width: colW - 20, lineGap: 2 })
 
-      // 2. Problem Statement (Column 2 Top)
-      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('2. Problem Statement', 220, topY)
-      drawCard(doc, 220, tY, colW, 95, C.white)
-      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.rose).text('☁  Current Hurdles', 230, tY + 10)
+      // Column 2 (x = 215)
+      const col2X = 40 + colW + colGap // 215
+      doc.x = col2X
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('2. Problem Statement', col2X, topY)
+      drawCard(doc, col2X, tY, colW, 95, C.white)
+      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.rose).text('☁  Current Hurdles', col2X + 10, tY + 10)
       
       const probText = data.score >= 70
         ? 'Risk of emotional comfort stagnation. Avoiding difficult growth discussions can restrict long-term dynamic compatibility.'
         : data.score >= 45
         ? 'Vedic friction points in Gana & Graha Maitri. Speaks slightly different languages, creating expression delays and feeling misunderstood.'
         : 'High energetic friction. Significant contrasts in Nadi & Bhakoot create blockages, arguments, and diverging daily paths.'
-      doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(probText, 230, tY + 24, { width: colW - 20, lineGap: 2.5 })
+      doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(probText, col2X + 10, tY + 24, { width: colW - 20, lineGap: 2.5 })
 
-      // 3. Solution (Column 2 Bottom)
-      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('3. Solution', 220, tY + 105)
+      // Column 2 Bottom (Solution)
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('3. Solution', col2X, tY + 105)
       const solY = tY + 123
-      drawCard(doc, 220, solY, colW, 205, C.goldBg, C.gold)
-      doc.font('Roboto-Bold').fontSize(9).fillColor(C.gold).text('Astrological Remedies', 230, solY + 12)
+      drawCard(doc, col2X, solY, colW, 205, C.goldBg, C.gold)
+      doc.font('Roboto-Bold').fontSize(9).fillColor(C.gold).text('Astrological Remedies', col2X + 10, solY + 12)
 
       const remediesList = data.score >= 70
         ? [
@@ -536,13 +538,15 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
 
       remediesList.forEach((r, idx) => {
         const ry = solY + 30 + idx * 56
-        doc.font('Roboto-Bold').fontSize(8).fillColor(C.purpleMid).text(`${r.icon}  ${r.t}`, 230, ry)
-        doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(r.d, 230, ry + 12, { width: colW - 20, lineGap: 1.5 })
+        doc.font('Roboto-Bold').fontSize(8).fillColor(C.purpleMid).text(`${r.icon}  ${r.t}`, col2X + 10, ry)
+        doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(r.d, col2X + 10, ry + 12, { width: colW - 20, lineGap: 1.5 })
       })
 
-      // 4. Impact (Column 3 Top)
-      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('4. Impact', 400, topY)
-      drawCard(doc, 400, tY, colW, 145, C.white)
+      // Column 3 (x = 390)
+      const col3X = col2X + colW + colGap // 390
+      doc.x = col3X
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('4. Impact', col3X, topY)
+      drawCard(doc, col3X, tY, colW, 145, C.white)
 
       const progress = [
         { label: 'Communication Flow', pct: 85, icon: '❤️', l: 'Deepening' },
@@ -551,26 +555,25 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
       ]
       progress.forEach((p, idx) => {
         const py = tY + 12 + idx * 42
-        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.ink).text(p.label, 410, py)
-        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.lavender).text(`${p.pct}%`, 535, py, { align: 'right', width: 25 })
+        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.ink).text(p.label, col3X + 10, py)
+        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.lavender).text(`${p.pct}%`, col3X + 115, py, { align: 'right', width: 25 })
         
         // Progress track
-        doc.rect(410, py + 10, 115, 5).fill('#F0ECFB')
-        // Progress fill (Yellow/Gold accent highlight)
-        doc.rect(410, py + 10, (115 * p.pct) / 100, 5).fill(C.gold)
+        doc.rect(col3X + 10, py + 10, 100, 5).fill('#F0ECFB')
+        doc.rect(col3X + 10, py + 10, (100 * p.pct) / 100, 5).fill(C.gold)
 
         // Icon indicator
-        doc.font('Roboto').fontSize(10).text(p.icon, 545, py + 5)
-        doc.font('Roboto-Bold').fontSize(5.5).fillColor(C.muted).text(p.l, 540, py + 18, { width: 30, align: 'center' })
+        doc.font('Roboto').fontSize(10).text(p.icon, col3X + 125, py + 5)
+        doc.font('Roboto-Bold').fontSize(5.5).fillColor(C.muted).text(p.l, col3X + 120, py + 18, { width: 30, align: 'center' })
       })
-      doc.font('Roboto').fontSize(6.5).fillColor(C.muted).text('Projected improvements based on remedies.', 410, tY + 132)
+      doc.font('Roboto').fontSize(6.5).fillColor(C.muted).text('Projected improvements based on remedies.', col3X + 10, tY + 132)
 
-      // 5. The Future Outlook (Column 3 Bottom)
-      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('5. The Future Outlook', 400, tY + 155)
+      // Column 3 Bottom (The Future Outlook)
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('5. The Future Outlook', col3X, tY + 155)
       const futY = tY + 173
-      drawCard(doc, 400, futY, colW, 147, C.white)
+      drawCard(doc, col3X, futY, colW, 147, C.white)
       
-      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.green).text('❯  What\'s Next', 410, futY + 12)
+      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.green).text('❯  What\'s Next', col3X + 10, futY + 12)
       
       const futureText = data.score >= 70
         ? 'Your path ahead shows promise for renewed harmony and deeper bonds. Celebrate small victories together. The cosmos supports your enduring partnership.'
@@ -578,12 +581,54 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
         ? 'Conscious effort bridges natural differences. Your path will transform into a highly stable partnership with deep emotional safety.'
         : 'High contrast acts as a transformative growth catalyst. Practicing the remedies neutralizes the energetic clash, inviting deep spiritual connection.'
 
-      doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(futureText, 410, futY + 26, { width: colW - 20, lineGap: 2 })
-      doc.font('Roboto').fontSize(6.8).fillColor(C.muted).text('"Love is a journey of continuous discovery."', 410, futY + 115, { width: colW - 20, align: 'center', oblique: true })
+      doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(futureText, col3X + 10, futY + 26, { width: colW - 20, lineGap: 2 })
+      doc.font('Roboto').fontSize(6.8).fillColor(C.muted).text('"Love is a journey of discovery."', col3X + 10, futY + 115, { width: colW - 20, align: 'center', oblique: true })
 
-      doc.y = futY + 160
+      doc.x = 40 // Clean reset to left margin
 
-      // ── Page 4: 4-Month Relationship Journey Map ───────────────────────────
+      // ── Page 4: Pre-Payment Vibe Card & Wellbeing Snapshot ───────────────
+      doc.addPage()
+      outline.addItem('Wellbeing & Vibe Cards')
+      doc.y = 100
+
+      drawSectionHeader(doc, '💖  Relationship Wellbeing Snapshot', C.purpleMid)
+      doc.moveDown(0.3)
+
+      const wellbeingText = data.score >= 70
+        ? `${data.cName1} and ${data.cName2} share a deeply compatible foundation. Your natural wavelengths align beautifully — this connection has the strength to weather challenges and grow over time.`
+        : data.score >= 45
+        ? `${data.cName1} and ${data.cName2} have real potential with conscious effort. Some natural tensions exist, but these build character and depth in a meaningful relationship.`
+        : `${data.cName1} and ${data.cName2} bring very different energies together. This can be transformative if both commit to understanding each other — contrast isn't incompatibility, it's a growth invitation.`
+
+      doc.font('Roboto').fontSize(9.5).fillColor(C.ink)
+        .text(wellbeingText, 50, doc.y, { width: doc.page.width - 100, align: 'justify', lineGap: 3.5 })
+      doc.moveDown(1.5)
+
+      // Partner Vibe Cards Grid (mockup pre-payment cards)
+      drawSectionHeader(doc, '⚡  Partner Vibe Card Breakdown', C.lavender)
+      doc.moveDown(0.4)
+
+      const gridY = doc.y
+      const cardW = (doc.page.width - 96) / 2 // 249 points
+      const cardH = 80
+
+      const matchDesc = {
+        comm: data.score >= 70 ? 'You two speak the same language — deep, natural understanding flows between you.' : data.score >= 45 ? 'Some friction in expression — learning each other\'s communication style unlocks deeper bonds.' : 'Different wavelengths right now — patience and active listening is the key to harmony.',
+        bond: data.score >= 70 ? 'A rare, nurturing connection — emotional safety and warmth are very strong here.' : data.score >= 45 ? 'Genuine warmth exists, but emotional openness needs to be consciously cultivated.' : 'You\'re in emotionally different places — understanding each other\'s attachment style helps.',
+        grow: data.score >= 70 ? 'You challenge and elevate each other — this partnership creates exponential growth.' : data.score >= 45 ? 'You inspire growth in each other, though some life goals need alignment conversations.' : 'Independent paths right now — shared vision conversations are essential before big decisions.',
+        life: data.score >= 70 ? 'Your daily rhythms naturally complement each other — effortless coexistence.' : data.score >= 45 ? 'Lifestyle differences exist but are bridgeable — mutual respect of routines is the key.' : 'Your daily energies differ — conscious effort to align habits will be necessary.',
+      }
+
+      drawVibeBadge(doc, 40, gridY, cardW, cardH, '💬', 'Communication', matchDesc.comm, C.blue)
+      drawVibeBadge(doc, doc.page.width - 40 - cardW, gridY, cardW, cardH, '❤️', 'Emotional Bond', matchDesc.bond, C.coral)
+
+      drawVibeBadge(doc, 40, gridY + cardH + 12, cardW, cardH, '🌱', 'Growth Together', matchDesc.grow, C.green)
+      drawVibeBadge(doc, doc.page.width - 40 - cardW, gridY + cardH + 12, cardW, cardH, '🏠', 'Lifestyle Fit', matchDesc.life, C.lavender)
+
+      doc.x = 40 // Reset to left margin
+      doc.y = gridY + cardH * 2 + 40
+
+      // ── Page 5: 4-Month Relationship Journey Map ───────────────────────────
       doc.addPage()
       outline.addItem('Relationship Journey Map')
       doc.y = 100
@@ -642,7 +687,7 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
         doc.moveDown(0.3)
       })
 
-      // ── Page 5: Astro-Referral, Mangal Dosha & Disclaimer ───────────
+      // ── Page 6: Astro-Clarity, Mangal Dosha & Disclaimer ───────────
       doc.addPage()
       outline.addItem('Astrologer Referral')
       doc.y = 100
@@ -718,45 +763,45 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
       const outline = doc.outline
       outline.addItem('Title Cover')
 
-      // ── Page 1: Cover Page ────────────────────────────────────────────────
-      drawCoverBackground(doc, false)
+      // ── Page 1: Cover Page matching the watercolor mockup ─────────────────
+      drawCoverBackground(doc)
 
-      // Mandala Logo
-      doc.circle(doc.page.width / 2, 210, 50).lineWidth(1.2).strokeColor(C.lavender).stroke()
-      doc.circle(doc.page.width / 2, 210, 44).lineWidth(0.5).strokeColor(C.gold).stroke()
-      doc.font('Roboto-Bold').fontSize(36).fillColor(C.gold).text('✦', doc.page.width / 2 - 13, 192, { align: 'center' })
+      // Center Nebula Art
+      const nebulaImgPath = path.join(process.cwd(), 'src/assets/images/cover_nebula.png')
+      const imgSize = 250
+      const imgX = (doc.page.width - imgSize) / 2
+      const imgY = 120
+      doc.image(nebulaImgPath, imgX, imgY, { width: imgSize, height: imgSize })
 
-      // Logo centered
-      const centeredLogoX = doc.page.width / 2 - 45
-      doc.font('Roboto-Bold').fontSize(20).fillColor(C.white)
-         .text('oyeastro', centeredLogoX, 290, { continued: true })
+      // Title & Subtitle in navy serif (all-caps)
+      doc.font('Roboto-Bold').fontSize(26).fillColor('#1C0F38')
+        .text('THE STARS WITHIN YOU', 40, 420, { width: doc.page.width - 80, align: 'center', characterSpacing: 1.5 })
+
+      doc.font('Roboto').fontSize(10).fillColor('#1C0F38')
+        .text(`A Personal Cosmic Blueprint by Oyeastro`, 40, 460, { width: doc.page.width - 80, align: 'center' })
+
+      // User name
       doc.font('Roboto-Bold').fontSize(14).fillColor(C.gold)
+        .text(`Prepared for: ${data.name}`, 40, 520, { width: doc.page.width - 80, align: 'center' })
+
+      // Astrological matrix info
+      doc.rect(doc.page.width / 2 - 120, 560, 240, 95).fill('#FFFFFF')
+      doc.rect(doc.page.width / 2 - 120, 560, 240, 95).lineWidth(1).strokeColor(C.gold).stroke()
+      
+      doc.font('Roboto-Bold').fontSize(8.5).fillColor('#1C0F38')
+        .text('ASTROLOGICAL MATRIX', doc.page.width / 2 - 100, 574)
+
+      doc.font('Roboto').fontSize(9).fillColor(C.ink)
+        .text(`Rising Sign (Lagna):  ${data.lagna}`, doc.page.width / 2 - 100, 595)
+        .text(`Birth Nakshatra:      ${data.nakshatra}`, doc.page.width / 2 - 100, 611)
+        .text(`Active Mahadasha:     ${data.mahadasha}`, doc.page.width / 2 - 100, 627)
+
+      // Bottom Logo
+      const bottomLogoX = doc.page.width / 2 - 40
+      doc.font('Roboto-Bold').fontSize(15).fillColor('#1C0F38')
+         .text('oyeastro', bottomLogoX, 730, { continued: true })
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.gold)
          .text('✦')
-
-      doc.font('Roboto-Bold').fontSize(15).fillColor(C.gold)
-        .text('PREMIUM COSMIC FORECAST & BLUEPRINT', 40, 335, { width: doc.page.width - 80, align: 'center', characterSpacing: 1 })
-
-      doc.moveTo(doc.page.width / 2 - 60, 362).lineTo(doc.page.width / 2 + 60, 362).lineWidth(1.5).strokeColor(C.gold).stroke()
-
-      // User details
-      doc.font('Roboto').fontSize(14).fillColor(C.white)
-        .text(`Prepared for: ${data.name}`, 40, 420, { width: doc.page.width - 80, align: 'center' })
-      
-      doc.font('Roboto-Bold').fontSize(9).fillColor(C.lavender)
-        .text('2025–2026 ANNUAL VEDIC ANALYSIS', 40, 450, { width: doc.page.width - 80, align: 'center', characterSpacing: 1 })
-
-      // Mini bio block
-      const cardY = 530
-      doc.rect(80, cardY, doc.page.width - 160, 95).fill('#1C0F38')
-      doc.rect(80, cardY, doc.page.width - 160, 95).lineWidth(0.5).strokeColor('#8A5CF540').stroke()
-      
-      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.gold)
-        .text('ASTROLOGICAL MATRIX', 100, cardY + 15)
-
-      doc.font('Roboto').fontSize(9).fillColor('#E2DBEB')
-        .text(`Rising Sign (Lagna):  ${data.lagna}`, 100, cardY + 36)
-        .text(`Birth Nakshatra:      ${data.nakshatra}`, 100, cardY + 52)
-        .text(`Active Mahadasha:     ${data.mahadasha}`, 100, cardY + 68)
 
       // Content Page setup
       doc.on('pageAdded', () => {
@@ -855,6 +900,8 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
         progressY += 26
       })
 
+      // CRITICAL: Reset document X coordinate to avoid leaks
+      doc.x = 40
       doc.y = auraY + 65
       doc.moveDown(0.8)
 
@@ -870,24 +917,27 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
       horizons.forEach((h) => {
         const hData = data.cosmicVibe?.[h.key as keyof CosmicVibeResult] || h.def
         const stepY = doc.y
-        drawCard(doc, 40, stepY, doc.page.width - 80, 56, C.white)
+        drawCard(doc, 40, stepY, doc.page.width - 80, 64, C.white)
+
+        // Reset X coordinate inside loop
+        doc.x = 40
 
         // Title
-        doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.purpleMid).text(h.title, 50, stepY + 10)
+        doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.purpleMid).text(h.title, 52, stepY + 12)
         
         // Emojis/Status grid in center
         doc.font('Roboto').fontSize(7.5).fillColor(C.ink)
-          .text(`💸 Money: ${hData.money.status} ${hData.money.emoji}`, 155, stepY + 10)
-          .text(`❤️ Love: ${hData.love.status} ${hData.love.emoji}`, 265, stepY + 10)
-          .text(`⚡ Energy: ${hData.energy.status} ${hData.energy.emoji}`, 375, stepY + 10)
+          .text(`💸 Money: ${hData.money.status} ${hData.money.emoji}`, 160, stepY + 12)
+          .text(`❤️ Love: ${hData.love.status} ${hData.love.emoji}`, 270, stepY + 12)
+          .text(`⚡ Energy: ${hData.energy.status} ${hData.energy.emoji}`, 380, stepY + 12)
 
         // Score
-        doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.gold).text(`Score: ${hData.score}/10`, doc.page.width - 100, stepY + 10, { align: 'right' })
+        doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.gold).text(`Score: ${hData.score}/10`, doc.page.width - 120, stepY + 12, { align: 'right', width: 60 })
 
         // Interpretation
-        doc.font('Roboto').fontSize(7.2).fillColor(C.muted).text(`"${hData.interpretation}"`, 50, stepY + 26, { width: doc.page.width - 100, lineGap: 2 })
+        doc.font('Roboto').fontSize(7.5).fillColor(C.muted).text(`"${hData.interpretation}"`, 52, stepY + 28, { width: doc.page.width - 104, lineGap: 1.5 })
 
-        doc.y = stepY + 56
+        doc.y = stepY + 64
         doc.moveDown(0.3)
       })
 
@@ -896,11 +946,14 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
       outline.addItem('Problem & Solution')
       doc.y = 100
 
-      const colW = 168
+      // Re-calculated column sizing for perfect margins (40 on left, 40 on right)
+      const colW = 165
+      const colGap = 10
       const topY = doc.y
       const tY = topY + 18
 
-      // 1. The Journey (Column 1)
+      // Column 1 (x = 40)
+      doc.x = 40
       doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('1. The Journey', 40, topY)
       drawCard(doc, 40, tY, colW, 205, C.white)
 
@@ -919,26 +972,28 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
         }
       })
 
-      // 2. Personal Partnership (Column 1 Bottom)
+      // Column 1 Bottom (Cosmic Energies)
       const hY = tY + 215
       doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('2. Cosmic Energies', 40, hY)
       drawCard(doc, 40, hY + 18, colW, 95, C.white)
       doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.gold).text('☁  Mind/Body Vibe', 50, hY + 28)
       doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(`Rising sign ${data.lagna} and nakshatra ${data.nakshatra} establish your core identity. Keeping these in energetic alignment unlocks inner peace.`, 50, hY + 42, { width: colW - 20, lineGap: 2 })
 
-      // 2. Problem Statement (Column 2 Top)
-      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('2. Problem Statement', 220, topY)
-      drawCard(doc, 220, tY, colW, 95, C.white)
-      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.rose).text('☁  Active Hurdles', 230, tY + 10)
+      // Column 2 (x = 215)
+      const col2X = 40 + colW + colGap // 215
+      doc.x = col2X
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('2. Problem Statement', col2X, topY)
+      drawCard(doc, col2X, tY, colW, 95, C.white)
+      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.rose).text('☁  Active Hurdles', col2X + 10, tY + 10)
       
       const personalProb = `Current dasha cycle and transit aspects indicate minor stagnation in career focus, feeling energetically drained due to Saturn transits, and emotional overthinking caused by Moon aspects.`
-      doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(personalProb, 230, tY + 24, { width: colW - 20, lineGap: 2.5 })
+      doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(personalProb, col2X + 10, tY + 24, { width: colW - 20, lineGap: 2.5 })
 
-      // 3. Solution (Column 2 Bottom)
-      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('3. Solution', 220, tY + 105)
+      // Column 2 Bottom (Solution)
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('3. Solution', col2X, tY + 105)
       const solY = tY + 123
-      drawCard(doc, 220, solY, colW, 205, C.goldBg, C.gold)
-      doc.font('Roboto-Bold').fontSize(9).fillColor(C.gold).text('Astrological Remedies', 230, solY + 12)
+      drawCard(doc, col2X, solY, colW, 205, C.goldBg, C.gold)
+      doc.font('Roboto-Bold').fontSize(9).fillColor(C.gold).text('Astrological Remedies', col2X + 10, solY + 12)
 
       const gemstone = data.remedies?.stone || 'Yellow Sapphire'
       const colors = data.remedies?.color || 'Bright Yellow'
@@ -952,13 +1007,15 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
 
       personalRems.forEach((r, idx) => {
         const ry = solY + 30 + idx * 56
-        doc.font('Roboto-Bold').fontSize(8).fillColor(C.purpleMid).text(`${r.icon}  ${r.t}`, 230, ry)
-        doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(r.d, 230, ry + 12, { width: colW - 20, lineGap: 1.5 })
+        doc.font('Roboto-Bold').fontSize(8).fillColor(C.purpleMid).text(`${r.icon}  ${r.t}`, col2X + 10, ry)
+        doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(r.d, col2X + 10, ry + 12, { width: colW - 20, lineGap: 1.5 })
       })
 
-      // 4. Impact (Column 3 Top)
-      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('4. Impact', 400, topY)
-      drawCard(doc, 400, tY, colW, 145, C.white)
+      // Column 3 (x = 390)
+      const col3X = col2X + colW + colGap // 390
+      doc.x = col3X
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('4. Impact', col3X, topY)
+      drawCard(doc, col3X, tY, colW, 145, C.white)
 
       const pProgress = [
         { label: 'Career Potential', pct: 85, icon: '❤️', l: 'Elevated' },
@@ -967,32 +1024,31 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
       ]
       pProgress.forEach((p, idx) => {
         const py = tY + 12 + idx * 42
-        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.ink).text(p.label, 410, py)
-        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.lavender).text(`${p.pct}%`, 535, py, { align: 'right', width: 25 })
+        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.ink).text(p.label, col3X + 10, py)
+        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.lavender).text(`${p.pct}%`, col3X + 115, py, { align: 'right', width: 25 })
         
         // Progress track
-        doc.rect(410, py + 10, 115, 5).fill('#F0ECFB')
-        // Progress fill (Yellow/Gold accent)
-        doc.rect(410, py + 10, (115 * p.pct) / 100, 5).fill(C.gold)
+        doc.rect(col3X + 10, py + 10, 100, 5).fill('#F0ECFB')
+        doc.rect(col3X + 10, py + 10, (100 * p.pct) / 100, 5).fill(C.gold)
 
         // Icon indicator
-        doc.font('Roboto').fontSize(10).text(p.icon, 545, py + 5)
-        doc.font('Roboto-Bold').fontSize(5.5).fillColor(C.muted).text(p.l, 540, py + 18, { width: 30, align: 'center' })
+        doc.font('Roboto').fontSize(10).text(p.icon, col3X + 125, py + 5)
+        doc.font('Roboto-Bold').fontSize(5.5).fillColor(C.muted).text(p.l, col3X + 120, py + 18, { width: 30, align: 'center' })
       })
-      doc.font('Roboto').fontSize(6.5).fillColor(C.muted).text('Projected improvements based on remedies.', 410, tY + 132)
+      doc.font('Roboto').fontSize(6.5).fillColor(C.muted).text('Projected improvements based on remedies.', col3X + 10, tY + 132)
 
-      // 5. The Future Outlook (Column 3 Bottom)
-      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('5. The Future Outlook', 400, tY + 155)
+      // Column 3 Bottom (The Future Outlook)
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('5. The Future Outlook', col3X, tY + 155)
       const futY = tY + 173
-      drawCard(doc, 400, futY, colW, 147, C.white)
+      drawCard(doc, col3X, futY, colW, 147, C.white)
       
-      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.green).text('❯  What\'s Next', 410, futY + 12)
+      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.green).text('❯  What\'s Next', col3X + 10, futY + 12)
       
       const personalImpact = `Successfully performing remedies dissolves blockages. You will experience up to 40% reduction in mental fatigue and unlock active yogas.`
-      doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(personalImpact, 410, futY + 26, { width: colW - 20, lineGap: 2 })
-      doc.font('Roboto').fontSize(6.8).fillColor(C.muted).text('"Aligning your stars changes your destiny."', 410, futY + 115, { width: colW - 20, align: 'center', oblique: true })
+      doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(personalImpact, col3X + 10, futY + 26, { width: colW - 20, lineGap: 2 })
+      doc.font('Roboto').fontSize(6.8).fillColor(C.muted).text('"Aligning your stars changes your destiny."', col3X + 10, futY + 115, { width: colW - 20, align: 'center', oblique: true })
 
-      doc.y = futY + 160
+      doc.x = 40 // Clean reset to left margin
 
       // ── Page 5: 4-Month Personal Journey Map ──────────────────────────────
       doc.addPage()

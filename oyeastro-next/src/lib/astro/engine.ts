@@ -32,8 +32,19 @@ async function getSwe() {
 
 // ─── Geocoding ─────────────────────────────────────────────────────────────
 
+const geocodeCache: Record<string, GeoLocation> = {}
+
 export async function geocode(place: string): Promise<GeoLocation> {
   const query = place.trim().toLowerCase()
+
+  if (geocodeCache[query]) {
+    return geocodeCache[query]
+  }
+
+  const resolveAndCache = (loc: GeoLocation): GeoLocation => {
+    geocodeCache[query] = loc
+    return loc
+  }
 
   // 0. Check if manual coordinates (e.g. "coords:12.34,56.78" or just "12.34,56.78")
   if (query.startsWith('coords:') || /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(query)) {
@@ -42,14 +53,14 @@ export async function geocode(place: string): Promise<GeoLocation> {
     const lat = parseFloat(latStr)
     const lon = parseFloat(lonStr)
     if (!isNaN(lat) && !isNaN(lon)) {
-      return {
+      return resolveAndCache({
         lat,
         lon,
         displayName: `Manual Coords (${lat.toFixed(4)}, ${lon.toFixed(4)})`,
         timezone: 'UTC',
         tzOffsetHours: 0,
         confidence: 1.0
-      }
+      })
     }
   }
 
@@ -57,7 +68,7 @@ export async function geocode(place: string): Promise<GeoLocation> {
   for (const [key, city] of Object.entries(CITIES_DB)) {
     if (query === key || query.includes(key) || key.includes(query.split(',')[0].trim())) {
       const tzOff = getTzOffsetFromIANA(city.timezone, new Date())
-      return { lat: city.lat, lon: city.lon, displayName: city.name, timezone: city.timezone, tzOffsetHours: tzOff, confidence: 1.0 }
+      return resolveAndCache({ lat: city.lat, lon: city.lon, displayName: city.name, timezone: city.timezone, tzOffsetHours: tzOff, confidence: 1.0 })
     }
   }
 
@@ -66,7 +77,7 @@ export async function geocode(place: string): Promise<GeoLocation> {
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}&limit=1&addressdetails=0`
     const res = await fetch(url, {
       headers: { 'User-Agent': 'OyeAstro/2.0 (oyeastro.com contact:shivampandeyy97@gmail.com)' },
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(1500),
     })
     if (res.ok) {
       const data = await res.json()
@@ -76,7 +87,7 @@ export async function geocode(place: string): Promise<GeoLocation> {
         const tz = getTimezoneFromCoords(lat, lon)
         const tzOff = getTzOffsetFromIANA(tz, new Date())
         const importance = data[0].importance !== undefined ? parseFloat(data[0].importance) : 0.5
-        return { lat, lon, displayName: data[0].display_name, timezone: tz, tzOffsetHours: tzOff, confidence: importance }
+        return resolveAndCache({ lat, lon, displayName: data[0].display_name, timezone: tz, tzOffsetHours: tzOff, confidence: importance })
       }
     }
   } catch {
@@ -91,7 +102,7 @@ export async function geocode(place: string): Promise<GeoLocation> {
   const lat = 10 + (Math.abs(hash % 40))
   const lon = -120 + (Math.abs((hash >> 3) % 240))
   const tz = 'UTC'
-  return { lat, lon, displayName: place, timezone: tz, tzOffsetHours: 0, confidence: 0.1 }
+  return resolveAndCache({ lat, lon, displayName: place, timezone: tz, tzOffsetHours: 0, confidence: 0.1 })
 }
 
 // ─── TimeZoneDB Historical Timezone Query ───────────────────────────────────
@@ -132,6 +143,10 @@ export async function getTimezoneOffset(
 
 // geo-tz: offline timezone from lat/lon (no API call)
 function getTimezoneFromCoords(lat: number, lon: number): string {
+  // Ultra-fast check for India (covers >98% of users)
+  if (lat > 6 && lat < 37 && lon > 68 && lon < 98) {
+    return 'Asia/Kolkata'
+  }
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { find } = require('geo-tz')
@@ -140,7 +155,6 @@ function getTimezoneFromCoords(lat: number, lon: number): string {
   } catch {
     // Rough TZ from longitude if geo-tz fails
     const offset = Math.round(lon / 15)
-    if (lat > 6 && lat < 37 && lon > 68 && lon < 98) return 'Asia/Kolkata'
     return `Etc/GMT${offset >= 0 ? '-' : '+'}${Math.abs(offset)}`
   }
 }

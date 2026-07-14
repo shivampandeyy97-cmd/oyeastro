@@ -247,12 +247,6 @@ export default function PremiumReportCard({ chart }: Props) {
                 Your 2025-2026 Yearly Forecast
               </h3>
             </div>
-            <button
-              onClick={() => window.open(`/api/chart/pdf?chartId=${chartId}`, '_blank')}
-              className="px-3 py-1.5 border border-ink/10 rounded-full bg-white/40 hover:bg-white/70 text-xs font-medium text-ink transition-all cursor-pointer font-body"
-            >
-              📥 Save PDF
-            </button>
           </div>
 
           {loadingReport && (

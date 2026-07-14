@@ -25,8 +25,8 @@ export async function POST(req: NextRequest) {
       console.error('[Connect Astrologer DB Insert] Error:', e)
     }
 
-    // Send email alert to shivampandeyy97@gmail.com
-    await sendEmail({
+    // Send email alert asynchronously without blocking the response
+    sendEmail({
       to: 'shivampandeyy97@gmail.com',
       subject: 'New Astrologer Connection Request',
       html: `
@@ -50,6 +50,8 @@ export async function POST(req: NextRequest) {
           <p style="margin-top: 25px; font-size: 11px; color: #888;">Received from OyeAstro.</p>
         </div>
       `
+    }).catch(err => {
+      console.error('[Async Connect Astrologer Email Send] Error:', err)
     })
 
     return NextResponse.json({ success: true })

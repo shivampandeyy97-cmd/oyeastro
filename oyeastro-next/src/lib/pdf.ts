@@ -50,19 +50,20 @@ interface PersonalPdfData {
 // ─── Color Palette ───────────────────────────────────────────────────────────
 const C = {
   purpleDark: '#0B0214', // Celestial deep space
-  purpleMid:  '#15092A', // Deep space violet
+  purpleMid:  '#1C0F38', // Deep brand purple
   lavender:   '#8A5CF5', // Vibrant brand purple
-  coral:      '#FF7A45', // Warm sunset coral (cheerfulness)
+  coral:      '#FF7A45', // Warm sunset coral
   rose:       '#FF5C8A', // Romantic rose
-  gold:       '#D4A017', // Vedic gold
-  ink:        '#1A1208', // Dark text
-  muted:      '#776E85', // Faint text
-  border:     '#E2DBEB', // Light border
-  bgLight:    '#FDFBFE', // Content page bg
+  gold:       '#F5B800', // Premium Vedic Gold/Yellow
+  goldBg:     '#FFFDF0', // Soft yellow card bg
+  bgLight:    '#F5F4F8', // Modern light grey page bg
   white:      '#FFFFFF',
-  green:      '#4EAD72',
-  red:        '#E25B5B',
+  border:     '#E2DBEB', // Subtle card border
+  ink:        '#1A1208', // Dark text
+  muted:      '#776E85', // Muted text
   blue:       '#4E9CD4',
+  green:      '#4EAD72',
+  red:        '#E25B5B'
 }
 
 const PLANET_ABBR: Record<string, string> = {
@@ -99,7 +100,7 @@ function getNakshatraLord(lon: number): string {
   return NAKSHATRA_LORDS[nakIdx % 9]
 }
 
-// ─── Document Formatting Helpers ─────────────────────────────────────────────
+// ─── Document Layout Helpers ─────────────────────────────────────────────────
 
 function drawCoverBackground(doc: PDFKit.PDFDocument, isCompatibility = false) {
   const oldBottom = doc.page.margins.bottom
@@ -138,49 +139,57 @@ function drawCoverBackground(doc: PDFKit.PDFDocument, isCompatibility = false) {
   doc.page.margins.bottom = oldBottom
 }
 
-function drawContentPageDecorations(doc: PDFKit.PDFDocument, pageNum: number, titleText = 'OYEASTRO COSMIC REPORT') {
+function drawPastelBanner(doc: PDFKit.PDFDocument, pageNum: number, reportTitle: string, subtitle: string) {
   const oldBottom = doc.page.margins.bottom
-  doc.page.margins.bottom = 0 
+  doc.page.margins.bottom = 0
 
-  // Soft page fill
+  // 1. Draw page background color (light grey-blue)
   doc.rect(0, 0, doc.page.width, doc.page.height).fill(C.bgLight)
 
-  // Elegant border lines
-  doc.rect(30, 30, doc.page.width - 60, doc.page.height - 60)
-     .lineWidth(0.5)
-     .strokeColor(C.border)
-     .stroke()
+  // 2. Draw Pastel Gradient Header Banner
+  const grad = doc.linearGradient(0, 0, doc.page.width, 0)
+  grad.stop(0, '#FFEAEA')   // Soft pastel red/peach
+  grad.stop(0.5, '#EAE2F8') // Soft pastel lavender
+  grad.stop(1, '#E1F5F0')   // Soft pastel mint/teal
+  doc.rect(0, 0, doc.page.width, 85).fill(grad)
 
-  const w = doc.page.width
+  // Subtle banner bottom border
+  doc.moveTo(0, 85).lineTo(doc.page.width, 85).lineWidth(0.5).strokeColor(C.border).stroke()
+
+  // 3. Draw Actual Logo: "oyeastro✦"
+  const logoX = 40
+  const logoY = 28
+  doc.font('Roboto-Bold').fontSize(16).fillColor(C.purpleMid)
+     .text('oyeastro', logoX, logoY, { continued: true })
+  doc.font('Roboto-Bold').fontSize(11).fillColor(C.rose)
+     .text('✦')
+
+  // 4. Draw Header Titles (Right Aligned)
+  doc.font('Roboto-Bold').fontSize(10).fillColor(C.purpleMid)
+     .text(reportTitle.toUpperCase(), 180, logoY, { width: doc.page.width - 220, align: 'right', characterSpacing: 1 })
+  doc.font('Roboto').fontSize(7.5).fillColor(C.muted)
+     .text(subtitle, 180, logoY + 14, { width: doc.page.width - 220, align: 'right' })
+
+  // 5. Running Footer
   const h = doc.page.height
-  
-  doc.font('Roboto-Bold').fontSize(8).fillColor(C.lavender)
-    .text('✦', 35, 38)
-    .text('✦', w - 42, 38)
-    .text('✦', 35, h - 45)
-    .text('✦', w - 42, h - 45)
-
-  // Running Header
-  doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.lavender).text(titleText, 45, 16, { width: w - 90, align: 'left', characterSpacing: 1 })
-  doc.font('Roboto').fontSize(7).fillColor(C.muted).text('Certified Vedic Astrology Alignment', 45, 16, { width: w - 90, align: 'right' })
-  doc.moveTo(40, 24).lineTo(w - 40, 24).lineWidth(0.5).strokeColor(C.border).stroke()
-
-  // Running Footer
-  doc.moveTo(40, h - 30).lineTo(w - 40, h - 30).lineWidth(0.5).strokeColor(C.border).stroke()
-  doc.font('Roboto').fontSize(7).fillColor(C.muted)
-    .text('Confidential Vedic Referral Profile · oyeastro.com', 45, h - 23, { width: w - 90, align: 'left' })
-    .text(`Page ${pageNum}`, 45, h - 23, { width: w - 90, align: 'right' })
+  doc.moveTo(40, h - 35).lineTo(doc.page.width - 40, h - 35).lineWidth(0.5).strokeColor(C.border).stroke()
+  doc.font('Roboto').fontSize(7.5).fillColor(C.muted)
+    .text('Powered by OyeAstro · Your Cosmic Guide · oyeastro.com', 45, h - 27, { width: doc.page.width - 90, align: 'left' })
+    .text(`Page ${pageNum}`, 45, h - 27, { width: doc.page.width - 90, align: 'right' })
 
   doc.page.margins.bottom = oldBottom
 }
 
-/**
- * Standard counter-clockwise North Indian Kundli chart (as seen on astrotalk.com / genuine Vedic platforms)
- * House 1 (Ascendant) is top diamond. Houses proceed counter-clockwise:
- * H1: top, H2: top-left upper, H3: top-left left, H4: left, H5: bottom-left left,
- * H6: bottom-left bottom, H7: bottom, H8: bottom-right bottom, H9: bottom-right right,
- * H10: right, H11: top-right right, H12: top-right upper.
- */
+function drawCard(doc: PDFKit.PDFDocument, x: number, y: number, w: number, h: number, bg = C.white, stroke = C.border) {
+  doc.roundedRect(x, y, w, h, 8)
+     .fillAndStroke(bg, stroke)
+}
+
+function drawSectionHeader(doc: PDFKit.PDFDocument, text: string, color = C.purpleMid) {
+  doc.font('Roboto-Bold').fontSize(10.5).fillColor(color).text(text, doc.x, doc.y)
+  doc.moveDown(0.4)
+}
+
 function drawNorthIndianChart(
   doc: PDFKit.PDFDocument,
   cx: number,   
@@ -197,12 +206,9 @@ function drawNorthIndianChart(
 
   // Chart Title
   doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.lavender)
-    .text(title, cx - s / 2, y0 - 16, { width: s, align: 'center' })
+    .text(title, cx - s / 2, y0 - 15, { width: s, align: 'center' })
 
-  // Fill chart background
-  doc.rect(x0, y0, s, s).fill(C.white)
-  
-  // Double outer border
+  // Draw chart square outline
   doc.rect(x0, y0, s, s).lineWidth(1.2).strokeColor(C.lavender).stroke()
   doc.rect(x0 + 3, y0 + 3, s - 6, s - 6).lineWidth(0.5).strokeColor(C.border).stroke()
 
@@ -216,12 +222,9 @@ function drawNorthIndianChart(
      .lineTo(cx, y0)
      .lineWidth(0.8).strokeColor(C.lavender).stroke()
 
-  // Highlight House 1 (Ascendant) diamond with soft lavender fill
-  doc.path(`M ${cx} ${cy} L ${x0 + s/2} ${y0} L ${x0} ${cy} Z`).fill('#8A5CF508')
+  // Highlight House 1 with soft yellow/gold background
+  doc.path(`M ${cx} ${cy} L ${x0 + s/2} ${y0} L ${x0} ${cy} Z`).fill('#F5B80008')
 
-  // Map sign names & planet placements
-  const signShort = ['Ar', 'Ta', 'Ge', 'Ca', 'Le', 'Vi', 'Li', 'Sc', 'Sg', 'Cp', 'Aq', 'Pi']
-  
   const planetsInHouse: Record<number, string[]> = {}
   for (let h = 1; h <= 12; h++) planetsInHouse[h] = []
 
@@ -258,7 +261,7 @@ function drawNorthIndianChart(
     const planets = planetsInHouse[hNum] || []
 
     // Sign number in the house
-    doc.font('Roboto').fontSize(6.5).fillColor(C.lavender)
+    doc.font('Roboto').fontSize(6.5).fillColor(C.gold)
       .text(String(signNum), hx - 12, hy - 11, { width: 24, align: 'center' })
 
     // House label (small subscript)
@@ -272,27 +275,6 @@ function drawNorthIndianChart(
         .text(pl, hx - 15, hy + 4 + pIdx * 7.5, { width: 30, align: 'center' })
     })
   })
-}
-
-function drawVibeBadge(doc: PDFKit.PDFDocument, x: number, y: number, w: number, h: number, icon: string, label: string, desc: string, badgeColor: string) {
-  doc.rect(x, y, w, h).fill(C.white)
-  doc.rect(x, y, w, h).lineWidth(0.5).strokeColor(C.border).stroke()
-  
-  // Color tag on left edge
-  doc.rect(x, y, 4, h).fill(badgeColor)
-
-  doc.font('Roboto-Bold').fontSize(12).text(icon, x + 12, y + 10)
-  doc.font('Roboto-Bold').fontSize(8.5).fillColor(badgeColor).text(label.toUpperCase(), x + 32, y + 12)
-  doc.font('Roboto').fontSize(8).fillColor(C.ink).text(desc, x + 12, y + 28, { width: w - 24, align: 'justify', lineGap: 2.5 })
-}
-
-// ─── Section Header ───────────────────────────────────────────────────────────
-function drawSectionHeader(doc: PDFKit.PDFDocument, text: string, color: string) {
-  const y = doc.y
-  doc.rect(40, y, doc.page.width - 80, 22).fill(color)
-  doc.font('Roboto-Bold').fontSize(10.5).fillColor(C.white)
-    .text(text, 50, y + 5.5, { width: doc.page.width - 100 })
-  doc.y = y + 27
 }
 
 function drawGridRow(doc: PDFKit.PDFDocument, bg: string, cells: { text: string; width: number; bold?: boolean; color?: string }[]) {
@@ -334,28 +316,31 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
       // ── Page 1: Branded Celebratory Cover Page ────────────────────────────
       drawCoverBackground(doc, true)
 
-      // Hearts & Love graphic accent
+      // Hearts & Love graphic accent with beautiful gold/rose circles
       doc.circle(doc.page.width / 2, 210, 50).lineWidth(1.2).strokeColor(C.rose).stroke()
       doc.circle(doc.page.width / 2, 210, 44).lineWidth(0.5).strokeColor(C.gold).stroke()
       doc.font('Roboto-Bold').fontSize(40).fillColor(C.rose).text('♥', doc.page.width / 2 - 14, 192, { align: 'center' })
 
-      // Celebratory text
-      doc.font('Roboto-Bold').fontSize(28).fillColor(C.white)
-        .text('OYEASTRO', 40, 290, { width: doc.page.width - 80, align: 'center', characterSpacing: 4 })
-      
+      // Logo centered
+      const centeredLogoX = doc.page.width / 2 - 45
+      doc.font('Roboto-Bold').fontSize(20).fillColor(C.white)
+         .text('oyeastro', centeredLogoX, 290, { continued: true })
       doc.font('Roboto-Bold').fontSize(14).fillColor(C.rose)
-        .text('OUR COSMIC JOURNEY TOGETHER', 40, 335, { width: doc.page.width - 80, align: 'center', characterSpacing: 1 })
+         .text('✦')
+
+      doc.font('Roboto-Bold').fontSize(15).fillColor(C.rose)
+        .text('COSMIC COMPATIBILITY REPORT', 40, 335, { width: doc.page.width - 80, align: 'center', characterSpacing: 1 })
 
       doc.moveTo(doc.page.width / 2 - 60, 362).lineTo(doc.page.width / 2 + 60, 362).lineWidth(1.5).strokeColor(C.rose).stroke()
 
       // Duo Names
       const scoreY = 410
-      doc.font('Roboto-Bold').fontSize(16).fillColor(C.white)
+      doc.font('Roboto-Bold').fontSize(17).fillColor(C.white)
         .text(`${data.cName1}   ♥   ${data.cName2}`, 40, scoreY, { width: doc.page.width - 80, align: 'center' })
 
-      // Match score badge
+      // Match score badge with gold accent outline
       doc.rect(doc.page.width / 2 - 70, scoreY + 32, 140, 95).fill(C.purpleMid)
-      doc.rect(doc.page.width / 2 - 70, scoreY + 32, 140, 95).lineWidth(0.8).strokeColor(C.rose + '50').stroke()
+      doc.rect(doc.page.width / 2 - 70, scoreY + 32, 140, 95).lineWidth(1).strokeColor(C.gold).stroke()
 
       const sColor = data.score >= 70 ? C.green : data.score >= 45 ? C.gold : C.red
       doc.font('Roboto-Bold').fontSize(38).fillColor(sColor)
@@ -372,18 +357,19 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
       doc.on('pageAdded', () => {
         pageNum++
         const savedY = doc.y
-        drawContentPageDecorations(doc, pageNum, `COMPATIBILITY PROFILE: ${data.cName1.toUpperCase()} & ${data.cName2.toUpperCase()}`)
+        drawPastelBanner(doc, pageNum, 'Couple Compatibility Report', `Prepared for ${data.cName1} & ${data.cName2}`)
         doc.y = savedY
       })
 
-      // ── Page 2: Astrologer-Ready Kundli Charts & Table ─────────────────────
+      // ── Page 2: Kundli Charts Side-by-Side ────────────────────────────────
       doc.addPage()
       outline.addItem('Janma Kundli Charts')
+      doc.y = 100
 
       drawSectionHeader(doc, '🪐  Vedic Birth Charts (Janma Kundli) — Astrologer Referral Profile', C.purpleMid)
       doc.moveDown(0.3)
 
-      // Dual counter-clockwise Kundli charts side-by-side
+      // Dual charts (astrologer-ready)
       const chartSize = 185
       const cy1 = doc.y + chartSize / 2 + 10
 
@@ -415,8 +401,8 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
 
       doc.y = cy1 + chartSize / 2 + 25
 
-      // Detailed Astrologer table (degrees, signs, nakshatras, nakshatra lords)
-      drawSectionHeader(doc, '🌍  Comprehensive Astro-Reference Grid', C.lavender)
+      // Detailed Astrologer table (degrees, signs, nakshatras, nakshatra lords) with Gold Header Accent
+      drawSectionHeader(doc, '🌍  Comprehensive Astro-Reference Grid', C.gold)
       
       const planetsList = ['Su', 'Mo', 'Ma', 'Me', 'Ju', 'Ve', 'Sa', 'Ra', 'Ke']
       
@@ -461,51 +447,135 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
         ])
       })
 
-      // ── Page 3: Problem, Solution, Impact Section ────────────────────────
+      // ── Page 3: Problem, Solution, Impact Section (mockup layout) ────────
       doc.addPage()
       outline.addItem('Problem & Solution')
+      doc.y = 100
 
-      drawSectionHeader(doc, '🔴  Connection Challenges (Problem Statement)', C.coral)
-      doc.moveDown(0.4)
+      // Column 1 area (x=40, width=170)
+      // Column 2 area (x=220, width=170)
+      // Column 3 area (x=400, width=172)
+      const colW = 168
+      const topY = doc.y
+
+      // 1. The Journey (Column 1)
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('1. The Journey', 40, topY)
+      const tY = topY + 18
+      drawCard(doc, 40, tY, colW, 205, C.white)
+
+      // Timeline nodes (vertical style inside card)
+      const nodes = [
+        { label: 'First Meeting', desc: 'Cosmic Connection', icon: '⭐' },
+        { label: 'Shared Dreams', desc: 'Building Foundations', icon: '👥' },
+        { label: 'Recent Phase', desc: 'Navigating Challenges', icon: '🌱' }
+      ]
+      nodes.forEach((n, idx) => {
+        const nY = tY + 12 + idx * 62
+        doc.font('Roboto-Bold').fontSize(9).fillColor(C.purpleMid).text(n.icon + ' ' + n.label, 50, nY)
+        doc.font('Roboto').fontSize(7.5).fillColor(C.muted).text(n.desc, 50, nY + 12, { width: colW - 20 })
+        doc.font('Roboto').fontSize(7).fillColor(C.ink).text(idx === 2 ? 'Navigating active transits.' : 'Shared energetic wavelengths.', 50, nY + 24, { width: colW - 20 })
+
+        if (idx < 2) {
+          doc.moveTo(56, nY + 36).lineTo(56, nY + 58).lineWidth(0.8).strokeColor(C.border).stroke()
+        }
+      })
+
+      // 2. Harmonious Partnership (Column 1 Bottom)
+      const hY = tY + 215
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('2. Harmonious Partnership', 40, hY)
+      drawCard(doc, 40, hY + 18, colW, 95, C.white)
+      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.gold).text('☁  Current Hurdles', 50, hY + 28)
+      doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text('We recognize current tensions in empathetic communication and balancing individual growth with togetherness, leading to moments of misunderstanding.', 50, hY + 42, { width: colW - 20, lineGap: 2 })
+
+      // 2. Problem Statement (Column 2 Top)
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('2. Problem Statement', 220, topY)
+      drawCard(doc, 220, tY, colW, 95, C.white)
+      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.rose).text('☁  Current Hurdles', 230, tY + 10)
       
       const probText = data.score >= 70
-        ? `Communication flow is highly harmonious, but the main risk is emotional comfort-zone stagnation. Because you understand each other so naturally, you might avoid difficult growth discussions, which can restrict long-term dynamic compatibility. Watch out for passive agreement over active building.`
+        ? 'Risk of emotional comfort stagnation. Avoiding difficult growth discussions can restrict long-term dynamic compatibility.'
         : data.score >= 45
-        ? `Vedic friction points exist in Gana (temperament) and Graha Maitri (communication lords). ${data.cName1} and ${data.cName2} speak slightly different relationship languages. This creates expression delays, feeling misunderstood, and intellectual differences during decision-making. Minor arguments could drag on.`
-        : `High energetic friction. Significant contrasts in Nadi (sub-conscious/biological wavelengths) and Bhakoot (emotional nodes). This indicates intense emotional blockages, frequent arguments, feeling drained during conflicts, and diverging lifestyle paths which can create separation anxiety.`
+        ? 'Vedic friction points in Gana & Graha Maitri. Speaks slightly different languages, creating expression delays and feeling misunderstood.'
+        : 'High energetic friction. Significant contrasts in Nadi & Bhakoot create blockages, arguments, and diverging daily paths.'
+      doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(probText, 230, tY + 24, { width: colW - 20, lineGap: 2.5 })
 
-      doc.font('Roboto').fontSize(9).fillColor(C.ink).text(probText, 50, doc.y, { width: doc.page.width - 100, align: 'justify', lineGap: 3.5 })
-      doc.moveDown(1)
+      // 3. Solution (Column 2 Bottom)
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('3. Solution', 220, tY + 105)
+      const solY = tY + 123
+      drawCard(doc, 220, solY, colW, 205, C.goldBg, C.gold)
+      doc.font('Roboto-Bold').fontSize(9).fillColor(C.gold).text('Astrological Remedies', 230, solY + 12)
 
-      drawSectionHeader(doc, '🔑  Vedic Remedies & Solutions', C.gold)
-      doc.moveDown(0.4)
-
-      const solText = data.score >= 70
-        ? `Remedies to sustain interest & energy:\n1. Wear shades of light rose or coral on Tuesdays to invite planetary warmth.\n2. Dedicate Saturday evenings to shared outdoor growth activities to ground Saturn\'s energy.\n3. Together, offer milk and honey to Lord Shiva on Mondays to strengthen the moon connection.`
+      const remediesList = data.score >= 70
+        ? [
+            { icon: '🎤', t: 'Foster Open Dialogue', d: 'Practice active listening during Mercury hours.' },
+            { icon: '🔀', t: 'Embrace Paths', d: 'Support individual goals; schedule independent time.' },
+            { icon: '⚖', t: 'Harmonize Energies', d: 'Engage in creative work; use Rose Quartz.' }
+          ]
         : data.score >= 45
-        ? `Vedic actions to bridge compatibility gaps:\n1. Wear light green or sky blue on Wednesdays to align Mercury (communication lord).\n2. Together, chant "Om Som Somaya Namah" 108 times on Mondays to soothe emotional friction.\n3. Dedicate a specific day weekly to relationship check-ins where honesty is practiced without defense.`
-        : `Strong corrective remedies to handle energy clash:\n1. Keep a silver coin or vessel in your shared living area to absorb negative Nadi clash waves.\n2. Donate yellow sweets or food to children on Thursdays (Jupiter remedy to dissolve Rahu/Mars blockages).\n3. Wear light cream/gold colors on Fridays. Avoid dark blue/black colors during major couple discussions.`
+        ? [
+            { icon: '🎤', t: 'Mercury Alignment', d: 'Wear green/light-blue colors on Wednesdays.' },
+            { icon: '🔀', t: 'Moon Chant', d: 'Chant "Om Som Somaya Namah" on Mondays.' },
+            { icon: '⚖', t: 'Honesty Hour', d: 'Schedule weekly non-defensive check-ins.' }
+          ]
+        : [
+            { icon: '🎤', t: 'Silver Remedy', d: 'Keep a silver coin or vessel in shared space.' },
+            { icon: '🔀', t: 'Jupiter sweets', d: 'Donate sweets to children on Thursdays.' },
+            { icon: '⚖', t: 'Neutralize Clash', d: 'Avoid dark colors during key discussions.' }
+          ]
 
-      doc.rect(46, doc.y, doc.page.width - 92, 90).fill('#FFFDF5')
-      doc.rect(46, doc.y, doc.page.width - 92, 90).lineWidth(0.5).strokeColor(C.gold).stroke()
-      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.gold).text('SUGGESTED ALIGNMENT SOLUTIONS:', 56, doc.y + 12)
-      doc.font('Roboto').fontSize(8.2).fillColor(C.ink).text(solText, 56, doc.y + 28, { width: doc.page.width - 112, lineGap: 3.5 })
-      doc.y += 105
+      remediesList.forEach((r, idx) => {
+        const ry = solY + 30 + idx * 56
+        doc.font('Roboto-Bold').fontSize(8).fillColor(C.purpleMid).text(`${r.icon}  ${r.t}`, 230, ry)
+        doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(r.d, 230, ry + 12, { width: colW - 20, lineGap: 1.5 })
+      })
 
-      drawSectionHeader(doc, '🟢  Future Transformation (Impact)', C.purpleMid)
-      doc.moveDown(0.4)
+      // 4. Impact (Column 3 Top)
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('4. Impact', 400, topY)
+      drawCard(doc, 400, tY, colW, 145, C.white)
 
-      const impactText = data.score >= 70
-        ? `Implementing these remedies ensures a highly creative partnership that elevates both of your careers and social stand. Your shared fortune will double, leading to stable wealth creation, high mutual respect, and a peaceful domestic sanctuary.`
+      const progress = [
+        { label: 'Communication Flow', pct: 85, icon: '❤️', l: 'Deepening' },
+        { label: 'Emotional Connection', pct: 90, icon: '🌸', l: 'Flourishing' },
+        { label: 'Mutual Understanding', pct: 75, icon: '🌱', l: 'Growing' }
+      ]
+      progress.forEach((p, idx) => {
+        const py = tY + 12 + idx * 42
+        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.ink).text(p.label, 410, py)
+        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.lavender).text(`${p.pct}%`, 535, py, { align: 'right', width: 25 })
+        
+        // Progress track
+        doc.rect(410, py + 10, 115, 5).fill('#F0ECFB')
+        // Progress fill (Yellow/Gold accent highlight)
+        doc.rect(410, py + 10, (115 * p.pct) / 100, 5).fill(C.gold)
+
+        // Icon indicator
+        doc.font('Roboto').fontSize(10).text(p.icon, 545, py + 5)
+        doc.font('Roboto-Bold').fontSize(5.5).fillColor(C.muted).text(p.l, 540, py + 18, { width: 30, align: 'center' })
+      })
+      doc.font('Roboto').fontSize(6.5).fillColor(C.muted).text('Projected improvements based on remedies.', 410, tY + 132)
+
+      // 5. The Future Outlook (Column 3 Bottom)
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('5. The Future Outlook', 400, tY + 155)
+      const futY = tY + 173
+      drawCard(doc, 400, futY, colW, 147, C.white)
+      
+      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.green).text('❯  What\'s Next', 410, futY + 12)
+      
+      const futureText = data.score >= 70
+        ? 'Your path ahead shows promise for renewed harmony and deeper bonds. Celebrate small victories together. The cosmos supports your enduring partnership.'
         : data.score >= 45
-        ? `Applying these actions resolves communication delays and aligns your daily lifestyle. You will transform from basic couple attraction into a highly focused partnership, building deep emotional trust and constructive joint ventures.`
-        : `Conscientiously following these remedies reduces the intensity of Nadi clash by up to 60%. This transforms constant friction into a powerful growth invitation, teaching both of you deep patience, spiritual empathy, and maturity.`
+        ? 'Conscious effort bridges natural differences. Your path will transform into a highly stable partnership with deep emotional safety.'
+        : 'High contrast acts as a transformative growth catalyst. Practicing the remedies neutralizes the energetic clash, inviting deep spiritual connection.'
 
-      doc.font('Roboto').fontSize(9).fillColor(C.ink).text(impactText, 50, doc.y, { width: doc.page.width - 100, align: 'justify', lineGap: 3.5 })
+      doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(futureText, 410, futY + 26, { width: colW - 20, lineGap: 2 })
+      doc.font('Roboto').fontSize(6.8).fillColor(C.muted).text('"Love is a journey of continuous discovery."', 410, futY + 115, { width: colW - 20, align: 'center', oblique: true })
+
+      doc.y = futY + 160
 
       // ── Page 4: 4-Month Relationship Journey Map ───────────────────────────
       doc.addPage()
       outline.addItem('Relationship Journey Map')
+      doc.y = 100
 
       drawSectionHeader(doc, '📅  4-Month Future Relationship Journey Map', C.purpleMid)
       doc.moveDown(0.4)
@@ -538,71 +608,74 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
       ]
 
       journeySteps.forEach((step, idx) => {
-        const stepBg = idx % 2 === 0 ? '#FAF6FF' : C.white
         const stepY = doc.y
-        doc.rect(40, stepY, doc.page.width - 80, 70).fill(stepBg)
-        doc.rect(40, stepY, doc.page.width - 80, 70).lineWidth(0.5).strokeColor(C.border).stroke()
+        drawCard(doc, 40, stepY, doc.page.width - 80, 68, C.white)
         
-        // Month marker
-        doc.rect(50, stepY + 12, 6, 6).fill(C.coral)
-        doc.font('Roboto-Bold').fontSize(9.5).fillColor(C.purpleMid).text(step.month, 62, stepY + 10)
+        // Month marker with gold/yellow circle indicator
+        doc.circle(52, stepY + 15, 4).fill(C.gold)
+        doc.font('Roboto-Bold').fontSize(9.5).fillColor(C.purpleMid).text(step.month, 64, stepY + 10)
 
         // Transit details
         doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.muted).text('Transit Context: ', 50, stepY + 28)
         doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(step.transits, 125, stepY + 28)
 
         // Caution details
-        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.rose).text('Astro Caution:   ', 50, stepY + 41)
-        doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(step.caution, 125, stepY + 41)
+        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.rose).text('Astro Caution:   ', 50, stepY + 40)
+        doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(step.caution, 125, stepY + 40)
 
         // Vibe/Energy
-        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.green).text('Vibe Forecast:   ', 50, stepY + 54)
-        doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(step.vibe, 125, stepY + 54)
+        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.green).text('Vibe Forecast:   ', 50, stepY + 52)
+        doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(step.vibe, 125, stepY + 52)
 
-        doc.y = stepY + 70
+        doc.y = stepY + 68
         doc.moveDown(0.3)
       })
 
-      // ── Page 5: Vibe Score & Disclaimer ──────────────────────────────────
+      // ── Page 5: Astro-Referral, Mangal Dosha & Disclaimer ───────────
       doc.addPage()
-      outline.addItem('Wellbeing Snapshot')
+      outline.addItem('Astrologer Referral')
+      doc.y = 100
 
-      drawSectionHeader(doc, '💖  Relationship Wellbeing Snapshot', C.purpleMid)
-      doc.moveDown(0.3)
-      doc.font('Roboto').fontSize(9.5).fillColor(C.ink)
-        .text(data.score >= 70
-          ? `${data.cName1} and ${data.cName2} share a deeply compatible foundation. Your natural wavelengths align beautifully — this connection has the strength to weather challenges and grow over time.`
-          : data.score >= 45
-          ? `${data.cName1} and ${data.cName2} have real potential with conscious effort. Some natural tensions exist, but these build character and depth in a meaningful relationship.`
-          : `${data.cName1} and ${data.cName2} bring very different energies together. This can be transformative if both commit to understanding each other — contrast isn't incompatibility, it's a growth invitation.`
-        , 50, doc.y, { width: doc.page.width - 100, align: 'justify', lineGap: 3.5 })
-      doc.moveDown(0.8)
+      // Mangal Dosha check inside a styled card
+      drawSectionHeader(doc, '🔥  Vedic Mangal Dosha Analysis (Mars Affliction)', C.coral)
+      doc.moveDown(0.2)
 
-      drawSectionHeader(doc, '⚡  Partner Vibe Card Breakdown', C.lavender)
-      doc.moveDown(0.4)
+      const isA = data.mangalDoshaA ?? false
+      const isB = data.mangalDoshaB ?? false
+      const isCancel = data.hasMangalDoshaCancellation ?? false
 
-      const gridY = doc.y
-      const cardW = (doc.page.width - 96) / 2
-      const cardH = 80
-
-      const matchDesc = {
-        comm: data.score >= 70 ? 'You two speak the same language — deep, natural understanding flows between you.' : data.score >= 45 ? 'Some friction in expression — learning each other\'s communication style unlocks deeper bonds.' : 'Different wavelengths right now — patience and active listening is the key to harmony.',
-        bond: data.score >= 70 ? 'A rare, nurturing connection — emotional safety and warmth are very strong here.' : data.score >= 45 ? 'Genuine warmth exists, but emotional openness needs to be consciously cultivated.' : 'You\'re in emotionally different places — understanding each other\'s attachment style helps.',
-        grow: data.score >= 70 ? 'You challenge and elevate each other — this partnership creates exponential growth.' : data.score >= 45 ? 'You inspire growth in each other, though some life goals need alignment conversations.' : 'Independent paths right now — shared vision conversations are essential before big decisions.',
-        life: data.score >= 70 ? 'Your daily rhythms naturally complement each other — effortless coexistence.' : data.score >= 45 ? 'Lifestyle differences exist but are bridgeable — mutual respect of routines is the key.' : 'Your daily energies differ — conscious effort to align habits will be necessary.',
+      let docText = ''
+      if (!isA && !isB) {
+        docText = 'Excellent! Neither partner suffers from Mangal Dosha. Your Mars energies are peaceful and safe, which keeps relationship communication stable without unexpected volatile clashes.'
+      } else if (isA && isB) {
+        docText = `Both ${data.cName1} and ${data.cName2} have Mangal Dosha. In Vedic calculations, when both partners have the affliction, it cancels out (Mangal Milan). The energies neutralize each other.`
+      } else {
+        const affected = isA ? data.cName1 : data.cName2
+        if (isCancel) {
+          docText = `Note: ${affected} has Mangal Dosha, but local placements create cancellation conditions (Dosha Nirvarana). The energy clash is neutralized.`
+        } else {
+          docText = `Alert: ${affected} has active Mangal Dosha while the other does not. This asymmetry indicates possible hot-headedness, arguments, or communication clashes. Applying active cooling remedies is suggested.`
+        }
       }
 
-      drawVibeBadge(doc, 44, gridY, cardW, cardH, '💬', 'Communication', matchDesc.comm, C.blue)
-      drawVibeBadge(doc, doc.page.width - 44 - cardW, gridY, cardW, cardH, '❤️', 'Emotional Bond', matchDesc.bond, C.coral)
+      const dY = doc.y
+      drawCard(doc, 40, dY, doc.page.width - 80, 52, '#FFFBFB', C.rose)
+      doc.font('Roboto').fontSize(8.5).fillColor(C.ink).text(docText, 52, dY + 10, { width: doc.page.width - 104, align: 'justify', lineGap: 3 })
+      doc.y = dY + 62
+      doc.moveDown(0.8)
 
-      drawVibeBadge(doc, 44, gridY + cardH + 10, cardW, cardH, '🌱', 'Growth Together', matchDesc.grow, C.green)
-      drawVibeBadge(doc, doc.page.width - 44 - cardW, gridY + cardH + 10, cardW, cardH, '🏠', 'Lifestyle Fit', matchDesc.life, C.lavender)
-
-      doc.y = gridY + cardH * 2 + 25
+      // Astrologer Referral Profile Box
+      drawSectionHeader(doc, '⚙️  Astrological referral guidelines (For the Astrologer)', C.gold)
+      doc.moveDown(0.2)
+      const refY = doc.y
+      drawCard(doc, 40, refY, doc.page.width - 80, 80, C.goldBg, C.gold)
+      doc.font('Roboto-Bold').fontSize(8).fillColor(C.gold).text('TECHNICAL DETAILS FOR THE ASTROLOGER RECIPIENT:', 50, refY + 12)
+      doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(`1. This chart is computed utilizing the Vedic Sidereal Lahiri Ayanamsa with standard coordinates.\n2. Note the Moon positions: ${data.cName1} has Moon in House ${data.chart1?.houseData?.placements?.Mo?.houseIndex || 1}, ${data.cName2} has Moon in House ${data.chart2?.houseData?.placements?.Mo?.houseIndex || 1}.\n3. Guna Milan score details: Varna (${data.score >= 70 ? '1/1' : '0.5/1'}), Vasya (${data.score >= 70 ? '2/2' : '1/2'}), Tara (${data.score >= 70 ? '3/3' : '2/3'}), Yoni (${data.score >= 70 ? '3/4' : '2/4'}).\n4. For remedies consultation, evaluate Venus-Mars positions for relationship compatibility stabilization.`, 50, refY + 24, { width: doc.page.width - 100, lineGap: 3 })
+      doc.y = refY + 92
       doc.moveDown(1.5)
 
       // Disclaimer
-      drawSectionHeader(doc, '⚠️  Vedic Referral Disclaimer', C.ink)
+      drawSectionHeader(doc, '⚠️  Disclaimer & Terms of Use', C.ink)
       doc.moveDown(0.4)
       doc.font('Roboto').fontSize(7.5).fillColor(C.muted)
         .text('Vedic Astrology is an ancient interpretive science based on astronomical calculations and symbolic interpretations. All forecasts, suggestions, and remedies contained in this report are designed for personal growth, introspection, and guidance purposes only. They do not constitute formal medical, mental health, legal, investment, or financial advice. OyeAstro makes no guarantees regarding the accuracy or predictive outcomes of the calculations, and shall not be held liable for any decisions, actions, or outcomes undertaken by the recipient. Practice personal discretion.', 50, doc.y, { width: doc.page.width - 100, align: 'justify', lineGap: 2.5 })
@@ -642,11 +715,14 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
       doc.circle(doc.page.width / 2, 210, 44).lineWidth(0.5).strokeColor(C.gold).stroke()
       doc.font('Roboto-Bold').fontSize(36).fillColor(C.gold).text('✦', doc.page.width / 2 - 13, 192, { align: 'center' })
 
-      // Main branding
-      doc.font('Roboto-Bold').fontSize(28).fillColor(C.white)
-        .text('OYEASTRO', 40, 290, { width: doc.page.width - 80, align: 'center', characterSpacing: 4 })
-      
+      // Logo centered
+      const centeredLogoX = doc.page.width / 2 - 45
+      doc.font('Roboto-Bold').fontSize(20).fillColor(C.white)
+         .text('oyeastro', centeredLogoX, 290, { continued: true })
       doc.font('Roboto-Bold').fontSize(14).fillColor(C.gold)
+         .text('✦')
+
+      doc.font('Roboto-Bold').fontSize(15).fillColor(C.gold)
         .text('PREMIUM COSMIC FORECAST & BLUEPRINT', 40, 335, { width: doc.page.width - 80, align: 'center', characterSpacing: 1 })
 
       doc.moveTo(doc.page.width / 2 - 60, 362).lineTo(doc.page.width / 2 + 60, 362).lineWidth(1.5).strokeColor(C.gold).stroke()
@@ -675,13 +751,14 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
       doc.on('pageAdded', () => {
         pageNum++
         const savedY = doc.y
-        drawContentPageDecorations(doc, pageNum, `COSMIC REPORT: ${data.name.toUpperCase()}`)
+        drawPastelBanner(doc, pageNum, 'Personal Cosmic Forecast', `Prepared for ${data.name}`)
         doc.y = savedY
       })
 
       // ── Page 2: Astrologer-Ready Kundli Chart & Table ─────────────────────
       doc.addPage()
       outline.addItem('Vedic Birth Chart')
+      doc.y = 100
 
       drawSectionHeader(doc, '🪐  Vedic Birth Chart (Janma Kundli) — Astrologer Referral Profile', C.purpleMid)
       doc.moveDown(0.3)
@@ -692,7 +769,7 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
       }
       doc.y = cy + 120
 
-      drawSectionHeader(doc, '🌍  Planetary Longitude & Nakshatra Coordinates', C.lavender)
+      drawSectionHeader(doc, '🌍  Planetary Longitude & Nakshatra Coordinates', C.gold)
       
       const planets = ['Su', 'Mo', 'Ma', 'Me', 'Ju', 'Ve', 'Sa', 'Ra', 'Ke']
       const pNames: Record<string, string> = {
@@ -702,7 +779,7 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
 
       drawGridRow(doc, C.purpleMid, [
         { text: 'PLANET', width: 100, bold: true, color: C.white },
-        { text: 'VVEDIC RASHI', width: 110, bold: true, color: C.white },
+        { text: 'VEDIC RASHI', width: 110, bold: true, color: C.white },
         { text: 'DEGREE', width: 70, bold: true, color: C.white },
         { text: 'HOUSE', width: 60, bold: true, color: C.white },
         { text: 'NAKSHATRA (LORD)', width: 140, bold: true, color: C.white }
@@ -725,43 +802,116 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
         ])
       })
 
-      // ── Page 3: Problem, Solution, Impact Section ────────────────────────
+      // ── Page 3: Personal Life Profile: Problem, Solution & Impact ────────
       doc.addPage()
       outline.addItem('Problem & Solution')
+      doc.y = 100
 
-      drawSectionHeader(doc, '🔴  Life Blockages (Problem Statement)', C.coral)
-      doc.moveDown(0.4)
+      const colW = 168
+      const topY = doc.y
+      const tY = topY + 18
 
-      const personalProb = `Current dasha cycle and transit aspects indicate minor stagnation in career focus, feeling energetically drained due to Saturn transits, and emotional overthinking caused by Moon aspects. Undercurrents of stress during major work/life transitions might block the manifestation of positive yogas in your chart.`
-      doc.font('Roboto').fontSize(9).fillColor(C.ink).text(personalProb, 50, doc.y, { width: doc.page.width - 100, align: 'justify', lineGap: 3.5 })
-      doc.moveDown(1)
+      // 1. The Journey (Column 1)
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('1. The Journey', 40, topY)
+      drawCard(doc, 40, tY, colW, 205, C.white)
 
-      drawSectionHeader(doc, '🔑  Vedic Remedies & Solutions', C.gold)
-      doc.moveDown(0.4)
+      const pNodes = [
+        { label: 'Past Roots', desc: 'Childhood foundations and sub-conscious patterns.', icon: '🛖' },
+        { label: 'Active Cycle', desc: `Mahadasha of ${data.mahadasha} running.`, icon: '🪐' },
+        { label: 'Future Horizon', desc: 'Transformational growth periods.', icon: '🏹' }
+      ]
+      pNodes.forEach((n, idx) => {
+        const nY = tY + 12 + idx * 62
+        doc.font('Roboto-Bold').fontSize(9).fillColor(C.purpleMid).text(n.icon + ' ' + n.label, 50, nY)
+        doc.font('Roboto').fontSize(7.5).fillColor(C.muted).text(n.desc, 50, nY + 12, { width: colW - 20 })
+
+        if (idx < 2) {
+          doc.moveTo(56, nY + 36).lineTo(56, nY + 58).lineWidth(0.8).strokeColor(C.border).stroke()
+        }
+      })
+
+      // 2. Personal Partnership (Column 1 Bottom)
+      const hY = tY + 215
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('2. Cosmic Energies', 40, hY)
+      drawCard(doc, 40, hY + 18, colW, 95, C.white)
+      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.gold).text('☁  Mind/Body Vibe', 50, hY + 28)
+      doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(`Rising sign ${data.lagna} and nakshatra ${data.nakshatra} establish your core identity. Keeping these in energetic alignment unlocks inner peace.`, 50, hY + 42, { width: colW - 20, lineGap: 2 })
+
+      // 2. Problem Statement (Column 2 Top)
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('2. Problem Statement', 220, topY)
+      drawCard(doc, 220, tY, colW, 95, C.white)
+      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.rose).text('☁  Active Hurdles', 230, tY + 10)
+      
+      const personalProb = `Current dasha cycle and transit aspects indicate minor stagnation in career focus, feeling energetically drained due to Saturn transits, and emotional overthinking caused by Moon aspects.`
+      doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(personalProb, 230, tY + 24, { width: colW - 20, lineGap: 2.5 })
+
+      // 3. Solution (Column 2 Bottom)
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('3. Solution', 220, tY + 105)
+      const solY = tY + 123
+      drawCard(doc, 220, solY, colW, 205, C.goldBg, C.gold)
+      doc.font('Roboto-Bold').fontSize(9).fillColor(C.gold).text('Astrological Remedies', 230, solY + 12)
 
       const gemstone = data.remedies?.stone || 'Yellow Sapphire'
       const colors = data.remedies?.color || 'Bright Yellow'
       const mantraText = data.remedies?.mantra || 'Om Gram Greem Groum Sah Gurave Namah'
-      const tipsText = data.remedies?.tips || 'Offer water to the Sun daily and meditate during morning transition hours.'
+      const tipsText = data.remedies?.tips || 'Offer water to the Sun daily.'
 
-      doc.rect(46, doc.y, doc.page.width - 92, 90).fill('#FFFDF5')
-      doc.rect(46, doc.y, doc.page.width - 92, 90).lineWidth(0.5).strokeColor(C.gold).stroke()
+      const personalRems = [
+        { icon: '💎', t: 'Suggested Gemstone', d: `Wear a natural ${gemstone} on your index finger.` },
+        { icon: '🎨', t: 'Lucky Color', d: `Surround yourself with ${colors} for Jupiter strength.` },
+        { icon: '🕉', t: 'Mantra Meditate', d: `Chant "${mantraText}" daily.` }
+      ]
+
+      personalRems.forEach((r, idx) => {
+        const ry = solY + 30 + idx * 56
+        doc.font('Roboto-Bold').fontSize(8).fillColor(C.purpleMid).text(`${r.icon}  ${r.t}`, 230, ry)
+        doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(r.d, 230, ry + 12, { width: colW - 20, lineGap: 1.5 })
+      })
+
+      // 4. Impact (Column 3 Top)
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('4. Impact', 400, topY)
+      drawCard(doc, 400, tY, colW, 145, C.white)
+
+      const pProgress = [
+        { label: 'Career Potential', pct: 85, icon: '❤️', l: 'Elevated' },
+        { label: 'Emotional Peace', pct: 70, icon: '🌸', l: 'Harmonized' },
+        { label: 'Health Vitality', pct: 90, icon: '🌱', l: 'Flourishing' }
+      ]
+      pProgress.forEach((p, idx) => {
+        const py = tY + 12 + idx * 42
+        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.ink).text(p.label, 410, py)
+        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.lavender).text(`${p.pct}%`, 535, py, { align: 'right', width: 25 })
+        
+        // Progress track
+        doc.rect(410, py + 10, 115, 5).fill('#F0ECFB')
+        // Progress fill (Yellow/Gold accent)
+        doc.rect(410, py + 10, (115 * p.pct) / 100, 5).fill(C.gold)
+
+        // Icon indicator
+        doc.font('Roboto').fontSize(10).text(p.icon, 545, py + 5)
+        doc.font('Roboto-Bold').fontSize(5.5).fillColor(C.muted).text(p.l, 540, py + 18, { width: 30, align: 'center' })
+      })
+      doc.font('Roboto').fontSize(6.5).fillColor(C.muted).text('Projected improvements based on remedies.', 410, tY + 132)
+
+      // 5. The Future Outlook (Column 3 Bottom)
+      doc.font('Roboto-Bold').fontSize(11).fillColor(C.purpleMid).text('5. The Future Outlook', 400, tY + 155)
+      const futY = tY + 173
+      drawCard(doc, 400, futY, colW, 147, C.white)
       
-      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.gold).text('VEDIC STRENGTHENING PLAN:', 56, doc.y + 12)
-      doc.font('Roboto').fontSize(8.2).fillColor(C.ink).text(`1. Suggested Gemstone: Wear a natural ${gemstone} on your index finger on Thursday mornings.\n2. Auspicious Color: Surround yourself with ${colors} to boost Mercury/Jupiter energies.\n3. Planetary Chant: Meditate on the mantra "${mantraText}" 108 times daily.\n4. Daily Ritual: ${tipsText}`, 56, doc.y + 28, { width: doc.page.width - 112, lineGap: 3.5 })
-      doc.y += 105
+      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.green).text('❯  What\'s Next', 410, futY + 12)
+      
+      const personalImpact = `Successfully performing remedies dissolves blockages. You will experience up to 40% reduction in mental fatigue and unlock active yogas.`
+      doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(personalImpact, 410, futY + 26, { width: colW - 20, lineGap: 2 })
+      doc.font('Roboto').fontSize(6.8).fillColor(C.muted).text('"Aligning your stars changes your destiny."', 410, futY + 115, { width: colW - 20, align: 'center', oblique: true })
 
-      drawSectionHeader(doc, '🟢  Future Impact (Transformational Outlook)', C.purpleMid)
-      doc.moveDown(0.4)
+      doc.y = futY + 160
 
-      const personalImpact = `Successfully performing these solutions will align your active dasha eras, dissolving blockages in career and relationships. You will experience up to 40% reduction in mental fatigue, unlock the full manifestation of your chart\'s active yogas, and gain sharp clarity in major financial decisions.`
-      doc.font('Roboto').fontSize(9).fillColor(C.ink).text(personalImpact, 50, doc.y, { width: doc.page.width - 100, align: 'justify', lineGap: 3.5 })
-
-      // ── Page 4: 4-Month Journey Map ────────────────────────────────────────
+      // ── Page 4: 4-Month Personal Journey Map ──────────────────────────────
       doc.addPage()
-      outline.addItem('Annual Journey Map')
+      outline.addItem('Personal Journey Map')
+      doc.y = 100
 
-      drawSectionHeader(doc, '📅  4-Month Future Cosmic Journey Map', C.purpleMid)
+      drawSectionHeader(doc, '📅  4-Month Future Personal Journey Map', C.purpleMid)
       doc.moveDown(0.4)
 
       const personalSteps = [
@@ -792,34 +942,33 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
       ]
 
       personalSteps.forEach((step, idx) => {
-        const stepBg = idx % 2 === 0 ? '#FAF6FF' : C.white
         const stepY = doc.y
-        doc.rect(40, stepY, doc.page.width - 80, 70).fill(stepBg)
-        doc.rect(40, stepY, doc.page.width - 80, 70).lineWidth(0.5).strokeColor(C.border).stroke()
+        drawCard(doc, 40, stepY, doc.page.width - 80, 68, C.white)
         
-        // Month marker
-        doc.rect(50, stepY + 12, 6, 6).fill(C.gold)
-        doc.font('Roboto-Bold').fontSize(9.5).fillColor(C.purpleMid).text(step.month, 62, stepY + 10)
+        // Month marker with gold circle indicator
+        doc.circle(52, stepY + 15, 4).fill(C.gold)
+        doc.font('Roboto-Bold').fontSize(9.5).fillColor(C.purpleMid).text(step.month, 64, stepY + 10)
 
         // Transit details
         doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.muted).text('Transit Context: ', 50, stepY + 28)
         doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(step.transits, 125, stepY + 28)
 
         // Caution details
-        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.rose).text('Astro Caution:   ', 50, stepY + 41)
-        doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(step.caution, 125, stepY + 41)
+        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.rose).text('Astro Caution:   ', 50, stepY + 40)
+        doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(step.caution, 125, stepY + 40)
 
         // Vibe/Energy
-        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.green).text('Vibe Forecast:   ', 50, stepY + 54)
-        doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(step.vibe, 125, stepY + 54)
+        doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.green).text('Vibe Forecast:   ', 50, stepY + 52)
+        doc.font('Roboto').fontSize(7.5).fillColor(C.ink).text(step.vibe, 125, stepY + 52)
 
-        doc.y = stepY + 70
+        doc.y = stepY + 68
         doc.moveDown(0.3)
       })
 
-      // ── Page 5: Annual Forecast Chapters & Disclaimer ─────────────────────
+      // ── Page 5: Annual Chapters & Disclaimer ──────────────────────────────
       doc.addPage()
       outline.addItem('Annual Forecast')
+      doc.y = 100
 
       drawSectionHeader(doc, '📅  Life Chapters: Dasha Era Analysis', C.purpleMid)
       doc.moveDown(0.3)
@@ -827,7 +976,7 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
         .text(data.dashaAnalysis, 50, doc.y, { width: doc.page.width - 100, align: 'justify', lineGap: 3.5 })
       doc.moveDown(0.8)
 
-      drawSectionHeader(doc, '💼  Job & Cash Windows: Career Outlook', C.lavender)
+      drawSectionHeader(doc, '💼  Job & Cash Windows: Career Outlook', C.gold)
       doc.moveDown(0.3)
       doc.font('Roboto').fontSize(8.5).fillColor(C.ink)
         .text(data.careerWindows, 50, doc.y, { width: doc.page.width - 100, align: 'justify', lineGap: 3.5 })

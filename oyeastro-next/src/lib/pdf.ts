@@ -390,7 +390,9 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
       // ── Set up content page callback ──────────────────────────────────────
       doc.on('pageAdded', () => {
         pageNum++
+        const savedY = doc.y // Save current writing cursor position to prevent auto overflow infinite recursion
         drawContentPageDecorations(doc, pageNum)
+        doc.y = savedY // Restore cursor to continue writing context correctly
       })
 
       // ── Page 2: Kundli & Planetary Alignment ──────────────────────────────
@@ -501,7 +503,7 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
 
       const activeYogas = data.yogas?.filter(y => y.detected) || [
         { name: 'Gaja-Kesari Yoga', description: 'Moon & Jupiter in kendra. Grants intelligence, luxury, and lasting fame.' },
-        { name: 'Budhaditya Yoga', description: 'Sun & Mercury conjunction in auspicious house. Confers analytical brilliance.' }
+        { name: 'Budhaditya Yoga', description: 'Sun & Mercury conjunction. Confers sharp intelligence.' }
       ]
 
       activeYogas.forEach(yoga => {
@@ -582,7 +584,7 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
       doc.font('Roboto').fontSize(8.5).fillColor(C.ink).text(rem.color, 195, remY + 28)
 
       doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.gold).text('VEDIC MANTRA:       ', 60, remY + 44)
-      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.lavender).text(rem.regularFontPath || rem.mantra, 195, remY + 44)
+      doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.lavender).text(rem.mantra, 195, remY + 44)
 
       doc.y = remY + 80
       doc.font('Roboto').fontSize(8.5).fillColor(C.ink)
@@ -662,7 +664,9 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
       // ── Set up content page callback ──────────────────────────────────────
       doc.on('pageAdded', () => {
         pageNum++
+        const savedY = doc.y // Save current writing cursor position to prevent auto overflow infinite recursion
         drawContentPageDecorations(doc, pageNum)
+        doc.y = savedY // Restore cursor to continue writing context correctly
       })
 
       // ── Page 2: Kundli Charts Side-by-Side ────────────────────────────────

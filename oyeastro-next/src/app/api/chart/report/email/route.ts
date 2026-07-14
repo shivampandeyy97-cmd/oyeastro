@@ -10,14 +10,17 @@ export const maxDuration = 60 // allow up to 60s for AI + PDF generation
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { chartId, email, isCompat, cName1, cName2, score, details, narrative, chart1, chart2 } = body
+    const {
+      chartId, email, isCompat, cName1, cName2, score, details, narrative,
+      chart1, chart2, mangalDoshaA, mangalDoshaB, hasMangalDoshaCancellation
+    } = body
 
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 })
     }
 
     if (isCompat) {
-      // Generate compatibility PDF with kundli charts for both partners
+      // Generate compatibility PDF with kundli charts and Mangal Dosha analysis
       const pdfBuffer = await generateCompatibilityPdf({
         cName1: cName1 || 'Partner 1',
         cName2: cName2 || 'Partner 2',
@@ -26,6 +29,9 @@ export async function POST(req: NextRequest) {
         narrative: narrative || 'Focus on open communication to harmonize your energies.',
         chart1: chart1 || undefined,
         chart2: chart2 || undefined,
+        mangalDoshaA: mangalDoshaA,
+        mangalDoshaB: mangalDoshaB,
+        hasMangalDoshaCancellation: hasMangalDoshaCancellation,
       })
 
       await sendEmail({

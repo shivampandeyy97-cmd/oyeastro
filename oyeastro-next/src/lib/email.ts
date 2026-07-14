@@ -13,13 +13,12 @@ function getTransporter() {
       return null
     }
 
+    // Do NOT use pool: true in Vercel Serverless environment.
+    // Frozen serverless containers can result in closed sockets or ECONNRESET on subsequent requests.
     cachedTransporter = nodemailer.createTransport({
       host,
       port,
       secure: port === 465,
-      pool: true, // Keep connections open and reuse them
-      maxConnections: 3,
-      maxMessages: 100,
       auth: {
         user,
         pass,

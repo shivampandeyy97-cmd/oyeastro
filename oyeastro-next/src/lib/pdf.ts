@@ -1,4 +1,5 @@
 import PDFDocument from 'pdfkit'
+import path from 'path'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface PlanetPositions {
@@ -76,13 +77,6 @@ const RASHI_SHORT = [
 ]
 
 // ─── North Indian Kundli Chart (Diamond/rhombus style) ───────────────────────
-/**
- * Draws the classic North Indian diamond Kundli chart using PDFKit primitives.
- * House 1 (Lagna) is always in the top-center diamond cell.
- * Houses go clockwise: 1(top), 2(top-right), 3(right), 4(bottom-right),
- *   5(bottom), 6(bottom-left), 7(left), 8(top-left),
- *   9(top), 10(right), 11(bottom), 12(left) — standard North Indian layout.
- */
 function drawKundliChart(
   doc: PDFKit.PDFDocument,
   cx: number,   // center x
@@ -98,7 +92,7 @@ function drawKundliChart(
   const y0 = cy - s / 2
 
   // Title above chart
-  doc.font('Helvetica-Bold').fontSize(9).fillColor(C.lavender)
+  doc.font('Roboto-Bold').fontSize(9).fillColor(C.lavender)
     .text(title, cx - s / 2, y0 - 18, { width: s, align: 'center' })
 
   // Background
@@ -158,12 +152,7 @@ function drawKundliChart(
     })
   }
 
-  // North Indian house position centers (relative to chart square)
-  // 12 houses: standard North Indian layout
-  // H1=top-center, H2=top-right, H3=right-top, H4=right-bottom,
-  // H5=bottom-right, H6=bottom-center, H7=bottom-left, H8=left-bottom,
-  // H9=left-top, H10=top-left, H11=top (2nd top), H12=left (2nd left)
-  // Actually, North Indian: H1 always top-center diamond, clockwise
+  // North Indian house position centers
   const q = s / 4
   const houseCenters: [number, number][] = [
     [cx,        y0 + q],        // H1  top diamond
@@ -187,17 +176,17 @@ function drawKundliChart(
     const planets = planetsInHouse[hNum] || []
 
     // House number (small)
-    doc.font('Helvetica').fontSize(6).fillColor('#AAAAAA')
+    doc.font('Roboto').fontSize(6).fillColor('#AAAAAA')
       .text(`H${hNum}`, hx - 10, hy - 14, { width: 20, align: 'center' })
 
     // Sign abbreviation
-    doc.font('Helvetica-Bold').fontSize(7).fillColor(C.midnight)
+    doc.font('Roboto-Bold').fontSize(7).fillColor(C.midnight)
       .text(sign, hx - 12, hy - 5, { width: 24, align: 'center' })
 
     // Planets (colored, stacked)
     planets.forEach((pl, pIdx) => {
       const color = pl === 'As' ? C.coral : pl === 'Mo' ? C.teal : pl === 'Su' ? C.gold : C.sage
-      doc.font('Helvetica-Bold').fontSize(6).fillColor(color)
+      doc.font('Roboto-Bold').fontSize(6).fillColor(color)
         .text(pl, hx - 12, hy + 5 + pIdx * 8, { width: 24, align: 'center' })
     })
   })
@@ -207,7 +196,7 @@ function drawKundliChart(
 function sectionHeader(doc: PDFKit.PDFDocument, text: string, color: string) {
   const y = doc.y
   doc.rect(50, y, 512, 22).fill(color)
-  doc.font('Helvetica-Bold').fontSize(11).fillColor(C.white)
+  doc.font('Roboto-Bold').fontSize(11).fillColor(C.white)
     .text(text, 58, y + 5, { width: 500 })
   doc.y = y + 26
   doc.moveDown(0.4)
@@ -216,14 +205,14 @@ function sectionHeader(doc: PDFKit.PDFDocument, text: string, color: string) {
 // ─── Info Row ────────────────────────────────────────────────────────────────
 function infoRow(doc: PDFKit.PDFDocument, label: string, value: string, labelColor = C.muted, valueColor = C.ink) {
   const y = doc.y
-  doc.font('Helvetica-Bold').fontSize(9).fillColor(labelColor).text(label, 60, y, { width: 160, continued: false })
-  doc.font('Helvetica').fontSize(9).fillColor(valueColor).text(value, 230, y, { width: 330 })
+  doc.font('Roboto-Bold').fontSize(9).fillColor(labelColor).text(label, 60, y, { width: 160, continued: false })
+  doc.font('Roboto').fontSize(9).fillColor(valueColor).text(value, 230, y, { width: 330 })
   doc.moveDown(0.35)
 }
 
 // ─── Colored Text Block ───────────────────────────────────────────────────────
 function textBlock(doc: PDFKit.PDFDocument, content: string, color = C.ink) {
-  doc.font('Helvetica').fontSize(10).fillColor(color)
+  doc.font('Roboto').fontSize(10).fillColor(color)
     .text(content, 60, doc.y, { align: 'justify', lineGap: 3, width: 492 })
   doc.moveDown(0.8)
 }
@@ -235,8 +224,8 @@ function scoreBar(doc: PDFKit.PDFDocument, label: string, pct: number, color: st
   const barH = 10
   const barX = 230
 
-  doc.font('Helvetica').fontSize(9).fillColor(C.ink).text(label, 60, y + 1, { width: 160 })
-  doc.font('Helvetica-Bold').fontSize(9).fillColor(color).text(`${pct}%`, 570, y + 1, { align: 'right', width: 40 })
+  doc.font('Roboto').fontSize(9).fillColor(C.ink).text(label, 60, y + 1, { width: 160 })
+  doc.font('Roboto-Bold').fontSize(9).fillColor(color).text(`${pct}%`, 570, y + 1, { align: 'right', width: 40 })
 
   // Background bar
   doc.rect(barX, y, barW, barH).fill('#EDE0FF')
@@ -247,9 +236,9 @@ function scoreBar(doc: PDFKit.PDFDocument, label: string, pct: number, color: st
 
 // ─── Page Footer ─────────────────────────────────────────────────────────────
 function addFooter(doc: PDFKit.PDFDocument, pageNum: number) {
-  doc.font('Helvetica').fontSize(8).fillColor(C.muted)
+  doc.font('Roboto').fontSize(8).fillColor(C.muted)
     .text('Powered by OyeAstro · oyeastro.com · Vedic Astrology Engine', 50, 800, { width: 495, align: 'center' })
-  doc.font('Helvetica').fontSize(8).fillColor(C.muted)
+  doc.font('Roboto').fontSize(8).fillColor(C.muted)
     .text(`Page ${pageNum}`, 545, 800, { align: 'right', width: 60 })
 }
 
@@ -260,9 +249,9 @@ function bannerHeader(doc: PDFKit.PDFDocument, title: string, subtitle: string, 
   doc.circle(560, -20, 80).fill('#ffffff10')
   doc.circle(50, 110, 60).fill('#ffffff10')
 
-  doc.font('Helvetica-Bold').fontSize(22).fillColor(C.white)
+  doc.font('Roboto-Bold').fontSize(22).fillColor(C.white)
     .text(title, 50, 28, { width: 512, align: 'center' })
-  doc.font('Helvetica').fontSize(11).fillColor('#ffffffCC')
+  doc.font('Roboto').fontSize(11).fillColor('#ffffffCC')
     .text(subtitle, 50, 58, { width: 512, align: 'center' })
 
   doc.y = 115
@@ -275,6 +264,12 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     try {
       const doc = new PDFDocument({ margin: 50, size: 'A4', autoFirstPage: true })
+      
+      const regularFontPath = path.join(process.cwd(), 'src/assets/fonts/Roboto-Regular.ttf')
+      const boldFontPath = path.join(process.cwd(), 'src/assets/fonts/Roboto-Bold.ttf')
+      doc.registerFont('Roboto', regularFontPath)
+      doc.registerFont('Roboto-Bold', boldFontPath)
+
       const buffers: Buffer[] = []
       doc.on('data', (c) => buffers.push(c))
       doc.on('end', () => resolve(Buffer.concat(buffers)))
@@ -291,13 +286,13 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
       // Big Three Info Box
       doc.rect(50, doc.y, 512, 70).fill(C.bgPurple)
       const infoY = doc.y + 8
-      doc.font('Helvetica-Bold').fontSize(10).fillColor(C.lavender)
+      doc.font('Roboto-Bold').fontSize(10).fillColor(C.lavender)
         .text('YOUR COSMIC PROFILE', 50, infoY, { width: 512, align: 'center' })
-      doc.font('Helvetica').fontSize(9).fillColor(C.ink)
+      doc.font('Roboto').fontSize(9).fillColor(C.ink)
         .text(`Rising Sign (Lagna): ${data.lagna}    ·    Nakshatra: ${data.nakshatra}    ·    Active Mahadasha: ${data.mahadasha}`, 50, infoY + 18, { width: 512, align: 'center' })
 
       if (data.bigThree) {
-        doc.font('Helvetica').fontSize(9).fillColor(C.muted)
+        doc.font('Roboto').fontSize(9).fillColor(C.muted)
           .text(`Sun: ${data.bigThree?.sun?.sign || ''}   ·   Moon: ${data.bigThree?.moon?.sign || ''}   ·   Rising: ${data.bigThree?.rising?.sign || ''}`, 50, infoY + 34, { width: 512, align: 'center' })
       }
       doc.y = infoY + 72
@@ -327,9 +322,9 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
           const house = data.houseData!.placements?.[p]?.houseIndex
           const color = i % 2 === 0 ? '#FAF6FF' : C.white
           doc.rect(50, doc.y, 512, 16).fill(color)
-          doc.font('Helvetica-Bold').fontSize(8).fillColor(C.midnight)
+          doc.font('Roboto-Bold').fontSize(8).fillColor(C.midnight)
             .text(pNames[p], 60, doc.y + 3, { width: 80 })
-          doc.font('Helvetica').fontSize(8).fillColor(C.ink)
+          doc.font('Roboto').fontSize(8).fillColor(C.ink)
             .text(RASHI_NAMES[signIdx], 150, doc.y + 3, { width: 100 })
             .text(`${degree}°`, 260, doc.y + 3, { width: 60 })
             .text(`House ${house}`, 330, doc.y + 3, { width: 80 })
@@ -348,9 +343,9 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
         data.yogas.forEach(yoga => {
           const dotColor = yoga.detected ? C.sage : C.muted
           doc.rect(60, doc.y, 8, 8).fill(dotColor)
-          doc.font('Helvetica-Bold').fontSize(9).fillColor(yoga.detected ? C.sage : C.muted)
+          doc.font('Roboto-Bold').fontSize(9).fillColor(yoga.detected ? C.sage : C.muted)
             .text(yoga.name, 76, doc.y - 1, { width: 200 })
-          doc.font('Helvetica').fontSize(8).fillColor(C.ink)
+          doc.font('Roboto').fontSize(8).fillColor(C.ink)
             .text(yoga.description, 60, doc.y + 2, { width: 492, lineGap: 2 })
           doc.moveDown(0.8)
         })
@@ -368,7 +363,7 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
         doc.moveDown(0.5)
         sectionHeader(doc, '🟢  Your Cosmic Strengths', C.sage)
         data.flags.green?.forEach(g => {
-          doc.font('Helvetica').fontSize(9).fillColor(C.ink)
+          doc.font('Roboto').fontSize(9).fillColor(C.ink)
             .text(`✓  ${g}`, 65, doc.y, { width: 492, lineGap: 2 })
           doc.moveDown(0.4)
         })
@@ -376,7 +371,7 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
         doc.moveDown(0.5)
         sectionHeader(doc, '🔴  Watch Out For', C.coral)
         data.flags.red?.forEach(r => {
-          doc.font('Helvetica').fontSize(9).fillColor(C.ink)
+          doc.font('Roboto').fontSize(9).fillColor(C.ink)
             .text(`⚠  ${r}`, 65, doc.y, { width: 492, lineGap: 2 })
           doc.moveDown(0.4)
         })
@@ -419,7 +414,7 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
       // Final footer note
       doc.moveDown(1)
       doc.rect(50, doc.y, 512, 40).fill(C.bgPurple)
-      doc.font('Helvetica').fontSize(9).fillColor(C.muted)
+      doc.font('Roboto').fontSize(9).fillColor(C.muted)
         .text('This report has been generated using the Vedic astrology calculation engine built by OyeAstro. Interpretations are meant for insight and inspiration — not as medical or legal advice.', 58, doc.y + 6, { width: 496, align: 'justify', lineGap: 2 })
 
       doc.end()
@@ -436,6 +431,12 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
   return new Promise((resolve, reject) => {
     try {
       const doc = new PDFDocument({ margin: 50, size: 'A4', autoFirstPage: true })
+
+      const regularFontPath = path.join(process.cwd(), 'src/assets/fonts/Roboto-Regular.ttf')
+      const boldFontPath = path.join(process.cwd(), 'src/assets/fonts/Roboto-Bold.ttf')
+      doc.registerFont('Roboto', regularFontPath)
+      doc.registerFont('Roboto-Bold', boldFontPath)
+
       const buffers: Buffer[] = []
       doc.on('data', (c) => buffers.push(c))
       doc.on('end', () => resolve(Buffer.concat(buffers)))
@@ -452,15 +453,15 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
       // Big Score Box
       const scoreY = doc.y
       doc.rect(156, scoreY, 300, 90).fill(C.bgPurple)
-      doc.font('Helvetica').fontSize(9).fillColor(C.muted)
+      doc.font('Roboto').fontSize(9).fillColor(C.muted)
         .text('ASHTAKOOT MATCH SCORE', 156, scoreY + 12, { width: 300, align: 'center' })
 
       const scoreColor = data.score >= 70 ? C.sage : data.score >= 45 ? C.coral : '#E53935'
-      doc.font('Helvetica-Bold').fontSize(44).fillColor(scoreColor)
+      doc.font('Roboto-Bold').fontSize(44).fillColor(scoreColor)
         .text(`${data.score}%`, 156, scoreY + 28, { width: 300, align: 'center' })
 
       const label = data.score >= 70 ? 'Highly Compatible ✨' : data.score >= 45 ? 'Moderate Compatibility' : 'Challenging Match'
-      doc.font('Helvetica').fontSize(10).fillColor(C.muted)
+      doc.font('Roboto').fontSize(10).fillColor(C.muted)
         .text(label, 156, scoreY + 72, { width: 300, align: 'center' })
 
       doc.y = scoreY + 100
@@ -481,7 +482,7 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
       sectionHeader(doc, '🌌  Cosmic Connection Insight', C.midnight)
       doc.rect(50, doc.y, 512, 4).fill(C.lavender)
       doc.moveDown(0.6)
-      doc.font('Helvetica').fontSize(11).fillColor(C.midnight)
+      doc.font('Roboto').fontSize(11).fillColor(C.midnight)
         .text(`"${data.narrative}"`, 60, doc.y, { align: 'justify', lineGap: 4, width: 492, oblique: true })
       doc.moveDown(1.2)
 
@@ -531,7 +532,7 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
 
         // Header row
         doc.rect(50, doc.y, 512, 18).fill(C.midnight)
-        doc.font('Helvetica-Bold').fontSize(8).fillColor(C.white)
+        doc.font('Roboto-Bold').fontSize(8).fillColor(C.white)
           .text('Planet', 60, doc.y + 5, { width: 70 })
           .text(`${data.cName1} — Sign / House`, 140, doc.y + 5, { width: 190 })
           .text(`${data.cName2} — Sign / House`, 340, doc.y + 5, { width: 190 })
@@ -545,16 +546,16 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
           const sign1 = RASHI_NAMES[Math.floor(pos1 / 30)]
           const house1 = data.chart1!.houseData!.placements?.[p]?.houseIndex
 
-          doc.font('Helvetica-Bold').fontSize(8).fillColor(C.midnight)
+          doc.font('Roboto-Bold').fontSize(8).fillColor(C.midnight)
             .text(pNames[p], 60, doc.y + 4, { width: 70 })
-          doc.font('Helvetica').fontSize(8).fillColor(C.ink)
+          doc.font('Roboto').fontSize(8).fillColor(C.ink)
             .text(`${sign1} · H${house1}`, 140, doc.y + 4, { width: 190 })
 
           if (data.chart2?.positions) {
             const pos2 = data.chart2.positions[p as keyof PlanetPositions]
             const sign2 = RASHI_NAMES[Math.floor(pos2 / 30)]
             const house2 = data.chart2?.houseData?.placements?.[p]?.houseIndex
-            doc.font('Helvetica').fontSize(8).fillColor(C.ink)
+            doc.font('Roboto').fontSize(8).fillColor(C.ink)
               .text(`${sign2} · H${house2}`, 340, doc.y + 4, { width: 190 })
           }
           doc.y += 16
@@ -564,7 +565,7 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
       // ── Final footer note ────────────────────────────────────────────────
       doc.moveDown(1.5)
       doc.rect(50, doc.y, 512, 40).fill(C.bgPurple)
-      doc.font('Helvetica').fontSize(9).fillColor(C.muted)
+      doc.font('Roboto').fontSize(9).fillColor(C.muted)
         .text('This compatibility report has been generated using the Vedic Ashtakoot method. It is meant for insight and inspiration — not medical or legal advice. Powered by OyeAstro · oyeastro.com', 58, doc.y + 8, { width: 496, align: 'justify', lineGap: 2 })
 
       doc.end()

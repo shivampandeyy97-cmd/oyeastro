@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import type { ChartResult, BirthData, CosmicVibeResult, HorizonVibeData } from '@/lib/astro/types'
+import { trackCosmicUsed, trackCompatibilityUsed } from '@/lib/analytics'
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -207,6 +208,7 @@ function HomeContent() {
       }
       const result = await res.json() as ChartResult
       setChart(result)
+      trackCosmicUsed()
       setTimeout(() => {
         setIsFlipped(true)
       }, 600)
@@ -472,6 +474,7 @@ function HomeContent() {
         destiny: destinyKuta ? Math.round((destinyKuta.scored / destinyKuta.maxPoints) * 100) : 60,
         trust: trustKuta ? Math.round((trustKuta.scored / trustKuta.maxPoints) * 100) : 80,
       })
+      trackCompatibilityUsed()
       setCompatChecked(true)
     } catch (err: any) {
       alert(`Error checking compatibility: ${err.message}`)

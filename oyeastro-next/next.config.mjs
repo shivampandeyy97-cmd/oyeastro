@@ -5,6 +5,9 @@ const nextConfig = {
   },
   experimental: {
     serverComponentsExternalPackages: ['swisseph-wasm'],
+    outputFileTracingIncludes: {
+      '/api/**/*': ['./node_modules/pdfkit/js/data/*.afm'],
+    },
   },
 };
 

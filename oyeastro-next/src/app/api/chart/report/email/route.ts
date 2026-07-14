@@ -4,23 +4,28 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { generateCompatibilityPdf, generatePersonalPdf } from '@/lib/pdf'
 import { sendEmail } from '@/lib/email'
 
+export const runtime = 'nodejs'
+export const maxDuration = 60 // allow up to 60s for AI + PDF generation
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { chartId, email, isCompat, cName1, cName2, score, details, narrative } = body
+    const { chartId, email, isCompat, cName1, cName2, score, details, narrative, chart1, chart2 } = body
 
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 })
     }
 
     if (isCompat) {
-      // Generate compatibility PDF buffer
+      // Generate compatibility PDF with kundli charts for both partners
       const pdfBuffer = await generateCompatibilityPdf({
         cName1: cName1 || 'Partner 1',
         cName2: cName2 || 'Partner 2',
         score: score || 0,
         details: details || {},
-        narrative: narrative || 'Focus on open communication to harmonize your energies.'
+        narrative: narrative || 'Focus on open communication to harmonize your energies.',
+        chart1: chart1 || undefined,
+        chart2: chart2 || undefined,
       })
 
       await sendEmail({
@@ -31,48 +36,18 @@ export async function POST(req: NextRequest) {
             <h2 style="font-size: 20px; font-weight: bold; color: #1a1208; border-bottom: 1px solid #f0f0f0; padding-bottom: 12px; margin-bottom: 16px;">
               ✨ OyeAstro Cosmic Compatibility Report
             </h2>
-            
             <p style="font-size: 14px; line-height: 1.6; color: #4a4a4a;">
-              Here is your certified Vedic Ashtakoot compatibility breakdown for <strong>${cName1 || 'Partner 1'}</strong> and <strong>${cName2 || 'Partner 2'}</strong>. We have also attached a complete breakdown PDF to this email.
+              Here is your certified Vedic Ashtakoot compatibility breakdown for <strong>${cName1 || 'Partner 1'}</strong> and <strong>${cName2 || 'Partner 2'}</strong>. Your detailed PDF report with birth charts (Kundli) for both partners is attached to this email.
             </p>
-
-            <div style="background-color: #fcfbfa; border: 1px solid #eee; border-radius: 12px; padding: 16px; margin: 20px 0; text-align: center;">
+            <div style="background-color: #f8f4ff; border: 1px solid #eee; border-radius: 12px; padding: 16px; margin: 20px 0; text-align: center;">
               <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; display: block; margin-bottom: 4px;">Cosmic Match Score</span>
-              <span style="font-size: 48px; font-weight: bold; color: #FF7A45;">${score || 0}%</span>
+              <span style="font-size: 48px; font-weight: bold; color: #8A5CF5;">${score || 0}%</span>
             </div>
-
-            <h3 style="font-size: 14px; font-weight: bold; color: #1a1208; margin-top: 24px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
-              Detailed Compatibility Dimensions
-            </h3>
-
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
-              <tr style="border-bottom: 1px solid #f5f5f5;">
-                <td style="padding: 10px 0; font-size: 13px; color: #666;">🎭 Temperament (Gana):</td>
-                <td style="padding: 10px 0; font-size: 13px; font-weight: bold; text-align: right; color: #333;">${details?.temp || 0}%</td>
-              </tr>
-              <tr style="border-bottom: 1px solid #f5f5f5;">
-                <td style="padding: 10px 0; font-size: 13px; color: #666;">💖 Heart Connect (Bhakoot):</td>
-                <td style="padding: 10px 0; font-size: 13px; font-weight: bold; text-align: right; color: #333;">${details?.heart || 0}%</td>
-              </tr>
-              <tr style="border-bottom: 1px solid #f5f5f5;">
-                <td style="padding: 10px 0; font-size: 13px; color: #666;">🚀 Destiny (Yoni/Nadi):</td>
-                <td style="padding: 10px 0; font-size: 13px; font-weight: bold; text-align: right; color: #333;">${details?.destiny || 0}%</td>
-              </tr>
-              <tr style="border-bottom: 1px solid #f5f5f5;">
-                <td style="padding: 10px 0; font-size: 13px; color: #666;">🤝 Trust Bond (Graha Maitri):</td>
-                <td style="padding: 10px 0; font-size: 13px; font-weight: bold; text-align: right; color: #333;">${details?.trust || 0}%</td>
-              </tr>
-            </table>
-
-            <h3 style="font-size: 14px; font-weight: bold; color: #1a1208; margin-top: 24px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
-              Cosmic Connection Insight
-            </h3>
-            <div style="background-color: #FFF2EC; border-left: 3px solid #FF7A45; border-radius: 8px; padding: 16px; font-style: italic; font-size: 13.5px; line-height: 1.6; color: #333; margin-bottom: 24px;">
-              "${narrative || 'Focus on open communication to harmonize your energies.'}"
-            </div>
-
+            <p style="font-size: 13px; color: #666; margin-top: 16px;">
+              Open the attached PDF for your complete Kundli charts, Ashtakoot breakdown, and cosmic compatibility insight.
+            </p>
             <p style="font-size: 11px; color: #bbb; text-align: center; border-top: 1px solid #f0f0f0; padding-top: 16px; margin-top: 32px;">
-              This report is powered by OyeAstro mathematical astrology engine.
+              This report is powered by OyeAstro mathematical astrology engine · oyeastro.com
             </p>
           </div>
         `,
@@ -101,6 +76,11 @@ export async function POST(req: NextRequest) {
         ? JSON.parse(chartData.chart_result)
         : chartData.chart_result
 
+      if (!chartData.is_paid) {
+        return NextResponse.json({ error: 'Payment required for report' }, { status: 402 })
+      }
+
+      // Generate or retrieve the AI premium report
       let report = chartData.premium_report
       if (!report) {
         const { generatePremiumReport } = await import('@/lib/gemini')
@@ -108,7 +88,7 @@ export async function POST(req: NextRequest) {
         await updateDoc(docRef, { premium_report: report })
       }
 
-      // Generate Personal PDF
+      // Generate Personal PDF with full Kundli chart
       const pdfBuffer = await generatePersonalPdf({
         name: chartResult.meta.name || 'Bestie',
         lagna: chartResult.bigThree.rising.sign,
@@ -119,6 +99,14 @@ export async function POST(req: NextRequest) {
         careerWindows: report.careerWindows,
         loveWindows: report.loveWindows,
         healthWarnings: report.healthWarnings,
+        positions: chartResult.positions,
+        houseData: chartResult.houseData,
+        bigThree: chartResult.bigThree,
+        dasha: chartResult.dasha,
+        yogas: chartResult.yogas,
+        vibeScore: chartResult.vibeScore,
+        flags: chartResult.flags,
+        remedies: chartResult.remedies,
       })
 
       await sendEmail({
@@ -127,13 +115,16 @@ export async function POST(req: NextRequest) {
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #f0f0f0; border-radius: 16px;">
             <h2 style="font-size: 20px; font-weight: bold; color: #1a1208; border-bottom: 1px solid #f0f0f0; padding-bottom: 12px; margin-bottom: 16px;">
-              🔮 Your Premium Cosmic Forecast is Ready!
+              🔮 Your Premium 2025–2026 Cosmic Forecast is Ready!
             </h2>
             <p style="font-size: 14px; line-height: 1.6; color: #4a4a4a;">
-              Hello ${chartResult.meta.name || 'Bestie'}, your purchase for the 2025-2026 Personal Yearly Forecast has been completed successfully. We have attached your complete, detailed PDF report to this email.
+              Hello <strong>${chartResult.meta.name || 'Bestie'}</strong>, your personalised Vedic astrology report is attached to this email. It includes your full Kundli chart, active yogas, planetary positions, vibe score, and a detailed 5-chapter cosmic forecast for 2025–2026.
             </p>
-            <p style="font-size: 13px; color: #666;">
-              Enjoy your cosmic mapping, and let the stars guide your way.
+            <p style="font-size: 13px; color: #666; margin-top: 16px;">
+              Open the PDF to explore your complete cosmic blueprint. The stars have spoken! 🌟
+            </p>
+            <p style="font-size: 11px; color: #bbb; text-align: center; border-top: 1px solid #f0f0f0; padding-top: 16px; margin-top: 32px;">
+              Powered by OyeAstro · oyeastro.com
             </p>
           </div>
         `,

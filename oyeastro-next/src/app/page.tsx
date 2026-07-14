@@ -139,6 +139,7 @@ function HomeContent() {
     destiny: 60,
     trust: 82
   })
+  const [compatCharts, setCompatCharts] = useState<{ chart1?: any; chart2?: any }>({})
 
   // Autocomplete 1
   useEffect(() => {
@@ -474,6 +475,8 @@ function HomeContent() {
         destiny: destinyKuta ? Math.round((destinyKuta.scored / destinyKuta.maxPoints) * 100) : 60,
         trust: trustKuta ? Math.round((trustKuta.scored / trustKuta.maxPoints) * 100) : 80,
       })
+      // Save chart data so PDF generator gets Kundli details for both partners
+      setCompatCharts({ chart1: data.personA, chart2: data.personB })
       trackCompatibilityUsed()
       setCompatChecked(true)
     } catch (err: any) {
@@ -571,7 +574,7 @@ function HomeContent() {
               const key = `compat_paid_${cName1.toLowerCase().trim()}_${cName2.toLowerCase().trim()}`
               localStorage.setItem(key, 'true')
 
-              // Auto-trigger sending the email asynchronously
+              // Auto-trigger sending the email asynchronously with full chart data
               if (cEmail) {
                 fetch('/api/chart/report/email', {
                   method: 'POST',
@@ -585,6 +588,8 @@ function HomeContent() {
                     score: compatScore,
                     details: compatDetails,
                     narrative: compatText,
+                    chart1: compatCharts.chart1,
+                    chart2: compatCharts.chart2,
                   }),
                 }).catch(err => console.error('Auto compatibility email dispatch failed:', err))
               }

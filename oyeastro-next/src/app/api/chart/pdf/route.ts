@@ -61,6 +61,14 @@ export async function GET(req: NextRequest) {
         report = await generatePremiumReport(chartResult)
       }
 
+      let cosmicVibe = null
+      try {
+        const { generateCosmicVibeResult } = await import('@/lib/gemini')
+        cosmicVibe = await generateCosmicVibeResult(chartResult)
+      } catch (err) {
+        console.error('[PDF Download API] Vibe fetch failed, using fallback:', err)
+      }
+
       const pdfBuffer = await generatePersonalPdf({
         name: chartResult.meta.name || 'Bestie',
         lagna: chartResult.bigThree.rising.sign,
@@ -71,6 +79,15 @@ export async function GET(req: NextRequest) {
         careerWindows: report.careerWindows,
         loveWindows: report.loveWindows,
         healthWarnings: report.healthWarnings,
+        positions: chartResult.positions,
+        houseData: chartResult.houseData,
+        bigThree: chartResult.bigThree,
+        dasha: chartResult.dasha,
+        yogas: chartResult.yogas,
+        vibeScore: chartResult.vibeScore,
+        flags: chartResult.flags,
+        remedies: chartResult.remedies,
+        cosmicVibe: cosmicVibe || undefined,
       })
 
       return new NextResponse(pdfBuffer as any, {

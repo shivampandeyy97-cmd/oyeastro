@@ -94,6 +94,14 @@ export async function POST(req: NextRequest) {
         await updateDoc(docRef, { premium_report: report })
       }
 
+      let cosmicVibe = null
+      try {
+        const { generateCosmicVibeResult } = await import('@/lib/gemini')
+        cosmicVibe = await generateCosmicVibeResult(chartResult)
+      } catch (err) {
+        console.error('[Email Send API] Vibe fetch failed, using fallback:', err)
+      }
+
       // Generate Personal PDF with full Kundli chart
       const pdfBuffer = await generatePersonalPdf({
         name: chartResult.meta.name || 'Bestie',
@@ -113,6 +121,7 @@ export async function POST(req: NextRequest) {
         vibeScore: chartResult.vibeScore,
         flags: chartResult.flags,
         remedies: chartResult.remedies,
+        cosmicVibe: cosmicVibe || undefined,
       })
 
       await sendEmail({

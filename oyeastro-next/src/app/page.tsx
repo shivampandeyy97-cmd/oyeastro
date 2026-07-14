@@ -1511,20 +1511,25 @@ function HomeContent() {
                                   return
                                 }
                                 try {
-                                  const verifyRes = await fetch('/api/chart/report/email', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                      chartId: `compat_${cName1}_${cName2}`,
-                                      email: cEmail,
-                                      isCompat: true,
-                                      cName1,
-                                      cName2,
-                                      score: compatScore,
-                                      details: compatDetails,
-                                      narrative: compatText,
-                                    }),
-                                  })
+                                    const verifyRes = await fetch('/api/chart/report/email', {
+                                     method: 'POST',
+                                     headers: { 'Content-Type': 'application/json' },
+                                     body: JSON.stringify({
+                                       chartId: `compat_${cName1}_${cName2}`,
+                                       email: cEmail,
+                                       isCompat: true,
+                                       cName1,
+                                       cName2,
+                                       score: compatScore,
+                                       details: compatDetails,
+                                       narrative: compatText,
+                                       chart1: compatCharts.chart1,
+                                       chart2: compatCharts.chart2,
+                                       mangalDoshaA: compatCharts.mangalDoshaA,
+                                       mangalDoshaB: compatCharts.mangalDoshaB,
+                                       hasMangalDoshaCancellation: compatCharts.hasMangalDoshaCancellation,
+                                     }),
+                                   })
                                   if (verifyRes.ok) {
                                     alert('Report PDF sent to your email successfully!')
                                   } else {

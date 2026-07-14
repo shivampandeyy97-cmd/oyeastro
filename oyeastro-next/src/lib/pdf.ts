@@ -27,6 +27,20 @@ interface CompatibilityPdfData {
   hasMangalDoshaCancellation?: boolean
 }
 
+interface VibeHorizon {
+  money: { status: string; emoji: string; colorClass: string }
+  love: { status: string; emoji: string; colorClass: string }
+  energy: { status: string; emoji: string; colorClass: string }
+  score: number
+  interpretation: string
+}
+
+interface CosmicVibeResult {
+  today: VibeHorizon
+  week: VibeHorizon
+  month: VibeHorizon
+}
+
 interface PersonalPdfData {
   name: string
   lagna: string
@@ -45,6 +59,7 @@ interface PersonalPdfData {
   vibeScore?: any
   flags?: { green: string[]; red: string[] }
   remedies?: any
+  cosmicVibe?: CosmicVibeResult
 }
 
 // ─── Color Palette ───────────────────────────────────────────────────────────
@@ -100,8 +115,6 @@ function getNakshatraLord(lon: number): string {
   return NAKSHATRA_LORDS[nakIdx % 9]
 }
 
-// ─── Document Layout Helpers ─────────────────────────────────────────────────
-
 function drawCoverBackground(doc: PDFKit.PDFDocument, isCompatibility = false) {
   const oldBottom = doc.page.margins.bottom
   doc.page.margins.bottom = 0 
@@ -109,7 +122,7 @@ function drawCoverBackground(doc: PDFKit.PDFDocument, isCompatibility = false) {
   // Fill deep space background
   doc.rect(0, 0, doc.page.width, doc.page.height).fill(C.purpleDark)
 
-  // Starry sky vector decorations
+  // Starry sky decorations
   doc.circle(doc.page.width - 60, 60, 150).lineWidth(1).strokeColor('#8A5CF515').stroke()
   doc.circle(60, doc.page.height - 100, 100).lineWidth(1).strokeColor('#FF5C8A10').stroke()
 
@@ -138,6 +151,8 @@ function drawCoverBackground(doc: PDFKit.PDFDocument, isCompatibility = false) {
 
   doc.page.margins.bottom = oldBottom
 }
+
+// ─── Document Layout Helpers ─────────────────────────────────────────────────
 
 function drawPastelBanner(doc: PDFKit.PDFDocument, pageNum: number, reportTitle: string, subtitle: string) {
   const oldBottom = doc.page.margins.bottom
@@ -452,9 +467,6 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
       outline.addItem('Problem & Solution')
       doc.y = 100
 
-      // Column 1 area (x=40, width=170)
-      // Column 2 area (x=220, width=170)
-      // Column 3 area (x=400, width=172)
       const colW = 168
       const topY = doc.y
 
@@ -463,7 +475,6 @@ export function generateCompatibilityPdf(data: CompatibilityPdfData): Promise<Bu
       const tY = topY + 18
       drawCard(doc, 40, tY, colW, 205, C.white)
 
-      // Timeline nodes (vertical style inside card)
       const nodes = [
         { label: 'First Meeting', desc: 'Cosmic Connection', icon: '⭐' },
         { label: 'Shared Dreams', desc: 'Building Foundations', icon: '👥' },
@@ -765,7 +776,7 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
 
       const cy = doc.y + 115
       if (data.houseData && data.positions) {
-        drawNorthIndianChart(doc, doc.page.width / 2, cy, 210, data.houseData, data.positions, data.houseData.lagnaSignIndex, `${data.name}'s Lagna Chart`)
+        drawNorthIndianChart(doc, doc.page.width / 2, cy, 210, data.houseData, data.positions, data.houseData.lagnaSignIndex, `${data.name}'s Birth Chart`)
       }
       doc.y = cy + 120
 
@@ -802,7 +813,85 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
         ])
       })
 
-      // ── Page 3: Personal Life Profile: Problem, Solution & Impact ────────
+      // ── Page 3: Cosmic Vibe Check & Aura Energy Matrix ─────────────────────
+      doc.addPage()
+      outline.addItem('Cosmic Vibe Check')
+      doc.y = 100
+
+      drawSectionHeader(doc, '⚡  Cosmic Vibe Check & Aura Energy Matrix', C.purpleMid)
+      doc.moveDown(0.4)
+
+      // Aura circle on left
+      const auraX = 100
+      const auraY = doc.y + 45
+      doc.circle(auraX, auraY, 35).lineWidth(4).strokeColor('#8A5CF520').stroke()
+      
+      const vScore = data.vibeScore?.score || 8
+      doc.circle(auraX, auraY, 35).lineWidth(4).strokeColor(C.gold).stroke()
+      
+      doc.font('Roboto-Bold').fontSize(24).fillColor(C.purpleMid)
+        .text(String(vScore), auraX - 18, auraY - 10, { width: 36, align: 'center' })
+      doc.font('Roboto-Bold').fontSize(7.5).fillColor(C.muted)
+        .text('AURA ENERGY', auraX - 30, auraY + 42, { width: 60, align: 'center' })
+
+      // Alignment factors on right
+      const barStartX = 180
+      let progressY = doc.y + 10
+      const progressFactors = data.vibeScore?.factors || [
+        { name: 'Love & Attraction', points: 8, max: 10 },
+        { name: 'Money & Fortune', points: 7, max: 10 },
+        { name: 'Energy & Health', points: 9, max: 10 },
+      ]
+
+      progressFactors.forEach((f: any) => {
+        doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.purpleMid).text(f.name, barStartX, progressY)
+        doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.lavender).text(`${f.points}/${f.max}`, doc.page.width - 80, progressY, { align: 'right' })
+        
+        // Progress track
+        doc.rect(barStartX, progressY + 11, doc.page.width - barStartX - 40, 5).fill('#EAE5F3')
+        // Progress fill (Yellow/Gold accent highlight)
+        doc.rect(barStartX, progressY + 11, ((doc.page.width - barStartX - 40) * f.points) / f.max, 5).fill(C.gold)
+
+        progressY += 26
+      })
+
+      doc.y = auraY + 65
+      doc.moveDown(0.8)
+
+      // Dynamic Horizons: Today, Week, Month
+      drawSectionHeader(doc, '🔮  Daily, Weekly & Monthly Transits Vibe Check', C.lavender)
+      
+      const horizons = [
+        { key: 'today', title: "TODAY'S VIBE", def: { money: { status: 'Attracting', emoji: '💵' }, love: { status: 'Deepening', emoji: '💝' }, energy: { status: 'Electric', emoji: '⚡' }, score: 8, interpretation: 'You will feel an urge to rush an important conversation today. Take a deep breath and listen carefully first to build a powerful level of trust and alignment.' } },
+        { key: 'week', title: "THIS WEEK'S VIBE", def: { money: { status: 'Secured', emoji: '💵' }, love: { status: 'Ghost Mode', emoji: '👻' }, energy: { status: 'Recharging', emoji: '🔋' }, score: 6, interpretation: 'This week calls for a major emotional battery recharge. Protect your peace and don\'t overthink.' } },
+        { key: 'month', title: "THIS MONTH'S VIBE", def: { money: { status: 'Hustling', emoji: '🔥' }, love: { status: 'Deep Connection', emoji: '💖' }, energy: { status: 'High Focus', emoji: '🎯' }, score: 9, interpretation: 'Your current stellar alignment is hitting its peak. Time to make big moves and act like the main character.' } }
+      ]
+
+      horizons.forEach((h) => {
+        const hData = data.cosmicVibe?.[h.key as keyof CosmicVibeResult] || h.def
+        const stepY = doc.y
+        drawCard(doc, 40, stepY, doc.page.width - 80, 56, C.white)
+
+        // Title
+        doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.purpleMid).text(h.title, 50, stepY + 10)
+        
+        // Emojis/Status grid in center
+        doc.font('Roboto').fontSize(7.5).fillColor(C.ink)
+          .text(`💸 Money: ${hData.money.status} ${hData.money.emoji}`, 155, stepY + 10)
+          .text(`❤️ Love: ${hData.love.status} ${hData.love.emoji}`, 265, stepY + 10)
+          .text(`⚡ Energy: ${hData.energy.status} ${hData.energy.emoji}`, 375, stepY + 10)
+
+        // Score
+        doc.font('Roboto-Bold').fontSize(8.5).fillColor(C.gold).text(`Score: ${hData.score}/10`, doc.page.width - 100, stepY + 10, { align: 'right' })
+
+        // Interpretation
+        doc.font('Roboto').fontSize(7.2).fillColor(C.muted).text(`"${hData.interpretation}"`, 50, stepY + 26, { width: doc.page.width - 100, lineGap: 2 })
+
+        doc.y = stepY + 56
+        doc.moveDown(0.3)
+      })
+
+      // ── Page 4: Personal Life Profile: Problem, Solution & Impact ────────
       doc.addPage()
       outline.addItem('Problem & Solution')
       doc.y = 100
@@ -854,7 +943,6 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
       const gemstone = data.remedies?.stone || 'Yellow Sapphire'
       const colors = data.remedies?.color || 'Bright Yellow'
       const mantraText = data.remedies?.mantra || 'Om Gram Greem Groum Sah Gurave Namah'
-      const tipsText = data.remedies?.tips || 'Offer water to the Sun daily.'
 
       const personalRems = [
         { icon: '💎', t: 'Suggested Gemstone', d: `Wear a natural ${gemstone} on your index finger.` },
@@ -906,7 +994,7 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
 
       doc.y = futY + 160
 
-      // ── Page 4: 4-Month Personal Journey Map ──────────────────────────────
+      // ── Page 5: 4-Month Personal Journey Map ──────────────────────────────
       doc.addPage()
       outline.addItem('Personal Journey Map')
       doc.y = 100
@@ -965,7 +1053,7 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
         doc.moveDown(0.3)
       })
 
-      // ── Page 5: Annual Chapters & Disclaimer ──────────────────────────────
+      // ── Page 6: Annual Chapters & Disclaimer ──────────────────────────────
       doc.addPage()
       outline.addItem('Annual Forecast')
       doc.y = 100

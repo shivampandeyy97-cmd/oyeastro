@@ -914,9 +914,9 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
         progressY += 26
       })
 
-      // CRITICAL: Reset document X coordinate to avoid leaks
+      // CRITICAL: Reset document X coordinate and calculate Y dynamically to prevent overlapping
       doc.x = 40
-      doc.y = auraY + 65
+      doc.y = Math.max(auraY + 65, progressY) + 10
       doc.moveDown(0.8)
 
       // Dynamic Horizons: Today, Week, Month

@@ -44,7 +44,7 @@ export default function Header() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between padding-6 px-12 py-5 bg-ivory/90 backdrop-blur-md border-b-[0.5px] border-border">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-12 py-5 bg-ivory/90 backdrop-blur-md border-b-[0.5px] border-border">
         <div className="flex-1 flex justify-start">
           <Link href="/" className="font-display text-2xl font-medium text-ink tracking-tight">
             oyeastro<span className="text-coral">.</span>
@@ -63,13 +63,13 @@ export default function Header() {
           <button 
             type="button"
             onClick={() => setIsOpen(true)}
-            className="bg-coral text-white px-5 py-2.5 rounded-full text-xs font-semibold hover:bg-ink hover:-translate-y-[1px] transition-all duration-200 border-none cursor-pointer font-body"
+            className="bg-coral text-white px-5 py-2.5 rounded-full text-xs font-semibold hover:bg-ink hover:-translate-y-[1px] transition-[transform,background-color] transform-gpu duration-200 border-none cursor-pointer font-body"
           >
             💬 Talk to Astrologer
           </button>
           <Link 
             href="/"
-            className="hidden sm:inline-block bg-ink text-ivory px-6 py-2.5 rounded-full text-xs font-medium hover:bg-coral hover:-translate-y-[1px] transition-all duration-200 border-none cursor-pointer font-body no-underline"
+            className="hidden sm:inline-block bg-ink text-ivory px-6 py-2.5 rounded-full text-xs font-medium hover:bg-coral hover:-translate-y-[1px] transition-[transform,background-color] transform-gpu duration-200 border-none cursor-pointer font-body no-underline"
           >
             Try it free →
           </Link>

@@ -195,7 +195,11 @@ function drawVibeBadge(
   // Icon badge background circle
   const cx = x + 24
   const cy = y + 24
-  doc.circle(cx, cy, 13).fill(color + '15')
+  doc.save()
+  doc.fillColor(color).fillOpacity(0.08)
+  doc.circle(cx, cy, 13).fill()
+  doc.restore()
+
   doc.font('Roboto').fontSize(11).text(icon, cx - 6, cy - 7)
 
   // Title
@@ -238,7 +242,10 @@ function drawNorthIndianChart(
      .lineWidth(0.8).strokeColor(C.lavender).stroke()
 
   // Highlight House 1 with soft yellow/gold background
-  doc.path(`M ${cx} ${cy} L ${x0 + s/2} ${y0} L ${x0} ${cy} Z`).fill('#F5B80008')
+  doc.save()
+  doc.fillColor(C.gold).fillOpacity(0.08)
+  doc.path(`M ${cx} ${cy} L ${x0 + s/4} ${y0 + s/4} L ${cx} ${y0} L ${x0 + 3*s/4} ${y0 + s/4} Z`).fill()
+  doc.restore()
 
   const planetsInHouse: Record<number, string[]> = {}
   for (let h = 1; h <= 12; h++) planetsInHouse[h] = []
@@ -254,20 +261,20 @@ function drawNorthIndianChart(
   }
 
   // Exact coordinates for labels inside the 12 triangles (Vedic counter-clockwise layout)
-  const q = s / 4
+  // Scaled proportionally to size 's' to avoid layout shifting/alignment issues across different chart sizes
   const centers: [number, number][] = [
-    [cx, y0 + q * 0.9],            // H1 (Top Diamond)
-    [x0 + s/4 + 10, y0 + s/12 + 14], // H2 (Top-Left upper triangle)
-    [x0 + s/12 + 14, y0 + s/4 + 10], // H3 (Top-Left left triangle)
-    [x0 + s/6 + 8, cy],            // H4 (Left Diamond)
-    [x0 + s/12 + 14, y0 + 3*s/4 - 10], // H5 (Bottom-Left left triangle)
-    [x0 + s/4 + 10, y0 + 11*s/12 - 14], // H6 (Bottom-Left bottom triangle)
-    [cx, y0 + 5*s/6 - 4],          // H7 (Bottom Diamond)
-    [x0 + 3*s/4 - 10, y0 + 11*s/12 - 14], // H8 (Bottom-Right bottom triangle)
-    [x0 + 11*s/12 - 14, y0 + 3*s/4 - 10], // H9 (Bottom-Right right triangle)
-    [x0 + 5*s/6 - 8, cy],          // H10 (Right Diamond)
-    [x0 + 11*s/12 - 14, y0 + s/4 + 10], // H11 (Top-Right right triangle)
-    [x0 + 3*s/4 - 10, y0 + s/12 + 14],  // H12 (Top-Right upper triangle)
+    [cx, y0 + s * 0.225],                 // H1 (Top Diamond)
+    [x0 + s * 0.304, y0 + s * 0.159],     // H2 (Top-Left upper triangle)
+    [x0 + s * 0.159, y0 + s * 0.304],     // H3 (Top-Left left triangle)
+    [x0 + s * 0.21, cy],                  // H4 (Left Diamond)
+    [x0 + s * 0.159, y0 + s * 0.696],     // H5 (Bottom-Left left triangle)
+    [x0 + s * 0.304, y0 + s * 0.841],     // H6 (Bottom-Left bottom triangle)
+    [cx, y0 + s * 0.812],                 // H7 (Bottom Diamond)
+    [x0 + s * 0.696, y0 + s * 0.841],     // H8 (Bottom-Right bottom triangle)
+    [x0 + s * 0.841, y0 + s * 0.696],     // H9 (Bottom-Right right triangle)
+    [x0 + s * 0.79, cy],                  // H10 (Right Diamond)
+    [x0 + s * 0.841, y0 + s * 0.304],     // H11 (Top-Right right triangle)
+    [x0 + s * 0.696, y0 + s * 0.159],     // H12 (Top-Right upper triangle)
   ]
 
   centers.forEach(([hx, hy], idx) => {
@@ -869,10 +876,17 @@ export function generatePersonalPdf(data: PersonalPdfData): Promise<Buffer> {
       // Aura circle on left
       const auraX = 100
       const auraY = doc.y + 45
-      doc.circle(auraX, auraY, 35).lineWidth(4).strokeColor('#8A5CF520').stroke()
+      
+      doc.save()
+      doc.lineWidth(4).strokeColor('#8A5CF5').strokeOpacity(0.12)
+      doc.circle(auraX, auraY, 35).stroke()
+      doc.restore()
       
       const vScore = data.vibeScore?.score || 8
-      doc.circle(auraX, auraY, 35).lineWidth(4).strokeColor(C.gold).stroke()
+      doc.save()
+      doc.lineWidth(4).strokeColor(C.gold)
+      doc.circle(auraX, auraY, 35).stroke()
+      doc.restore()
       
       doc.font('Roboto-Bold').fontSize(24).fillColor(C.purpleMid)
         .text(String(vScore), auraX - 18, auraY - 10, { width: 36, align: 'center' })

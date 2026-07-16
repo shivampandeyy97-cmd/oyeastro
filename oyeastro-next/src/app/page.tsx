@@ -687,7 +687,7 @@ function HomeContent() {
                       onChange={(e) => setName(e.target.value)} 
                       required 
                       placeholder="Riya, Arjun, Priya…" 
-                      className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                      className="bg-cream border border-border/80 rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
                     />
                   </div>
                   <div className="field flex flex-col gap-1.5">
@@ -695,7 +695,7 @@ function HomeContent() {
                     <select 
                       value={gender} 
                       onChange={(e) => setGender(e.target.value)}
-                      className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink cursor-pointer focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                      className="bg-cream border border-border/80 rounded-xl p-3 text-sm font-body text-ink cursor-pointer focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
                     >
                       <option value="male">Male</option>
                       <option value="female">Female</option>
@@ -715,7 +715,7 @@ function HomeContent() {
                         onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                         required 
                         placeholder="Mumbai, Delhi, London…" 
-                        className="w-full bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                        className="w-full bg-cream border border-border/80 rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
                         autoComplete="off"
                       />
                       {showSuggestions && suggestions.length > 0 && (
@@ -740,7 +740,7 @@ function HomeContent() {
                       value={date} 
                       onChange={(e) => setDate(e.target.value)} 
                       required 
-                      className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                      className="bg-cream border border-border/80 rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -753,7 +753,7 @@ function HomeContent() {
                       value={time} 
                       onChange={(e) => setTime(e.target.value)} 
                       required 
-                      className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                      className="bg-cream border border-border/80 rounded-xl p-3 text-sm font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
                     />
                   </div>
                   <div className="field flex flex-col gap-1.5">
@@ -761,7 +761,7 @@ function HomeContent() {
                     <select 
                       value={clarity} 
                       onChange={(e) => setClarity(e.target.value)}
-                      className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-3 text-sm font-body text-ink cursor-pointer focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                      className="bg-cream border border-border/80 rounded-xl p-3 text-sm font-body text-ink cursor-pointer focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
                     >
                       <option value="everything">Everything — just hit me ✦</option>
                       <option value="love">Love &amp; relationships</option>
@@ -775,7 +775,7 @@ function HomeContent() {
                 <button 
                   type="submit" 
                   disabled={isLoading}
-                  className="submit-btn w-full bg-ink text-ivory rounded-xl p-4 font-medium text-sm font-body cursor-pointer flex items-center justify-center gap-2 hover:bg-coral hover:scale-[1.01] hover:shadow-[0_10_30_rgba(255,122,69,0.28)] transition-all duration-200 disabled:opacity-50"
+                  className="submit-btn w-full bg-ink text-ivory rounded-xl p-4 font-medium text-sm font-body cursor-pointer flex items-center justify-center gap-2 hover:bg-coral hover:scale-[1.01] hover:shadow-[0_10px_30px_rgba(255,122,69,0.28)] transition-[transform,shadow,background-color] transform-gpu duration-200 disabled:opacity-50"
                 >
                   {isLoading ? 'Reading your alignment...' : 'Read my cosmos'}
                   <span className="inline-block transition-transform duration-200 hover:translate-x-1">→</span>
@@ -822,7 +822,7 @@ function HomeContent() {
                         onChange={(e) => setName(e.target.value)} 
                         required 
                         placeholder="Riya, Arjun, Priya…" 
-                        className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-2.5 text-xs font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                        className="bg-cream border border-border/80 rounded-xl p-2.5 text-xs font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
                       />
                     </div>
 
@@ -831,7 +831,7 @@ function HomeContent() {
                       <select 
                         value={gender} 
                         onChange={(e) => setGender(e.target.value)}
-                        className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-2.5 text-xs font-body text-ink cursor-pointer focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                        className="bg-cream border border-border/80 rounded-xl p-2.5 text-xs font-body text-ink cursor-pointer focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
                       >
                         <option value="male">Male</option>
                         <option value="female">Female</option>
@@ -849,7 +849,7 @@ function HomeContent() {
                           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                           required 
                           placeholder="Mumbai, Delhi, London…" 
-                          className="w-full bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-2.5 text-xs font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                          className="w-full bg-cream border border-border/80 rounded-xl p-2.5 text-xs font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
                           autoComplete="off"
                         />
                         {showSuggestions && suggestions.length > 0 && (
@@ -876,7 +876,7 @@ function HomeContent() {
                           value={date} 
                           onChange={(e) => setDate(e.target.value)} 
                           required 
-                          className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-2.5 text-xs font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                          className="bg-cream border border-border/80 rounded-xl p-2.5 text-xs font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
                         />
                       </div>
                       <div className="field flex flex-col gap-1.5">
@@ -886,7 +886,7 @@ function HomeContent() {
                           value={time} 
                           onChange={(e) => setTime(e.target.value)} 
                           required 
-                          className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-2.5 text-xs font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                          className="bg-cream border border-border/80 rounded-xl p-2.5 text-xs font-body text-ink focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
                         />
                       </div>
                     </div>
@@ -896,7 +896,7 @@ function HomeContent() {
                       <select 
                         value={clarity} 
                         onChange={(e) => setClarity(e.target.value)}
-                        className="bg-cream border-[1.5px] border-transparent outline-[1px] outline-border rounded-xl p-2.5 text-xs font-body text-ink cursor-pointer focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
+                        className="bg-cream border border-border/80 rounded-xl p-2.5 text-xs font-body text-ink cursor-pointer focus:outline-none focus:border-coral focus:bg-white focus:ring-4 focus:ring-coral/10 transition-all duration-200"
                       >
                         <option value="everything">Everything — just hit me ✦</option>
                         <option value="love">Love &amp; relationships</option>
@@ -909,7 +909,7 @@ function HomeContent() {
                     <button 
                       type="submit" 
                       disabled={isLoading}
-                      className="submit-btn w-full bg-ink text-ivory rounded-xl p-3 mt-1 font-medium text-xs font-body cursor-pointer flex items-center justify-center gap-2 hover:bg-coral transition-all duration-200 disabled:opacity-50"
+                      className="submit-btn w-full bg-ink text-ivory rounded-xl p-3 mt-1 font-medium text-xs font-body cursor-pointer flex items-center justify-center gap-2 hover:bg-coral transition-colors transform-gpu duration-200 disabled:opacity-50"
                     >
                       {isLoading ? 'Re-calculating...' : 'Update Vibe Check'}
                       <span className="inline-block">→</span>
@@ -1588,19 +1588,19 @@ function HomeContent() {
             People keep saying<br />it's <em className="not-italic text-periwinkle font-light">eerily accurate.</em>
           </h2>
           <div className="testi-grid grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
-            <div className="testi-card bg-cream border border-border rounded-[20px] p-6 transition-transform duration-200 hover:-translate-y-0.5">
+            <div className="testi-card bg-cream border border-border rounded-[20px] p-6 transition-transform duration-200 hover:-translate-y-0.5 transform-gpu">
               <div className="testi-stars text-gold text-xs tracking-wider mb-3">★★★★★</div>
               <p className="testi-q font-display text-[15px] font-light leading-[1.72] italic text-ink mb-4">"I've tried every astrology app. This is the first one that said something I hadn't heard before. The Dasha insight about my career literally made me tear up."</p>
               <div className="testi-by text-xs font-semibold text-ink">Priya S.</div>
               <div className="testi-sign text-[11px] text-ink-faint mt-0.5">21 · Mumbai · Virgo Rising</div>
             </div>
-            <div className="testi-card bg-cream border border-border rounded-[20px] p-6 transition-transform duration-200 hover:-translate-y-0.5">
+            <div className="testi-card bg-cream border border-border rounded-[20px] p-6 transition-transform duration-200 hover:-translate-y-0.5 transform-gpu">
               <div className="testi-stars text-gold text-xs tracking-wider mb-3">★★★★★</div>
               <p className="testi-q font-display text-[15px] font-light leading-[1.72] italic text-ink mb-4">"Sent the compatibility card to my partner. He's a full skeptic. He read it three times and then asked me to read it to him again. Say less."</p>
               <div className="testi-by text-xs font-semibold text-ink">Rohan K.</div>
               <div className="testi-sign text-[11px] text-ink-faint mt-0.5">27 · Bengaluru · Capricorn Moon</div>
             </div>
-            <div className="testi-card bg-cream border border-border rounded-[20px] p-6 transition-transform duration-200 hover:-translate-y-0.5">
+            <div className="testi-card bg-cream border border-border rounded-[20px] p-6 transition-transform duration-200 hover:-translate-y-0.5 transform-gpu">
               <div className="testi-stars text-gold text-xs tracking-wider mb-3">★★★★★</div>
               <p className="testi-q font-display text-[15px] font-light leading-[1.72] italic text-ink mb-4">"No login. No email. No paywall. It just worked. And it hit so different at 2am when I was spiraling about literally everything."</p>
               <div className="testi-by text-xs font-semibold text-ink">Aisha M.</div>
@@ -1617,22 +1617,22 @@ function HomeContent() {
             Ancient wisdom, built for<br /><em className="not-italic text-gold font-light">the next generation.</em>
           </h2>
           <div className="why-grid grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-            <div className="why-card bg-ivory border border-border rounded-[20px] p-6 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm">
+            <div className="why-card bg-ivory border border-border rounded-[20px] p-6 transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-sm transform-gpu">
               <span className="why-tag wt-a text-[10px] font-medium tracking-[1.5px] uppercase px-2.5 py-0.5 rounded-full mb-3 bg-[#FFF3CC] text-[#7A5500]">Accuracy</span>
               <h3 className="why-card-h font-display text-lg font-normal text-ink mb-2">Real Swiss Ephemeris calculations</h3>
               <p className="why-card-p text-xs text-ink-mid leading-[1.75] font-light">Not approximations. Actual Vedic chart computation from your exact birth coordinates — the same engine used by professional astrologers worldwide.</p>
             </div>
-            <div className="why-card bg-ivory border border-border rounded-[20px] p-6 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm">
+            <div className="why-card bg-ivory border border-border rounded-[20px] p-6 transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-sm transform-gpu">
               <span className="why-tag wt-b text-[10px] font-medium tracking-[1.5px] uppercase px-2.5 py-0.5 rounded-full mb-3 bg-[#FFE8E0] text-[#7A2500]">Language</span>
               <h3 className="why-card-h font-display text-lg font-normal text-ink mb-2">Zero Sanskrit. Zero jargon.</h3>
               <p className="why-card-p text-xs text-ink-mid leading-[1.75] font-light">"Jupiter transiting your 9th house" becomes "your biggest glow-up is happening in your career right now." Same truth. Language you actually want to read.</p>
             </div>
-            <div className="why-card bg-ivory border border-border rounded-[20px] p-6 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm">
+            <div className="why-card bg-ivory border border-border rounded-[20px] p-6 transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-sm transform-gpu">
               <span className="why-tag wt-c text-[10px] font-medium tracking-[1.5px] uppercase px-2.5 py-0.5 rounded-full mb-3 bg-[#E0F5E8] text-[#0A5228]">Privacy</span>
               <h3 className="why-card-h font-display text-lg font-normal text-ink mb-2">No signup. No tracking. Just clarity.</h3>
               <p className="why-card-p text-xs text-ink-mid leading-[1.75] font-light">Your birth data stays in your browser. We don't store it, sell it, or ask for your email. Come back anytime. No friction ever.</p>
             </div>
-            <div className="why-card bg-ivory border border-border rounded-[20px] p-6 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm">
+            <div className="why-card bg-ivory border border-border rounded-[20px] p-6 transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-sm transform-gpu">
               <span className="why-tag wt-d text-[10px] font-medium tracking-[1.5px] uppercase px-2.5 py-0.5 rounded-full mb-3 bg-[#E8E0FF] text-[#38107A]">Design</span>
               <h3 className="why-card-h font-display text-lg font-normal text-ink mb-2">Made to be shared.</h3>
               <p className="why-card-p text-xs text-ink-mid leading-[1.75] font-light">Every vibe card is designed for Instagram Stories — beautiful, personal, screenshot-worthy. The first astrology tool your friends will actually ask about.</p>
@@ -1653,7 +1653,7 @@ function HomeContent() {
           <button 
             type="button" 
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="cta-btn inline-flex items-center gap-2.5 bg-gold text-ink px-10 py-4.5 rounded-full text-sm font-medium font-body hover:bg-white hover:-translate-y-[2px] hover:shadow-[0_14px_40px_rgba(245,197,24,0.2)] transition-all duration-200 border-none cursor-pointer"
+            className="cta-btn inline-flex items-center gap-2.5 bg-gold text-ink px-10 py-4.5 rounded-full text-sm font-medium font-body hover:bg-white hover:-translate-y-[2px] hover:shadow-[0_14px_40px_rgba(245,197,24,0.2)] transition-[transform,shadow,background-color] transform-gpu duration-200 border-none cursor-pointer"
           >
             Read my cosmos ✦
           </button>
